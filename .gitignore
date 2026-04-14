@@ -1,0 +1,9 @@
+# data mentah / RAW
+accepted_2007_to_2018q4.csv/accepted_2007_to_2018Q4.csv
+rejected_2007_to_2018q4.csv/rejected_2007_to_2018Q4.csv
+
+# hasil cleaning
+.clean_accepted_loans.csv
+.clean_accepted_loans2.csv
+.clean_rejected_loans.csv
+.clean_rejected_loans2.csv
