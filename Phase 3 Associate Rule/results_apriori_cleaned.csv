@@ -1,0 +1,878 @@
+antecedents,consequents,support,confidence,lift
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE",0.051,0.434,6.314
+"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE","fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.051,0.748,6.314
+"grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.051,0.678,6.289
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High",0.051,0.478,6.289
+"grade_A, fico_range_low_bin_High","last_fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.392,6.287
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","grade_A, fico_range_low_bin_High",0.051,0.826,6.287
+"fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, grade_A",0.051,0.746,6.241
+"last_fico_range_low_bin_High, grade_A","fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.43,6.241
+"term_ 36 months, fico_range_low_bin_High, grade_A","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.081,0.663,6.155
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","term_ 36 months, fico_range_low_bin_High, grade_A",0.081,0.756,6.155
+"last_fico_range_low_bin_High, term_ 36 months, grade_A","fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.081,0.728,6.147
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","grade_A, fico_range_low_bin_High",0.087,0.807,6.147
+"grade_A, fico_range_low_bin_High","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.087,0.662,6.147
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months, grade_A",0.081,0.687,6.147
+"last_fico_range_low_bin_High, grade_A","fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.087,0.727,6.136
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, grade_A",0.087,0.734,6.136
+"grade_A, fico_range_low_bin_High","last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Very Low (<8%)",0.081,0.62,6.111
+"last_fico_range_low_bin_High, grade_A","term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.081,0.681,6.104
+"last_fico_range_low_bin_High, term_ 36 months, grade_A","int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.055,0.495,5.701
+"int_rate_bin_Very Low (<8%), loan_status_Fully Paid","last_fico_range_low_bin_High, term_ 36 months, grade_A",0.055,0.637,5.701
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, grade_A, fico_range_low_bin_High",0.051,0.539,5.651
+"last_fico_range_low_bin_High, grade_A, fico_range_low_bin_High","home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.54,5.651
+"last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Very Low (<8%)","grade_A, loan_status_Fully Paid",0.055,0.545,5.582
+"grade_A, loan_status_Fully Paid","last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Very Low (<8%)",0.055,0.566,5.582
+"loan_status_Current, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, grade_A",0.05,0.664,5.556
+"last_fico_range_low_bin_High, grade_A","loan_status_Current, int_rate_bin_Very Low (<8%)",0.05,0.422,5.556
+"last_fico_range_low_bin_High, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","grade_A, home_ownership_MORTGAGE",0.051,0.592,5.51
+"grade_A, home_ownership_MORTGAGE","last_fico_range_low_bin_High, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.051,0.479,5.51
+"grade_A, fico_range_low_bin_High","home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.069,0.525,5.497
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","grade_A, fico_range_low_bin_High",0.069,0.722,5.497
+"grade_A, fico_range_low_bin_High","loan_status_Current, int_rate_bin_Very Low (<8%)",0.055,0.417,5.491
+"loan_status_Current, int_rate_bin_Very Low (<8%)","grade_A, fico_range_low_bin_High",0.055,0.721,5.491
+"grade_A, fico_range_low_bin_High, loan_status_Fully Paid","term_ 36 months, int_rate_bin_Very Low (<8%)",0.058,0.882,5.491
+"term_ 36 months, int_rate_bin_Very Low (<8%)","grade_A, fico_range_low_bin_High, loan_status_Fully Paid",0.058,0.363,5.491
+"term_ 36 months, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, grade_A, loan_status_Fully Paid",0.055,0.344,5.487
+"last_fico_range_low_bin_High, grade_A, loan_status_Fully Paid","term_ 36 months, int_rate_bin_Very Low (<8%)",0.055,0.881,5.487
+"term_ 36 months, fico_range_low_bin_High, grade_A","int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.058,0.475,5.468
+"int_rate_bin_Very Low (<8%), loan_status_Fully Paid","term_ 36 months, fico_range_low_bin_High, grade_A",0.058,0.671,5.468
+"last_fico_range_low_bin_High, grade_A","int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.057,0.475,5.466
+"int_rate_bin_Very Low (<8%), loan_status_Fully Paid","last_fico_range_low_bin_High, grade_A",0.057,0.654,5.466
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, grade_A",0.062,0.653,5.456
+"last_fico_range_low_bin_High, grade_A","home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.062,0.521,5.456
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","term_ 36 months, fico_range_low_bin_High, grade_A",0.064,0.67,5.455
+"last_fico_range_low_bin_High, grade_A","term_ 36 months, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.055,0.462,5.446
+"grade_A, fico_range_low_bin_High","term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.064,0.487,5.44
+"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High, grade_A",int_rate_bin_Very Low (<8%),0.081,0.919,5.435
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High, grade_A",0.081,0.481,5.435
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months, grade_A",0.058,0.606,5.42
+"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.051,0.916,5.42
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High",0.051,0.305,5.42
+"grade_A, home_ownership_MORTGAGE","int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.051,0.471,5.419
+"int_rate_bin_Very Low (<8%), loan_status_Fully Paid","grade_A, home_ownership_MORTGAGE",0.051,0.582,5.419
+"grade_A, home_ownership_MORTGAGE","fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.069,0.642,5.417
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","grade_A, home_ownership_MORTGAGE",0.069,0.582,5.417
+int_rate_bin_Very Low (<8%),"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High, grade_A",0.064,0.378,5.417
+"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High, grade_A",int_rate_bin_Very Low (<8%),0.064,0.916,5.417
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","grade_A, loan_status_Fully Paid",0.051,0.529,5.416
+"grade_A, loan_status_Fully Paid","home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.517,5.416
+"grade_A, loan_status_Current","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.05,0.583,5.415
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","grade_A, loan_status_Current",0.05,0.468,5.415
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE, grade_A",0.058,0.342,5.413
+"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE, grade_A",int_rate_bin_Very Low (<8%),0.058,0.915,5.413
+"grade_A, loan_status_Fully Paid","term_ 36 months, int_rate_bin_Very Low (<8%)",0.085,0.868,5.406
+"term_ 36 months, int_rate_bin_Very Low (<8%)","grade_A, loan_status_Fully Paid",0.085,0.528,5.406
+"last_fico_range_low_bin_High, grade_A","term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.058,0.484,5.403
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","term_ 36 months, home_ownership_MORTGAGE, grade_A",0.064,0.54,5.401
+"term_ 36 months, grade_A","int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.085,0.469,5.398
+"int_rate_bin_Very Low (<8%), loan_status_Fully Paid","term_ 36 months, grade_A",0.085,0.977,5.398
+"term_ 36 months, fico_range_low_bin_High, grade_A, loan_status_Fully Paid",int_rate_bin_Very Low (<8%),0.058,0.912,5.394
+int_rate_bin_Very Low (<8%),"term_ 36 months, fico_range_low_bin_High, grade_A, loan_status_Fully Paid",0.058,0.345,5.394
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","term_ 36 months, grade_A, loan_status_Fully Paid",0.055,0.514,5.393
+"grade_A, loan_status_Fully Paid","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.057,0.581,5.393
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","grade_A, loan_status_Fully Paid",0.057,0.527,5.393
+"last_fico_range_low_bin_High, grade_A, fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.087,0.912,5.392
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, grade_A, fico_range_low_bin_High",0.087,0.514,5.392
+"grade_A, home_ownership_MORTGAGE","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.062,0.58,5.387
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","grade_A, home_ownership_MORTGAGE",0.062,0.579,5.387
+"term_ 36 months, grade_A","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.055,0.306,5.38
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, term_ 36 months, grade_A, loan_status_Fully Paid",0.055,0.327,5.377
+"last_fico_range_low_bin_High, term_ 36 months, grade_A, loan_status_Fully Paid",int_rate_bin_Very Low (<8%),0.055,0.909,5.377
+"term_ 36 months, grade_A","fico_range_low_bin_High, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.058,0.322,5.374
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","term_ 36 months, home_ownership_MORTGAGE, grade_A",0.058,0.537,5.374
+int_rate_bin_Very Low (<8%),"term_ 36 months, fico_range_low_bin_High, grade_A",0.111,0.659,5.37
+"term_ 36 months, fico_range_low_bin_High, grade_A",int_rate_bin_Very Low (<8%),0.111,0.908,5.37
+"last_fico_range_low_bin_High, term_ 36 months, grade_A",int_rate_bin_Very Low (<8%),0.101,0.907,5.366
+"grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.069,0.907,5.366
+int_rate_bin_Very Low (<8%),"grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High",0.069,0.408,5.366
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, term_ 36 months, grade_A",0.101,0.6,5.366
+"grade_A, fico_range_low_bin_High, loan_status_Fully Paid",int_rate_bin_Very Low (<8%),0.06,0.906,5.361
+int_rate_bin_Very Low (<8%),"grade_A, fico_range_low_bin_High, loan_status_Fully Paid",0.06,0.354,5.361
+int_rate_bin_Very Low (<8%),"grade_A, fico_range_low_bin_High, dti_bin_Low (10-20)",0.053,0.315,5.359
+"grade_A, fico_range_low_bin_High, dti_bin_Low (10-20)",int_rate_bin_Very Low (<8%),0.053,0.906,5.359
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE",0.062,0.369,5.357
+"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE",int_rate_bin_Very Low (<8%),0.062,0.906,5.357
+"term_ 36 months, grade_A","home_ownership_RENT, int_rate_bin_Very Low (<8%)",0.052,0.29,5.352
+"home_ownership_RENT, int_rate_bin_Very Low (<8%)","term_ 36 months, grade_A",0.052,0.969,5.352
+"grade_A, loan_status_Fully Paid","term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.058,0.597,5.351
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, grade_A, loan_status_Fully Paid",0.057,0.336,5.349
+"last_fico_range_low_bin_High, grade_A, loan_status_Fully Paid",int_rate_bin_Very Low (<8%),0.057,0.904,5.349
+"grade_A, loan_status_Current","fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.055,0.633,5.342
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","grade_A, loan_status_Current",0.055,0.462,5.342
+"grade_A, home_ownership_MORTGAGE","term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.064,0.595,5.34
+int_rate_bin_Very Low (<8%),"grade_A, fico_range_low_bin_High",0.118,0.7,5.334
+"grade_A, fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.118,0.902,5.334
+"installment_bin_Low, int_rate_bin_Very Low (<8%)","term_ 36 months, grade_A",0.056,0.964,5.328
+"term_ 36 months, grade_A","installment_bin_Low, int_rate_bin_Very Low (<8%)",0.056,0.309,5.328
+"last_fico_range_low_bin_High, grade_A",int_rate_bin_Very Low (<8%),0.108,0.9,5.324
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, grade_A",0.108,0.637,5.324
+int_rate_bin_Very Low (<8%),"grade_A, loan_status_Current, fico_range_low_bin_High",0.055,0.324,5.317
+"last_fico_range_low_bin_High, grade_A, fico_range_low_bin_High","term_ 36 months, int_rate_bin_Very Low (<8%)",0.081,0.853,5.312
+"grade_A, home_ownership_MORTGAGE","last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Very Low (<8%)",0.058,0.539,5.309
+"term_ 36 months, int_rate_bin_Very Low (<8%)","grade_A, installment_bin_Low",0.056,0.348,5.301
+"grade_A, installment_bin_Low","term_ 36 months, int_rate_bin_Very Low (<8%)",0.056,0.851,5.301
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, grade_A, loan_status_Current",0.05,0.298,5.297
+int_rate_bin_Very Low (<8%),"term_ 36 months, home_ownership_MORTGAGE, grade_A",0.089,0.529,5.295
+"term_ 36 months, home_ownership_MORTGAGE, grade_A",int_rate_bin_Very Low (<8%),0.089,0.895,5.295
+"fico_range_low_bin_High, grade_A","term_ 36 months, int_rate_bin_Very Low (<8%)",0.111,0.849,5.285
+"last_fico_range_low_bin_High, grade_A","term_ 36 months, int_rate_bin_Very Low (<8%)",0.101,0.848,5.278
+"grade_A, home_ownership_MORTGAGE, loan_status_Fully Paid",int_rate_bin_Very Low (<8%),0.051,0.891,5.27
+int_rate_bin_Very Low (<8%),"grade_A, home_ownership_MORTGAGE, loan_status_Fully Paid",0.051,0.299,5.27
+int_rate_bin_Very Low (<8%),"term_ 36 months, grade_A, loan_status_Fully Paid",0.085,0.502,5.269
+"term_ 36 months, grade_A, loan_status_Fully Paid",int_rate_bin_Very Low (<8%),0.085,0.891,5.269
+"term_ 36 months, dti_bin_Low (10-20), grade_A",int_rate_bin_Very Low (<8%),0.073,0.889,5.26
+int_rate_bin_Very Low (<8%),"term_ 36 months, dti_bin_Low (10-20), grade_A",0.073,0.434,5.26
+"grade_A, fico_range_low_bin_High","int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.06,0.456,5.254
+"term_ 36 months, installment_bin_High, grade_A",int_rate_bin_Very Low (<8%),0.05,0.888,5.253
+int_rate_bin_Very Low (<8%),"term_ 36 months, installment_bin_High, grade_A",0.05,0.296,5.253
+"grade_A, home_ownership_MORTGAGE",int_rate_bin_Very Low (<8%),0.095,0.888,5.251
+int_rate_bin_Very Low (<8%),"grade_A, home_ownership_MORTGAGE",0.095,0.564,5.251
+int_rate_bin_Very Low (<8%),"term_ 36 months, grade_A, installment_bin_Medium",0.055,0.322,5.248
+"term_ 36 months, grade_A, installment_bin_Medium",int_rate_bin_Very Low (<8%),0.055,0.887,5.248
+"grade_A, loan_status_Fully Paid",int_rate_bin_Very Low (<8%),0.087,0.887,5.247
+int_rate_bin_Very Low (<8%),"grade_A, loan_status_Fully Paid",0.087,0.513,5.247
+int_rate_bin_Very Low (<8%),"term_ 36 months, grade_A",0.16,0.949,5.244
+"term_ 36 months, grade_A",int_rate_bin_Very Low (<8%),0.16,0.887,5.244
+"term_ 36 months, grade_A","installment_bin_High, int_rate_bin_Very Low (<8%)",0.05,0.277,5.241
+"term_ 36 months, int_rate_bin_Very Low (<8%)","home_ownership_RENT, grade_A",0.052,0.326,5.236
+"home_ownership_RENT, grade_A","term_ 36 months, int_rate_bin_Very Low (<8%)",0.052,0.841,5.236
+"grade_A, fico_range_low_bin_High","dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",0.053,0.406,5.233
+int_rate_bin_Very Low (<8%),"term_ 36 months, installment_bin_Low, grade_A",0.056,0.331,5.231
+int_rate_bin_Very Low (<8%),"grade_A, dti_bin_Low (10-20)",0.077,0.458,5.227
+"grade_A, dti_bin_Low (10-20)",int_rate_bin_Very Low (<8%),0.077,0.884,5.227
+"term_ 36 months, grade_A","dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",0.073,0.405,5.226
+int_rate_bin_Very Low (<8%),"term_ 36 months, loan_status_Current, grade_A",0.07,0.412,5.226
+"grade_A, fico_range_low_bin_High","term_ 36 months, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.058,0.444,5.226
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.081,0.425,5.22
+"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",grade_A,0.081,1.0,5.22
+"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",grade_A,0.064,1.0,5.22
+"term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",grade_A,0.111,1.0,5.22
+grade_A,"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.064,0.334,5.22
+grade_A,"last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.269,5.22
+grade_A,"term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.058,0.304,5.22
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.058,0.302,5.22
+grade_A,"term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.111,0.582,5.22
+"last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",grade_A,0.051,1.0,5.22
+"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",grade_A,0.058,1.0,5.22
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Very Low (<8%)",0.101,0.529,5.219
+int_rate_bin_Very Low (<8%),"grade_A, installment_bin_High",0.053,0.312,5.219
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.055,0.289,5.219
+"last_fico_range_low_bin_High, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",grade_A,0.087,1.0,5.219
+"grade_A, installment_bin_High",int_rate_bin_Very Low (<8%),0.053,0.882,5.219
+grade_A,"last_fico_range_low_bin_High, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.087,0.454,5.219
+"grade_A, installment_bin_High","term_ 36 months, int_rate_bin_Very Low (<8%)",0.05,0.838,5.219
+"last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Very Low (<8%)",grade_A,0.101,1.0,5.219
+grade_A,"fico_range_low_bin_High, loan_status_Current, int_rate_bin_Very Low (<8%)",0.055,0.286,5.218
+"last_fico_range_low_bin_High, loan_status_Current, int_rate_bin_Very Low (<8%)",grade_A,0.05,0.999,5.218
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",grade_A,0.06,1.0,5.218
+grade_A,"fico_range_low_bin_High, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.06,0.313,5.218
+grade_A,"fico_range_low_bin_High, dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",0.053,0.278,5.218
+grade_A,"last_fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.062,0.325,5.218
+"fico_range_low_bin_High, dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",grade_A,0.053,1.0,5.218
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",grade_A,0.062,1.0,5.218
+"fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",grade_A,0.069,1.0,5.218
+grade_A,"last_fico_range_low_bin_High, loan_status_Current, int_rate_bin_Very Low (<8%)",0.05,0.263,5.218
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",grade_A,0.118,0.999,5.218
+grade_A,"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.118,0.618,5.218
+grade_A,"fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.069,0.36,5.218
+grade_A,"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.057,0.296,5.217
+"term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",grade_A,0.089,0.999,5.217
+grade_A,"term_ 36 months, loan_status_Current, int_rate_bin_Very Low (<8%)",0.07,0.364,5.217
+"term_ 36 months, loan_status_Current, int_rate_bin_Very Low (<8%)",grade_A,0.07,0.999,5.217
+"term_ 36 months, installment_bin_High, int_rate_bin_Very Low (<8%)",grade_A,0.05,0.999,5.217
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",grade_A,0.108,0.999,5.217
+grade_A,"term_ 36 months, installment_bin_High, int_rate_bin_Very Low (<8%)",0.05,0.261,5.217
+grade_A,"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.108,0.562,5.217
+grade_A,"term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.089,0.467,5.217
+grade_A,"term_ 36 months, installment_bin_Medium, int_rate_bin_Very Low (<8%)",0.055,0.285,5.216
+grade_A,"term_ 36 months, dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",0.073,0.383,5.216
+grade_A,"term_ 36 months, int_rate_bin_Very Low (<8%)",0.16,0.838,5.216
+"term_ 36 months, installment_bin_Medium, int_rate_bin_Very Low (<8%)",grade_A,0.055,0.999,5.216
+"term_ 36 months, dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",grade_A,0.073,0.999,5.216
+"term_ 36 months, int_rate_bin_Very Low (<8%)",grade_A,0.16,0.999,5.216
+grade_A,"term_ 36 months, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.085,0.443,5.215
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",grade_A,0.051,0.999,5.214
+grade_A,"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.051,0.264,5.214
+grade_A,"term_ 36 months, installment_bin_Low, int_rate_bin_Very Low (<8%)",0.056,0.292,5.214
+grade_A,"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.095,0.498,5.213
+grade_A,"loan_status_Current, int_rate_bin_Very Low (<8%)",0.076,0.396,5.213
+"dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",grade_A,0.077,0.999,5.213
+"loan_status_Current, int_rate_bin_Very Low (<8%)",grade_A,0.076,0.998,5.213
+"installment_bin_High, int_rate_bin_Very Low (<8%)",grade_A,0.053,0.999,5.213
+grade_A,"installment_bin_High, int_rate_bin_Very Low (<8%)",0.053,0.275,5.213
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",grade_A,0.095,0.999,5.213
+grade_A,"dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",0.077,0.404,5.213
+grade_A,"int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.087,0.452,5.212
+grade_A,int_rate_bin_Very Low (<8%),0.169,0.881,5.212
+"grade_A, installment_bin_Low",int_rate_bin_Very Low (<8%),0.058,0.881,5.212
+int_rate_bin_Very Low (<8%),"grade_A, installment_bin_Low",0.058,0.342,5.212
+int_rate_bin_Very Low (<8%),grade_A,0.169,0.998,5.212
+grade_A,"int_rate_bin_Very Low (<8%), installment_bin_Medium",0.058,0.304,5.212
+grade_A,"home_ownership_RENT, term_ 36 months, int_rate_bin_Very Low (<8%)",0.052,0.274,5.212
+grade_A,"installment_bin_Low, int_rate_bin_Very Low (<8%)",0.058,0.302,5.211
+grade_A,"home_ownership_RENT, int_rate_bin_Very Low (<8%)",0.054,0.282,5.208
+int_rate_bin_Very Low (<8%),"grade_A, installment_bin_Medium",0.058,0.344,5.205
+int_rate_bin_Very Low (<8%),"grade_A, loan_status_Current",0.076,0.448,5.184
+int_rate_bin_Very Low (<8%),"home_ownership_RENT, term_ 36 months, grade_A",0.052,0.31,5.142
+int_rate_bin_Very Low (<8%),"home_ownership_RENT, grade_A",0.054,0.319,5.122
+"term_ 36 months, int_rate_bin_High (16-20%)",grade_D,0.065,0.721,5.024
+grade_D,"term_ 36 months, int_rate_bin_High (16-20%)",0.065,0.455,5.024
+grade_D,"last_fico_range_low_bin_Low, int_rate_bin_High (16-20%)",0.059,0.408,4.898
+"last_fico_range_low_bin_Low, int_rate_bin_High (16-20%)",grade_D,0.059,0.703,4.898
+"int_rate_bin_High (16-20%), fico_range_low_bin_Low",grade_D,0.064,0.702,4.889
+grade_D,"int_rate_bin_High (16-20%), fico_range_low_bin_Low",0.064,0.449,4.889
+"term_ 36 months, grade_D",int_rate_bin_High (16-20%),0.065,0.802,4.846
+int_rate_bin_High (16-20%),"term_ 36 months, grade_D",0.065,0.395,4.846
+"grade_D, last_fico_range_low_bin_Low",int_rate_bin_High (16-20%),0.059,0.796,4.814
+int_rate_bin_High (16-20%),"grade_D, last_fico_range_low_bin_Low",0.059,0.354,4.814
+"home_ownership_MORTGAGE, grade_D",int_rate_bin_High (16-20%),0.051,0.795,4.805
+int_rate_bin_High (16-20%),"home_ownership_MORTGAGE, grade_D",0.051,0.31,4.805
+int_rate_bin_High (16-20%),"grade_D, fico_range_low_bin_Low",0.064,0.39,4.79
+"grade_D, fico_range_low_bin_Low",int_rate_bin_High (16-20%),0.064,0.793,4.79
+int_rate_bin_High (16-20%),grade_D,0.114,0.687,4.787
+grade_D,int_rate_bin_High (16-20%),0.114,0.792,4.787
+grade_D,"home_ownership_MORTGAGE, int_rate_bin_High (16-20%)",0.051,0.357,4.735
+"last_fico_range_low_bin_High, int_rate_bin_Low (8-12%)","grade_B, fico_range_low_bin_High",0.052,0.463,4.636
+"grade_B, fico_range_low_bin_High","last_fico_range_low_bin_High, int_rate_bin_Low (8-12%)",0.052,0.522,4.636
+"grade_B, last_fico_range_low_bin_High","fico_range_low_bin_High, int_rate_bin_Low (8-12%)",0.052,0.48,4.509
+"fico_range_low_bin_High, int_rate_bin_Low (8-12%)","grade_B, last_fico_range_low_bin_High",0.052,0.49,4.509
+"int_rate_bin_Medium (12-16%), grade_C",sub_grade_C3,0.057,0.23,4.026
+"int_rate_bin_Medium (12-16%), grade_C",sub_grade_C2,0.058,0.233,4.026
+"home_ownership_MORTGAGE, grade_C","int_rate_bin_Medium (12-16%), term_ 60 months",0.052,0.38,3.849
+"int_rate_bin_Medium (12-16%), term_ 60 months","home_ownership_MORTGAGE, grade_C",0.052,0.522,3.849
+"grade_B, int_rate_bin_Low (8-12%)",sub_grade_B1,0.055,0.21,3.797
+"grade_B, int_rate_bin_Low (8-12%)",sub_grade_B2,0.056,0.213,3.796
+"last_fico_range_low_bin_Low, grade_C","int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.061,0.51,3.697
+"int_rate_bin_Medium (12-16%), fico_range_low_bin_Low","last_fico_range_low_bin_Low, grade_C",0.061,0.441,3.697
+"last_fico_range_low_bin_High, grade_A","term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High",0.051,0.428,3.695
+"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High","last_fico_range_low_bin_High, grade_A",0.051,0.442,3.695
+"int_rate_bin_Low (8-12%), fico_range_low_bin_Low","grade_B, term_ 36 months",0.086,0.871,3.682
+"grade_B, term_ 36 months","int_rate_bin_Low (8-12%), fico_range_low_bin_Low",0.086,0.362,3.682
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High",0.051,0.267,3.657
+"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High",grade_A,0.051,0.7,3.657
+"home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%)","term_ 60 months, grade_C",0.052,0.372,3.655
+"term_ 60 months, grade_C","home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%)",0.052,0.506,3.655
+"term_ 36 months, grade_C","int_rate_bin_Medium (12-16%), installment_bin_Low",0.07,0.377,3.646
+"int_rate_bin_Medium (12-16%), installment_bin_Low","term_ 36 months, grade_C",0.07,0.677,3.646
+"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low","fico_range_low_bin_Low, grade_C",0.061,0.5,3.627
+"fico_range_low_bin_Low, grade_C","int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low",0.061,0.441,3.627
+"grade_A, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High",0.081,0.482,3.581
+"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High","grade_A, int_rate_bin_Very Low (<8%)",0.081,0.604,3.581
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High",0.081,0.482,3.575
+"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.081,0.604,3.575
+"term_ 36 months, int_rate_bin_Medium (12-16%)","installment_bin_Low, grade_C",0.07,0.361,3.571
+"installment_bin_Low, grade_C","term_ 36 months, int_rate_bin_Medium (12-16%)",0.07,0.693,3.571
+"int_rate_bin_Medium (12-16%), grade_C",sub_grade_C1,0.057,0.229,3.545
+"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High","grade_A, home_ownership_MORTGAGE",0.051,0.38,3.542
+"grade_A, home_ownership_MORTGAGE","last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High",0.051,0.477,3.542
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, fico_range_low_bin_Low",0.086,0.36,3.539
+"grade_B, fico_range_low_bin_Low","term_ 36 months, int_rate_bin_Low (8-12%)",0.086,0.844,3.539
+"grade_B, int_rate_bin_Low (8-12%)",sub_grade_B3,0.054,0.205,3.525
+"grade_B, term_ 36 months, home_ownership_MORTGAGE","int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.056,0.516,3.522
+"int_rate_bin_Low (8-12%), loan_status_Fully Paid","grade_B, term_ 36 months, home_ownership_MORTGAGE",0.056,0.385,3.522
+grade_C,sub_grade_C1,0.065,0.224,3.478
+grade_C,sub_grade_C3,0.057,0.199,3.478
+grade_C,"int_rate_bin_Medium (12-16%), sub_grade_C2",0.058,0.201,3.478
+grade_C,sub_grade_C2,0.058,0.202,3.478
+grade_C,"int_rate_bin_Medium (12-16%), sub_grade_C3",0.057,0.198,3.478
+grade_C,sub_grade_C4,0.056,0.196,3.478
+grade_C,"int_rate_bin_Medium (12-16%), sub_grade_C1",0.057,0.197,3.478
+grade_C,sub_grade_C5,0.052,0.18,3.478
+"term_ 36 months, grade_C","int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.089,0.478,3.465
+"int_rate_bin_Medium (12-16%), fico_range_low_bin_Low","term_ 36 months, grade_C",0.089,0.644,3.465
+"grade_B, last_fico_range_low_bin_High","int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.055,0.506,3.451
+"int_rate_bin_Low (8-12%), loan_status_Fully Paid","grade_B, last_fico_range_low_bin_High",0.055,0.375,3.451
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High",0.089,0.462,3.434
+"last_fico_range_low_bin_High, term_ 36 months, fico_range_low_bin_High",grade_A,0.089,0.658,3.434
+"term_ 36 months, int_rate_bin_Medium (12-16%)","loan_status_Fully Paid, grade_C",0.087,0.449,3.428
+"loan_status_Fully Paid, grade_C","term_ 36 months, int_rate_bin_Medium (12-16%)",0.087,0.665,3.428
+"int_rate_bin_Low (8-12%), loan_status_Fully Paid","grade_B, term_ 36 months, dti_bin_Low (10-20)",0.051,0.348,3.423
+"grade_B, term_ 36 months, dti_bin_Low (10-20)","int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.051,0.502,3.423
+"grade_B, term_ 36 months","int_rate_bin_Low (8-12%), installment_bin_Low",0.089,0.375,3.42
+"int_rate_bin_Low (8-12%), installment_bin_Low","grade_B, term_ 36 months",0.089,0.809,3.42
+"grade_B, installment_bin_Low","term_ 36 months, int_rate_bin_Low (8-12%)",0.089,0.815,3.419
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, installment_bin_Low",0.089,0.372,3.419
+"grade_B, term_ 36 months","int_rate_bin_Low (8-12%), last_fico_range_low_bin_Low",0.066,0.28,3.418
+"int_rate_bin_Low (8-12%), last_fico_range_low_bin_Low","grade_B, term_ 36 months",0.066,0.809,3.418
+sub_grade_C3,int_rate_bin_Medium (12-16%),0.057,0.999,3.411
+sub_grade_C2,int_rate_bin_Medium (12-16%),0.058,0.999,3.411
+int_rate_bin_Medium (12-16%),"sub_grade_C3, grade_C",0.057,0.195,3.411
+int_rate_bin_Medium (12-16%),sub_grade_C3,0.057,0.195,3.411
+int_rate_bin_Medium (12-16%),sub_grade_C2,0.058,0.198,3.411
+int_rate_bin_Medium (12-16%),"sub_grade_C2, grade_C",0.058,0.198,3.411
+grade_B,sub_grade_B2,0.056,0.191,3.407
+grade_B,"int_rate_bin_Low (8-12%), sub_grade_B1",0.055,0.189,3.407
+grade_B,sub_grade_B5,0.062,0.211,3.407
+grade_B,sub_grade_B4,0.062,0.211,3.407
+grade_B,sub_grade_B1,0.055,0.189,3.407
+grade_B,"int_rate_bin_Low (8-12%), sub_grade_B4",0.053,0.181,3.407
+grade_B,"sub_grade_B3, int_rate_bin_Low (8-12%)",0.054,0.184,3.407
+grade_B,"int_rate_bin_Low (8-12%), sub_grade_B2",0.056,0.191,3.407
+grade_B,sub_grade_B3,0.058,0.198,3.407
+int_rate_bin_Low (8-12%),"grade_B, sub_grade_B2",0.056,0.19,3.4
+int_rate_bin_Low (8-12%),sub_grade_B2,0.056,0.19,3.4
+int_rate_bin_Low (8-12%),"grade_B, sub_grade_B1",0.055,0.189,3.4
+"home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)","grade_B, fico_range_low_bin_High",0.05,0.34,3.4
+"grade_B, fico_range_low_bin_High","home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.05,0.501,3.4
+int_rate_bin_Low (8-12%),sub_grade_B1,0.055,0.189,3.4
+sub_grade_B1,int_rate_bin_Low (8-12%),0.055,1.0,3.4
+sub_grade_B2,int_rate_bin_Low (8-12%),0.056,1.0,3.4
+"last_fico_range_low_bin_High, grade_A, int_rate_bin_Very Low (<8%)","term_ 36 months, fico_range_low_bin_High",0.081,0.756,3.38
+"term_ 36 months, fico_range_low_bin_High","last_fico_range_low_bin_High, grade_A, int_rate_bin_Very Low (<8%)",0.081,0.364,3.38
+"term_ 36 months, fico_range_low_bin_High","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.081,0.364,3.378
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","term_ 36 months, fico_range_low_bin_High",0.081,0.756,3.378
+"grade_B, loan_status_Fully Paid","term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.056,0.375,3.371
+"term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)","grade_B, loan_status_Fully Paid",0.056,0.507,3.371
+"term_ 36 months, grade_C","home_ownership_RENT, int_rate_bin_Medium (12-16%)",0.076,0.409,3.347
+"home_ownership_RENT, int_rate_bin_Medium (12-16%)","term_ 36 months, grade_C",0.076,0.622,3.347
+"int_rate_bin_Low (8-12%), loan_status_Fully Paid","grade_B, term_ 36 months",0.115,0.787,3.328
+"grade_B, term_ 36 months","int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.115,0.488,3.328
+"term_ 36 months, fico_range_low_bin_High","last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE",0.051,0.229,3.327
+"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE","term_ 36 months, fico_range_low_bin_High",0.051,0.744,3.327
+"home_ownership_RENT, int_rate_bin_Low (8-12%)","grade_B, term_ 36 months",0.089,0.787,3.325
+"grade_B, term_ 36 months","home_ownership_RENT, int_rate_bin_Low (8-12%)",0.089,0.378,3.325
+"term_ 36 months, int_rate_bin_Medium (12-16%)","fico_range_low_bin_Low, grade_C",0.089,0.457,3.317
+"fico_range_low_bin_Low, grade_C","term_ 36 months, int_rate_bin_Medium (12-16%)",0.089,0.644,3.317
+"grade_B, loan_status_Fully Paid","term_ 36 months, int_rate_bin_Low (8-12%), dti_bin_Low (10-20)",0.051,0.339,3.313
+"term_ 36 months, int_rate_bin_Low (8-12%), dti_bin_Low (10-20)","grade_B, loan_status_Fully Paid",0.051,0.499,3.313
+"last_fico_range_low_bin_High, grade_A","term_ 36 months, fico_range_low_bin_High",0.089,0.741,3.31
+"term_ 36 months, fico_range_low_bin_High","last_fico_range_low_bin_High, grade_A",0.089,0.396,3.31
+"term_ 36 months, grade_C","int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low",0.074,0.401,3.3
+"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low","term_ 36 months, grade_C",0.074,0.613,3.3
+"grade_B, term_ 36 months","dti_bin_Low (10-20), int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.051,0.216,3.298
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, home_ownership_RENT",0.089,0.375,3.272
+"grade_B, home_ownership_RENT","term_ 36 months, int_rate_bin_Low (8-12%)",0.089,0.781,3.272
+"grade_A, int_rate_bin_Very Low (<8%)","term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High",0.064,0.379,3.268
+"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High","grade_A, int_rate_bin_Very Low (<8%)",0.064,0.552,3.268
+"term_ 36 months, int_rate_bin_Medium (12-16%)","home_ownership_RENT, grade_C",0.076,0.392,3.265
+"home_ownership_RENT, grade_C","term_ 36 months, int_rate_bin_Medium (12-16%)",0.076,0.633,3.265
+"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.064,0.552,3.263
+int_rate_bin_Very Low (<8%),"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High",0.064,0.378,3.263
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, last_fico_range_low_bin_Low",0.066,0.278,3.263
+"grade_B, last_fico_range_low_bin_Low","term_ 36 months, int_rate_bin_Low (8-12%)",0.066,0.778,3.263
+"home_ownership_RENT, grade_C","int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.054,0.448,3.25
+"int_rate_bin_Medium (12-16%), fico_range_low_bin_Low","home_ownership_RENT, grade_C",0.054,0.39,3.25
+"grade_B, last_fico_range_low_bin_High","home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.052,0.478,3.249
+"home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)","grade_B, last_fico_range_low_bin_High",0.052,0.353,3.249
+"grade_B, loan_status_Fully Paid","last_fico_range_low_bin_High, int_rate_bin_Low (8-12%)",0.055,0.365,3.244
+"last_fico_range_low_bin_High, int_rate_bin_Low (8-12%)","grade_B, loan_status_Fully Paid",0.055,0.488,3.244
+"loan_status_Fully Paid, grade_C","int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.058,0.445,3.224
+"int_rate_bin_Medium (12-16%), fico_range_low_bin_Low","loan_status_Fully Paid, grade_C",0.058,0.422,3.224
+"grade_B, term_ 36 months, loan_status_Current",int_rate_bin_Low (8-12%),0.077,0.947,3.22
+"term_ 36 months, int_rate_bin_Medium (12-16%)","last_fico_range_low_bin_Low, grade_C",0.074,0.384,3.22
+"last_fico_range_low_bin_Low, grade_C","term_ 36 months, int_rate_bin_Medium (12-16%)",0.074,0.625,3.22
+"term_ 36 months, grade_C","int_rate_bin_Medium (12-16%), loan_status_Fully Paid",0.087,0.469,3.22
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, loan_status_Current",0.077,0.262,3.22
+"int_rate_bin_Medium (12-16%), loan_status_Fully Paid","term_ 36 months, grade_C",0.087,0.598,3.22
+"int_rate_bin_Low (8-12%), loan_status_Fully Paid","grade_B, installment_bin_Low",0.051,0.35,3.217
+"grade_B, installment_bin_Low","int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.051,0.472,3.217
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, loan_status_Fully Paid",0.115,0.484,3.215
+"grade_B, loan_status_Fully Paid","term_ 36 months, int_rate_bin_Low (8-12%)",0.115,0.767,3.215
+"fico_range_low_bin_High, int_rate_bin_Low (8-12%)","grade_B, home_ownership_MORTGAGE",0.05,0.47,3.214
+"grade_B, home_ownership_MORTGAGE","fico_range_low_bin_High, int_rate_bin_Low (8-12%)",0.05,0.342,3.214
+"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE","grade_A, fico_range_low_bin_High",0.051,0.421,3.204
+"grade_A, fico_range_low_bin_High","last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE",0.051,0.39,3.204
+"int_rate_bin_Medium (12-16%), fico_range_low_bin_Low","dti_bin_Low (10-20), grade_C",0.05,0.365,3.2
+"dti_bin_Low (10-20), grade_C","int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.05,0.441,3.2
+"int_rate_bin_Low (8-12%), last_fico_range_low_bin_Medium","grade_B, term_ 36 months",0.075,0.755,3.191
+"grade_B, home_ownership_MORTGAGE, loan_status_Current",int_rate_bin_Low (8-12%),0.054,0.938,3.191
+int_rate_bin_Low (8-12%),"grade_B, home_ownership_MORTGAGE, loan_status_Current",0.054,0.184,3.191
+"grade_B, term_ 36 months","int_rate_bin_Low (8-12%), last_fico_range_low_bin_Medium",0.075,0.317,3.191
+"home_ownership_RENT, int_rate_bin_Medium (12-16%)","fico_range_low_bin_Low, grade_C",0.054,0.44,3.19
+"fico_range_low_bin_Low, grade_C","home_ownership_RENT, int_rate_bin_Medium (12-16%)",0.054,0.39,3.19
+int_rate_bin_Low (8-12%),"grade_B, loan_status_Current",0.109,0.371,3.187
+"grade_B, loan_status_Current",int_rate_bin_Low (8-12%),0.109,0.937,3.187
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, dti_bin_Low (10-20), loan_status_Fully Paid",0.051,0.214,3.181
+"int_rate_bin_Low (8-12%), fico_range_low_bin_Medium","grade_B, term_ 36 months",0.067,0.752,3.177
+"grade_B, term_ 36 months","int_rate_bin_Low (8-12%), fico_range_low_bin_Medium",0.067,0.283,3.177
+"loan_status_Current, int_rate_bin_Medium (12-16%)",grade_C,0.093,0.913,3.175
+grade_C,"loan_status_Current, int_rate_bin_Medium (12-16%)",0.093,0.323,3.175
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), fico_range_low_bin_Low",0.086,0.292,3.167
+"term_ 36 months, int_rate_bin_Low (8-12%), fico_range_low_bin_Low",grade_B,0.086,0.93,3.167
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, fico_range_low_bin_High",0.059,0.201,3.165
+"grade_B, loan_status_Current","home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.054,0.466,3.165
+"grade_B, term_ 36 months, fico_range_low_bin_High",int_rate_bin_Low (8-12%),0.059,0.931,3.165
+"grade_B, term_ 36 months","home_ownership_MORTGAGE, int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.056,0.238,3.163
+"last_fico_range_low_bin_High, int_rate_bin_Low (8-12%)","grade_B, home_ownership_MORTGAGE",0.052,0.462,3.159
+"grade_B, home_ownership_MORTGAGE","last_fico_range_low_bin_High, int_rate_bin_Low (8-12%)",0.052,0.356,3.159
+"term_ 36 months, fico_range_low_bin_High, dti_bin_Low (10-20)",grade_A,0.055,0.605,3.158
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, last_fico_range_low_bin_Medium",0.075,0.315,3.158
+"grade_B, last_fico_range_low_bin_Medium","term_ 36 months, int_rate_bin_Low (8-12%)",0.075,0.753,3.158
+grade_A,"term_ 36 months, fico_range_low_bin_High, dti_bin_Low (10-20)",0.055,0.286,3.158
+int_rate_bin_Low (8-12%),sub_grade_B3,0.054,0.184,3.157
+int_rate_bin_Low (8-12%),"grade_B, sub_grade_B3",0.054,0.184,3.157
+sub_grade_B3,int_rate_bin_Low (8-12%),0.054,0.928,3.157
+"grade_B, fico_range_low_bin_High, last_fico_range_low_bin_High",int_rate_bin_Low (8-12%),0.052,0.928,3.156
+int_rate_bin_Low (8-12%),"grade_B, fico_range_low_bin_High, last_fico_range_low_bin_High",0.052,0.177,3.156
+grade_B,"int_rate_bin_Low (8-12%), term_ 60 months",0.051,0.175,3.154
+"int_rate_bin_Low (8-12%), term_ 60 months",grade_B,0.051,0.926,3.154
+"int_rate_bin_Low (8-12%), fico_range_low_bin_Low",grade_B,0.091,0.925,3.151
+grade_B,"int_rate_bin_Low (8-12%), fico_range_low_bin_Low",0.091,0.31,3.151
+"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High",grade_A,0.07,0.602,3.145
+grade_A,"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High",0.07,0.365,3.145
+"home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%)","loan_status_Fully Paid, grade_C",0.057,0.41,3.133
+"loan_status_Fully Paid, grade_C","home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%)",0.057,0.434,3.133
+int_rate_bin_Low (8-12%),"grade_B, fico_range_low_bin_High",0.092,0.313,3.133
+"grade_B, fico_range_low_bin_High",int_rate_bin_Low (8-12%),0.092,0.921,3.133
+"grade_B, dti_bin_Low (10-20)","int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.058,0.459,3.131
+"int_rate_bin_Low (8-12%), loan_status_Fully Paid","grade_B, dti_bin_Low (10-20)",0.058,0.397,3.131
+int_rate_bin_Low (8-12%),"grade_B, fico_range_low_bin_High, home_ownership_MORTGAGE",0.05,0.17,3.13
+"grade_B, home_ownership_MORTGAGE","int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.067,0.457,3.121
+grade_A,"term_ 36 months, loan_status_Current, fico_range_low_bin_High",0.055,0.286,3.121
+"int_rate_bin_Low (8-12%), loan_status_Fully Paid","grade_B, home_ownership_MORTGAGE",0.067,0.456,3.121
+"term_ 36 months, loan_status_Current, fico_range_low_bin_High",grade_A,0.055,0.598,3.121
+"int_rate_bin_Low (8-12%), last_fico_range_low_bin_Low",grade_B,0.075,0.913,3.111
+grade_B,"int_rate_bin_Low (8-12%), last_fico_range_low_bin_Low",0.075,0.255,3.111
+"int_rate_bin_Low (8-12%), installment_bin_Low","grade_B, loan_status_Fully Paid",0.051,0.468,3.11
+"grade_B, loan_status_Fully Paid","int_rate_bin_Low (8-12%), installment_bin_Low",0.051,0.341,3.11
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), last_fico_range_low_bin_Low",0.066,0.226,3.11
+"dti_bin_Low (10-20), int_rate_bin_Medium (12-16%)","fico_range_low_bin_Low, grade_C",0.05,0.427,3.099
+"fico_range_low_bin_Low, grade_C","dti_bin_Low (10-20), int_rate_bin_Medium (12-16%)",0.05,0.365,3.099
+int_rate_bin_Low (8-12%),"grade_B, home_ownership_MORTGAGE, last_fico_range_low_bin_High",0.052,0.177,3.098
+"grade_B, home_ownership_MORTGAGE, last_fico_range_low_bin_High",int_rate_bin_Low (8-12%),0.052,0.911,3.098
+"grade_B, dti_bin_Low (10-20)","term_ 36 months, int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.051,0.402,3.097
+int_rate_bin_Low (8-12%),"grade_B, installment_bin_Low",0.099,0.336,3.092
+"grade_B, installment_bin_Low",int_rate_bin_Low (8-12%),0.099,0.909,3.092
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, installment_bin_Low",0.089,0.302,3.09
+int_rate_bin_Low (8-12%),"grade_B, last_fico_range_low_bin_High",0.099,0.335,3.087
+"grade_B, last_fico_range_low_bin_High",int_rate_bin_Low (8-12%),0.099,0.908,3.087
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, home_ownership_MORTGAGE, loan_status_Fully Paid",0.056,0.236,3.085
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, last_fico_range_low_bin_High",0.071,0.24,3.082
+"int_rate_bin_Low (8-12%), last_fico_range_low_bin_Medium",grade_B,0.09,0.903,3.078
+grade_B,"int_rate_bin_Low (8-12%), last_fico_range_low_bin_Medium",0.09,0.306,3.078
+grade_B,"int_rate_bin_Low (8-12%), installment_bin_Low",0.099,0.337,3.073
+"int_rate_bin_Low (8-12%), installment_bin_Low",grade_B,0.099,0.902,3.073
+grade_B,"int_rate_bin_Low (8-12%), installment_bin_Low, loan_status_Fully Paid",0.051,0.175,3.072
+"int_rate_bin_Medium (12-16%), term_ 60 months",grade_C,0.087,0.883,3.071
+grade_C,"int_rate_bin_Medium (12-16%), term_ 60 months",0.087,0.303,3.071
+grade_C,"home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%), term_ 60 months",0.052,0.179,3.071
+"home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%), term_ 60 months",grade_C,0.052,0.883,3.071
+int_rate_bin_Low (8-12%),"grade_B, term_ 60 months",0.051,0.175,3.07
+"grade_B, term_ 60 months",int_rate_bin_Low (8-12%),0.051,0.903,3.07
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, last_fico_range_low_bin_Medium",0.075,0.255,3.069
+"grade_B, term_ 36 months, last_fico_range_low_bin_Medium",int_rate_bin_Low (8-12%),0.075,0.902,3.069
+"int_rate_bin_Low (8-12%), fico_range_low_bin_Medium",grade_B,0.08,0.901,3.068
+"grade_B, home_ownership_MORTGAGE","dti_bin_Low (10-20), int_rate_bin_Low (8-12%)",0.057,0.39,3.068
+grade_B,"int_rate_bin_Low (8-12%), fico_range_low_bin_Medium",0.08,0.273,3.068
+"dti_bin_Low (10-20), int_rate_bin_Low (8-12%)","grade_B, home_ownership_MORTGAGE",0.057,0.448,3.068
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), installment_bin_Low",0.089,0.302,3.066
+grade_B,"dti_bin_Medium (20-30), int_rate_bin_Low (8-12%)",0.076,0.26,3.065
+int_rate_bin_Low (8-12%),"grade_B, last_fico_range_low_bin_Medium",0.09,0.306,3.065
+"dti_bin_Medium (20-30), int_rate_bin_Low (8-12%)",grade_B,0.076,0.9,3.065
+"grade_B, last_fico_range_low_bin_Medium",int_rate_bin_Low (8-12%),0.09,0.901,3.065
+int_rate_bin_Low (8-12%),"grade_B, dti_bin_Very Low (<10)",0.051,0.175,3.065
+"grade_B, dti_bin_Very Low (<10)",int_rate_bin_Low (8-12%),0.051,0.901,3.065
+"loan_status_Fully Paid, term_ 36 months, grade_C",int_rate_bin_Medium (12-16%),0.087,0.897,3.063
+int_rate_bin_Medium (12-16%),"loan_status_Fully Paid, term_ 36 months, grade_C",0.087,0.297,3.063
+grade_B,"loan_status_Current, int_rate_bin_Low (8-12%)",0.109,0.371,3.061
+"loan_status_Current, int_rate_bin_Low (8-12%)",grade_B,0.109,0.898,3.061
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), last_fico_range_low_bin_Medium",0.075,0.256,3.06
+int_rate_bin_Low (8-12%),"grade_B, home_ownership_MORTGAGE",0.131,0.447,3.06
+"grade_B, home_ownership_MORTGAGE",int_rate_bin_Low (8-12%),0.131,0.9,3.06
+grade_B,"home_ownership_RENT, int_rate_bin_Low (8-12%)",0.102,0.348,3.058
+grade_B,"home_ownership_MORTGAGE, int_rate_bin_Low (8-12%), loan_status_Current",0.054,0.185,3.058
+"home_ownership_RENT, int_rate_bin_Low (8-12%)",grade_B,0.102,0.897,3.058
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, home_ownership_MORTGAGE",0.098,0.334,3.054
+"dti_bin_Medium (20-30), int_rate_bin_Low (8-12%)","grade_B, term_ 36 months",0.061,0.722,3.053
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), fico_range_low_bin_Medium",0.067,0.228,3.051
+grade_B,int_rate_bin_Low (8-12%),0.263,0.897,3.051
+"grade_B, fico_range_low_bin_Medium","term_ 36 months, int_rate_bin_Low (8-12%)",0.067,0.728,3.051
+"term_ 36 months, int_rate_bin_Low (8-12%)","grade_B, fico_range_low_bin_Medium",0.067,0.281,3.051
+int_rate_bin_Low (8-12%),grade_B,0.263,0.896,3.051
+int_rate_bin_Low (8-12%),"grade_B, dti_bin_Low (10-20), home_ownership_MORTGAGE",0.057,0.194,3.051
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, fico_range_low_bin_Low",0.086,0.292,3.05
+int_rate_bin_Low (8-12%),"grade_B, fico_range_low_bin_Low",0.091,0.31,3.049
+grade_B,"dti_bin_Low (10-20), int_rate_bin_Low (8-12%)",0.114,0.387,3.049
+"home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)","grade_B, dti_bin_Low (10-20)",0.057,0.387,3.048
+"grade_B, dti_bin_Low (10-20)","home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.057,0.449,3.048
+int_rate_bin_Low (8-12%),"grade_B, dti_bin_Low (10-20)",0.114,0.387,3.047
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months",0.212,0.721,3.047
+"dti_bin_Low (10-20), int_rate_bin_Low (8-12%)","grade_B, loan_status_Fully Paid",0.058,0.458,3.046
+int_rate_bin_Medium (12-16%),"loan_status_Fully Paid, grade_C",0.117,0.399,3.045
+grade_B,"home_ownership_RENT, term_ 36 months, int_rate_bin_Low (8-12%)",0.089,0.305,3.045
+"loan_status_Fully Paid, grade_C",int_rate_bin_Medium (12-16%),0.117,0.891,3.045
+grade_B,"int_rate_bin_Low (8-12%), installment_bin_Medium",0.09,0.306,3.045
+int_rate_bin_Low (8-12%),"grade_B, dti_bin_Medium (20-30)",0.076,0.26,3.043
+int_rate_bin_Medium (12-16%),"loan_status_Fully Paid, fico_range_low_bin_Low, grade_C",0.058,0.199,3.043
+grade_B,"term_ 36 months, dti_bin_Medium (20-30), int_rate_bin_Low (8-12%)",0.061,0.209,3.043
+grade_B,"home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.131,0.448,3.042
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, dti_bin_Low (10-20)",0.091,0.309,3.04
+grade_B,"int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.131,0.445,3.038
+int_rate_bin_Medium (12-16%),"loan_status_Fully Paid, home_ownership_MORTGAGE, grade_C",0.057,0.194,3.037
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, dti_bin_Medium (20-30)",0.061,0.209,3.037
+int_rate_bin_Low (8-12%),"grade_B, installment_bin_High",0.075,0.254,3.034
+grade_B,"dti_bin_Low (10-20), home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.057,0.194,3.033
+grade_B,"dti_bin_Low (10-20), int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.058,0.198,3.033
+grade_B,"int_rate_bin_Low (8-12%), dti_bin_Very Low (<10)",0.051,0.175,3.031
+grade_B,"installment_bin_High, int_rate_bin_Low (8-12%)",0.075,0.255,3.03
+int_rate_bin_Low (8-12%),"grade_B, home_ownership_RENT",0.102,0.347,3.028
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%)",0.212,0.722,3.028
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), dti_bin_Low (10-20)",0.091,0.31,3.026
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.115,0.393,3.026
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, home_ownership_RENT",0.089,0.304,3.026
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, installment_bin_High",0.055,0.186,3.025
+grade_B,"home_ownership_MORTGAGE, int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.067,0.228,3.024
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), installment_bin_Medium",0.069,0.234,3.022
+int_rate_bin_Low (8-12%),"grade_B, installment_bin_Medium",0.09,0.305,3.022
+grade_B,"term_ 36 months, int_rate_bin_Low (8-12%), dti_bin_Low (10-20), loan_status_Fully Paid",0.051,0.174,3.019
+"dti_bin_Low (10-20), int_rate_bin_Low (8-12%)","grade_B, term_ 36 months, loan_status_Fully Paid",0.051,0.402,3.019
+grade_B,"term_ 36 months, loan_status_Current, int_rate_bin_Low (8-12%)",0.077,0.262,3.018
+"home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)","grade_B, loan_status_Fully Paid",0.067,0.454,3.017
+int_rate_bin_Low (8-12%),"grade_B, installment_bin_Low, loan_status_Fully Paid",0.051,0.174,3.012
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, installment_bin_Medium",0.069,0.233,3.01
+grade_B,"term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.056,0.192,3.007
+grade_B,"term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.098,0.334,3.007
+"grade_A, int_rate_bin_Very Low (<8%), loan_status_Fully Paid","term_ 36 months, fico_range_low_bin_High",0.058,0.673,3.006
+"term_ 36 months, fico_range_low_bin_High","grade_A, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.058,0.261,3.006
+"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low, fico_range_low_bin_Low",grade_C,0.061,0.863,3.003
+int_rate_bin_Medium (12-16%),"sub_grade_C1, grade_C",0.057,0.194,3.003
+int_rate_bin_Medium (12-16%),sub_grade_C1,0.057,0.194,3.003
+sub_grade_C1,int_rate_bin_Medium (12-16%),0.057,0.879,3.003
+grade_C,"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low, fico_range_low_bin_Low",0.061,0.211,3.003
+int_rate_bin_Low (8-12%),"grade_B, last_fico_range_low_bin_High, loan_status_Fully Paid",0.055,0.187,3.002
+"home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",grade_C,0.052,0.863,3.001
+"int_rate_bin_Very Low (<8%), loan_status_Fully Paid","term_ 36 months, fico_range_low_bin_High",0.058,0.672,3.001
+"term_ 36 months, fico_range_low_bin_High","int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.058,0.261,3.001
+grade_C,"home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.052,0.181,3.001
+"int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",grade_C,0.119,0.862,2.999
+grade_C,"int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.119,0.413,2.999
+"term_ 36 months, fico_range_low_bin_High","grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.064,0.286,2.997
+"grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","term_ 36 months, fico_range_low_bin_High",0.064,0.671,2.997
+grade_B,"last_fico_range_low_bin_High, int_rate_bin_Low (8-12%), loan_status_Fully Paid",0.055,0.187,2.997
+"term_ 36 months, fico_range_low_bin_High","home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.064,0.286,2.994
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","term_ 36 months, fico_range_low_bin_High",0.064,0.67,2.994
+int_rate_bin_Low (8-12%),"grade_B, last_fico_range_low_bin_Low",0.075,0.255,2.989
+grade_C,"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Medium",0.084,0.291,2.988
+"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Medium",grade_C,0.084,0.859,2.988
+int_rate_bin_Medium (12-16%),"fico_range_low_bin_High, grade_C",0.051,0.174,2.987
+"fico_range_low_bin_High, grade_C",int_rate_bin_Medium (12-16%),0.051,0.875,2.987
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, last_fico_range_low_bin_Low",0.066,0.226,2.986
+grade_C,"dti_bin_Low (10-20), int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.05,0.175,2.986
+grade_C,"home_ownership_RENT, int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.054,0.187,2.984
+int_rate_bin_Medium (12-16%),"last_fico_range_low_bin_High, grade_C",0.061,0.208,2.984
+"last_fico_range_low_bin_High, grade_C",int_rate_bin_Medium (12-16%),0.061,0.874,2.984
+grade_B,"last_fico_range_low_bin_High, int_rate_bin_Low (8-12%)",0.099,0.336,2.984
+"installment_bin_Low, grade_C",int_rate_bin_Medium (12-16%),0.088,0.873,2.98
+int_rate_bin_Medium (12-16%),"installment_bin_Low, grade_C",0.088,0.301,2.98
+grade_B,"last_fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.052,0.177,2.976
+"term_ 36 months, dti_bin_Low (10-20), grade_C",int_rate_bin_Medium (12-16%),0.062,0.871,2.975
+"term_ 36 months, last_fico_range_low_bin_Low, grade_C",int_rate_bin_Medium (12-16%),0.074,0.871,2.975
+int_rate_bin_Medium (12-16%),"term_ 36 months, last_fico_range_low_bin_Low, grade_C",0.074,0.254,2.975
+int_rate_bin_Medium (12-16%),"term_ 36 months, dti_bin_Low (10-20), grade_C",0.062,0.213,2.975
+"dti_bin_Medium (20-30), int_rate_bin_Medium (12-16%)",grade_C,0.08,0.855,2.974
+grade_C,"dti_bin_Medium (20-30), int_rate_bin_Medium (12-16%)",0.08,0.278,2.974
+grade_B,"term_ 36 months, installment_bin_High, int_rate_bin_Low (8-12%)",0.055,0.187,2.973
+int_rate_bin_Medium (12-16%),"term_ 36 months, installment_bin_Low, grade_C",0.07,0.239,2.972
+int_rate_bin_Low (8-12%),"grade_B, home_ownership_MORTGAGE, loan_status_Fully Paid",0.067,0.227,2.969
+"dti_bin_Medium (20-30), int_rate_bin_Medium (12-16%)","term_ 36 months, grade_C",0.051,0.551,2.968
+int_rate_bin_Medium (12-16%),"term_ 36 months, home_ownership_MORTGAGE, grade_C",0.066,0.224,2.967
+"term_ 36 months, home_ownership_MORTGAGE, grade_C",int_rate_bin_Medium (12-16%),0.066,0.869,2.967
+int_rate_bin_Low (8-12%),"grade_B, fico_range_low_bin_Medium",0.08,0.273,2.966
+int_rate_bin_Medium (12-16%),"dti_bin_Low (10-20), grade_C",0.099,0.338,2.966
+"dti_bin_Low (10-20), grade_C",int_rate_bin_Medium (12-16%),0.099,0.868,2.966
+"int_rate_bin_Medium (12-16%), installment_bin_Low",grade_C,0.088,0.853,2.966
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, home_ownership_MORTGAGE, loan_status_Fully Paid",0.056,0.192,2.966
+grade_C,"int_rate_bin_Medium (12-16%), installment_bin_Low",0.088,0.306,2.966
+grade_C,"installment_bin_High, int_rate_bin_Medium (12-16%)",0.078,0.272,2.965
+"installment_bin_High, int_rate_bin_Medium (12-16%)",grade_C,0.078,0.852,2.965
+"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Medium","term_ 36 months, grade_C",0.054,0.55,2.964
+"last_fico_range_low_bin_Low, grade_C",int_rate_bin_Medium (12-16%),0.103,0.868,2.963
+int_rate_bin_Medium (12-16%),"last_fico_range_low_bin_Low, grade_C",0.103,0.353,2.963
+grade_C,"term_ 36 months, int_rate_bin_Medium (12-16%), fico_range_low_bin_Low",0.089,0.309,2.962
+grade_C,"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low",0.103,0.36,2.96
+"int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low",grade_C,0.103,0.851,2.96
+"term_ 36 months, dti_bin_Medium (20-30), grade_C",int_rate_bin_Medium (12-16%),0.051,0.867,2.96
+int_rate_bin_Medium (12-16%),"term_ 36 months, dti_bin_Medium (20-30), grade_C",0.051,0.176,2.96
+"term_ 36 months, grade_C",int_rate_bin_Medium (12-16%),0.161,0.866,2.958
+int_rate_bin_Medium (12-16%),"term_ 36 months, grade_C",0.161,0.549,2.958
+int_rate_bin_Medium (12-16%),"dti_bin_Low (10-20), fico_range_low_bin_Low, grade_C",0.05,0.172,2.957
+int_rate_bin_Low (8-12%),"grade_B, loan_status_Fully Paid",0.131,0.444,2.954
+int_rate_bin_Medium (12-16%),"home_ownership_MORTGAGE, grade_C",0.117,0.4,2.953
+"home_ownership_MORTGAGE, grade_C",int_rate_bin_Medium (12-16%),0.117,0.865,2.953
+"term_ 36 months, fico_range_low_bin_High","grade_A, int_rate_bin_Very Low (<8%)",0.111,0.498,2.952
+int_rate_bin_Medium (12-16%),"last_fico_range_low_bin_Low, fico_range_low_bin_Low, grade_C",0.061,0.208,2.952
+"grade_A, int_rate_bin_Very Low (<8%)","term_ 36 months, fico_range_low_bin_High",0.111,0.66,2.952
+int_rate_bin_Medium (12-16%),"term_ 36 months, fico_range_low_bin_Low, grade_C",0.089,0.303,2.951
+"installment_bin_Medium, grade_C",int_rate_bin_Medium (12-16%),0.082,0.864,2.95
+int_rate_bin_Medium (12-16%),"installment_bin_Medium, grade_C",0.082,0.279,2.95
+int_rate_bin_Medium (12-16%),"home_ownership_RENT, term_ 36 months, grade_C",0.076,0.26,2.949
+int_rate_bin_Medium (12-16%),"home_ownership_MORTGAGE, fico_range_low_bin_Low, grade_C",0.052,0.178,2.949
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, loan_status_Fully Paid",0.115,0.393,2.948
+grade_C,int_rate_bin_Medium (12-16%),0.248,0.863,2.947
+int_rate_bin_Very Low (<8%),"term_ 36 months, fico_range_low_bin_High",0.111,0.659,2.947
+int_rate_bin_Medium (12-16%),grade_C,0.248,0.847,2.947
+"term_ 36 months, fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.111,0.498,2.947
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, fico_range_low_bin_Medium",0.067,0.228,2.946
+grade_B,"fico_range_low_bin_High, int_rate_bin_Low (8-12%)",0.092,0.314,2.945
+int_rate_bin_Medium (12-16%),"fico_range_low_bin_Low, grade_C",0.119,0.406,2.945
+"grade_A, int_rate_bin_Very Low (<8%)","term_ 36 months, fico_range_low_bin_High, loan_status_Fully Paid",0.058,0.345,2.944
+grade_C,"home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%)",0.117,0.408,2.944
+int_rate_bin_Medium (12-16%),"dti_bin_Medium (20-30), grade_C",0.08,0.273,2.944
+grade_B,"fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Low (8-12%)",0.05,0.17,2.944
+int_rate_bin_Low (8-12%),"grade_B, dti_bin_Low (10-20), loan_status_Fully Paid",0.058,0.198,2.943
+int_rate_bin_Very Low (<8%),"term_ 36 months, fico_range_low_bin_High, loan_status_Fully Paid",0.058,0.345,2.939
+grade_C,"term_ 36 months, int_rate_bin_Medium (12-16%), installment_bin_Low",0.07,0.243,2.939
+int_rate_bin_Medium (12-16%),"home_ownership_RENT, grade_C",0.103,0.353,2.938
+int_rate_bin_Medium (12-16%),"home_ownership_RENT, fico_range_low_bin_Low, grade_C",0.054,0.184,2.938
+int_rate_bin_Low (8-12%),"grade_B, term_ 36 months, dti_bin_Low (10-20), loan_status_Fully Paid",0.051,0.174,2.937
+int_rate_bin_Medium (12-16%),"home_ownership_MORTGAGE, term_ 60 months, grade_C",0.052,0.176,2.936
+grade_C,"home_ownership_RENT, int_rate_bin_Medium (12-16%)",0.103,0.359,2.935
+sub_grade_B4,int_rate_bin_Low (8-12%),0.053,0.861,2.929
+int_rate_bin_Low (8-12%),sub_grade_B4,0.053,0.181,2.929
+int_rate_bin_Low (8-12%),"grade_B, sub_grade_B4",0.053,0.181,2.929
+int_rate_bin_Medium (12-16%),"term_ 60 months, grade_C",0.087,0.298,2.925
+grade_C,"dti_bin_Low (10-20), int_rate_bin_Medium (12-16%)",0.099,0.344,2.925
+grade_C,"term_ 36 months, int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Low",0.074,0.259,2.924
+int_rate_bin_Medium (12-16%),"fico_range_low_bin_Medium, grade_C",0.078,0.267,2.924
+"term_ 36 months, fico_range_low_bin_High","grade_A, loan_status_Fully Paid",0.064,0.286,2.924
+"grade_A, loan_status_Fully Paid","term_ 36 months, fico_range_low_bin_High",0.064,0.654,2.924
+grade_B,"last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Low (8-12%)",0.071,0.24,2.922
+grade_C,"fico_range_low_bin_High, int_rate_bin_Medium (12-16%)",0.051,0.177,2.92
+grade_C,"term_ 36 months, int_rate_bin_Medium (12-16%), last_fico_range_low_bin_Medium",0.054,0.187,2.918
+grade_C,"term_ 36 months, dti_bin_Medium (20-30), int_rate_bin_Medium (12-16%)",0.051,0.179,2.913
+int_rate_bin_Medium (12-16%),"term_ 36 months, last_fico_range_low_bin_Medium, grade_C",0.054,0.183,2.911
+grade_C,"int_rate_bin_Medium (12-16%), installment_bin_Medium",0.082,0.284,2.909
+int_rate_bin_Medium (12-16%),"installment_bin_High, grade_C",0.078,0.267,2.906
+"term_ 36 months, fico_range_low_bin_High","grade_A, home_ownership_MORTGAGE",0.07,0.312,2.906
+"grade_A, home_ownership_MORTGAGE","term_ 36 months, fico_range_low_bin_High",0.07,0.65,2.906
+grade_B,"last_fico_range_low_bin_High, fico_range_low_bin_High, int_rate_bin_Low (8-12%)",0.052,0.178,2.901
+int_rate_bin_Medium (12-16%),"last_fico_range_low_bin_Medium, grade_C",0.084,0.286,2.9
+"fico_range_low_bin_Low, grade_C","int_rate_bin_Medium (12-16%), loan_status_Fully Paid",0.058,0.422,2.899
+"last_fico_range_low_bin_High, fico_range_low_bin_High","grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.276,2.897
+"grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, fico_range_low_bin_High",0.051,0.54,2.897
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, fico_range_low_bin_High",0.051,0.539,2.893
+grade_C,"home_ownership_RENT, term_ 36 months, int_rate_bin_Medium (12-16%)",0.076,0.264,2.893
+"last_fico_range_low_bin_High, fico_range_low_bin_High","home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.276,2.893
+grade_C,"int_rate_bin_Medium (12-16%), fico_range_low_bin_Medium",0.078,0.272,2.888
+"last_fico_range_low_bin_High, term_ 36 months, loan_status_Current",grade_A,0.05,0.553,2.886
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, loan_status_Current",0.05,0.263,2.886
+grade_C,"term_ 36 months, int_rate_bin_Medium (12-16%)",0.161,0.559,2.884
+"home_ownership_MORTGAGE, grade_C","int_rate_bin_Medium (12-16%), loan_status_Fully Paid",0.057,0.419,2.878
+grade_C,"last_fico_range_low_bin_High, int_rate_bin_Medium (12-16%)",0.061,0.212,2.87
+loan_status_Charged Off,"home_ownership_RENT, last_fico_range_low_bin_Low",0.053,0.45,2.867
+"home_ownership_RENT, last_fico_range_low_bin_Low",loan_status_Charged Off,0.053,0.341,2.867
+grade_A,"term_ 36 months, fico_range_low_bin_High",0.123,0.641,2.865
+"term_ 36 months, fico_range_low_bin_High",grade_A,0.123,0.549,2.865
+"grade_A, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE",0.051,0.305,2.861
+"last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE","grade_A, int_rate_bin_Very Low (<8%)",0.051,0.483,2.861
+grade_C,"int_rate_bin_Medium (12-16%), fico_range_low_bin_Low, loan_status_Fully Paid",0.058,0.202,2.859
+"last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE",int_rate_bin_Very Low (<8%),0.051,0.483,2.856
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE",0.051,0.305,2.856
+grade_C,"term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%)",0.066,0.228,2.851
+"last_fico_range_low_bin_High, term_ 36 months","grade_A, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.081,0.337,2.848
+"grade_A, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months",0.081,0.687,2.848
+"last_fico_range_low_bin_High, term_ 36 months","fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.081,0.337,2.847
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months",0.081,0.687,2.847
+grade_A,"term_ 36 months, fico_range_low_bin_High, loan_status_Fully Paid",0.064,0.334,2.844
+grade_C,"term_ 36 months, int_rate_bin_Medium (12-16%), dti_bin_Low (10-20)",0.062,0.217,2.84
+"term_ 36 months, fico_range_low_bin_High","grade_A, loan_status_Current",0.055,0.245,2.832
+grade_B,"int_rate_bin_Low (8-12%), term_ 36 months, fico_range_low_bin_High",0.059,0.202,2.823
+"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE","grade_A, int_rate_bin_Very Low (<8%)",0.058,0.475,2.815
+"grade_A, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE",0.058,0.343,2.815
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE",0.058,0.342,2.811
+"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE",int_rate_bin_Very Low (<8%),0.058,0.475,2.811
+int_rate_bin_Medium (12-16%),"loan_status_Current, grade_C",0.093,0.318,2.807
+"last_fico_range_low_bin_High, fico_range_low_bin_High","grade_A, home_ownership_MORTGAGE",0.056,0.301,2.807
+"grade_A, home_ownership_MORTGAGE","last_fico_range_low_bin_High, fico_range_low_bin_High",0.056,0.523,2.807
+"last_fico_range_low_bin_High, term_ 36 months","fico_range_low_bin_High, grade_A",0.089,0.367,2.795
+"fico_range_low_bin_High, grade_A","last_fico_range_low_bin_High, term_ 36 months",0.089,0.675,2.795
+grade_C,"home_ownership_MORTGAGE, int_rate_bin_Medium (12-16%), loan_status_Fully Paid",0.057,0.198,2.794
+"last_fico_range_low_bin_High, term_ 36 months","grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High",0.051,0.212,2.793
+"term_ 36 months, fico_range_low_bin_High","dti_bin_Low (10-20), grade_A",0.055,0.244,2.791
+grade_C,"int_rate_bin_Medium (12-16%), loan_status_Fully Paid",0.117,0.406,2.787
+"loan_status_Charged Off, fico_range_low_bin_Low",last_fico_range_low_bin_Low,0.061,0.979,2.779
+last_fico_range_low_bin_Low,"loan_status_Charged Off, fico_range_low_bin_Low",0.061,0.172,2.779
+"grade_A, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, fico_range_low_bin_High",0.087,0.515,2.765
+"last_fico_range_low_bin_High, fico_range_low_bin_High","grade_A, int_rate_bin_Very Low (<8%)",0.087,0.467,2.765
+last_fico_range_low_bin_Low,"home_ownership_RENT, loan_status_Charged Off",0.053,0.152,2.763
+"home_ownership_RENT, loan_status_Charged Off",last_fico_range_low_bin_Low,0.053,0.973,2.763
+"last_fico_range_low_bin_High, fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.087,0.467,2.761
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, fico_range_low_bin_High",0.087,0.515,2.761
+"last_fico_range_low_bin_High, fico_range_low_bin_High","term_ 36 months, home_ownership_MORTGAGE, grade_A",0.051,0.275,2.751
+"last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE",grade_A,0.056,0.527,2.751
+grade_A,"last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE",0.056,0.293,2.751
+"last_fico_range_low_bin_High, grade_A, int_rate_bin_Very Low (<8%)","fico_range_low_bin_High, home_ownership_MORTGAGE",0.051,0.478,2.739
+"fico_range_low_bin_High, home_ownership_MORTGAGE","last_fico_range_low_bin_High, grade_A, int_rate_bin_Very Low (<8%)",0.051,0.295,2.739
+last_fico_range_low_bin_Low,loan_status_Charged Off,0.115,0.325,2.739
+loan_status_Charged Off,last_fico_range_low_bin_Low,0.115,0.964,2.739
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","fico_range_low_bin_High, home_ownership_MORTGAGE",0.051,0.478,2.738
+"fico_range_low_bin_High, home_ownership_MORTGAGE","last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.051,0.295,2.738
+last_fico_range_low_bin_Low,"term_ 36 months, loan_status_Charged Off",0.069,0.197,2.733
+grade_C,"term_ 36 months, int_rate_bin_Medium (12-16%), loan_status_Fully Paid",0.087,0.303,2.726
+"last_fico_range_low_bin_High, fico_range_low_bin_High","term_ 36 months, grade_A, int_rate_bin_Very Low (<8%)",0.081,0.437,2.722
+"last_fico_range_low_bin_High, fico_range_low_bin_High","term_ 36 months, int_rate_bin_Very Low (<8%)",0.081,0.437,2.72
+"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE",grade_A,0.063,0.519,2.71
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE",0.063,0.33,2.71
+"fico_range_low_bin_High, home_ownership_MORTGAGE","last_fico_range_low_bin_High, grade_A",0.056,0.322,2.691
+"last_fico_range_low_bin_High, grade_A","fico_range_low_bin_High, home_ownership_MORTGAGE",0.056,0.47,2.691
+grade_A,"last_fico_range_low_bin_High, fico_range_low_bin_High",0.095,0.498,2.673
+"last_fico_range_low_bin_High, fico_range_low_bin_High",grade_A,0.095,0.512,2.673
+"last_fico_range_low_bin_High, fico_range_low_bin_High, home_ownership_MORTGAGE","term_ 36 months, grade_A",0.051,0.481,2.655
+"grade_A, int_rate_bin_Very Low (<8%), loan_status_Fully Paid","last_fico_range_low_bin_High, term_ 36 months",0.055,0.638,2.644
+"last_fico_range_low_bin_High, term_ 36 months","grade_A, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.055,0.229,2.644
+"int_rate_bin_Very Low (<8%), loan_status_Fully Paid","last_fico_range_low_bin_High, term_ 36 months",0.055,0.637,2.641
+"last_fico_range_low_bin_High, term_ 36 months","int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.055,0.229,2.641
+"fico_range_low_bin_High, home_ownership_MORTGAGE","last_fico_range_low_bin_High, term_ 36 months, grade_A",0.051,0.294,2.626
+"last_fico_range_low_bin_High, fico_range_low_bin_High","term_ 36 months, grade_A",0.089,0.475,2.626
+fico_range_low_bin_High,"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.162,2.599
+"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.051,0.826,2.599
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.051,0.826,2.598
+fico_range_low_bin_High,"last_fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.162,2.598
+"last_fico_range_low_bin_High, term_ 36 months","grade_A, loan_status_Fully Paid",0.061,0.252,2.58
+"grade_A, loan_status_Fully Paid","last_fico_range_low_bin_High, term_ 36 months",0.061,0.623,2.58
+loan_status_Charged Off,"last_fico_range_low_bin_Low, fico_range_low_bin_Low",0.061,0.51,2.58
+"last_fico_range_low_bin_High, term_ 36 months, dti_bin_Low (10-20)",grade_A,0.051,0.493,2.575
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, dti_bin_Low (10-20)",0.051,0.266,2.575
+"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE",fico_range_low_bin_High,0.056,0.816,2.568
+fico_range_low_bin_High,"last_fico_range_low_bin_High, grade_A, home_ownership_MORTGAGE",0.056,0.177,2.568
+fico_range_low_bin_High,"last_fico_range_low_bin_High, term_ 36 months, home_ownership_MORTGAGE, grade_A",0.051,0.161,2.55
+fico_range_low_bin_High,"last_fico_range_low_bin_High, grade_A, int_rate_bin_Very Low (<8%)",0.087,0.274,2.541
+"last_fico_range_low_bin_High, grade_A, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.087,0.808,2.541
+"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.087,0.808,2.54
+fico_range_low_bin_High,"last_fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.087,0.274,2.54
+fico_range_low_bin_High,"last_fico_range_low_bin_High, term_ 36 months, grade_A, int_rate_bin_Very Low (<8%)",0.081,0.256,2.526
+fico_range_low_bin_High,"last_fico_range_low_bin_High, term_ 36 months, int_rate_bin_Very Low (<8%)",0.081,0.256,2.525
+"grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months",0.058,0.607,2.513
+"last_fico_range_low_bin_High, term_ 36 months","grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.058,0.24,2.513
+"last_fico_range_low_bin_High, term_ 36 months","home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.058,0.24,2.51
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months",0.058,0.606,2.51
+fico_range_low_bin_High,"last_fico_range_low_bin_High, grade_A",0.095,0.3,2.509
+"last_fico_range_low_bin_High, grade_A",fico_range_low_bin_High,0.095,0.798,2.509
+fico_range_low_bin_High,"last_fico_range_low_bin_High, term_ 36 months, grade_A",0.089,0.279,2.494
+"grade_A, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months",0.101,0.601,2.489
+"last_fico_range_low_bin_High, term_ 36 months","grade_A, int_rate_bin_Very Low (<8%)",0.101,0.42,2.489
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, term_ 36 months",0.101,0.6,2.486
+"last_fico_range_low_bin_High, term_ 36 months",int_rate_bin_Very Low (<8%),0.101,0.42,2.486
+"grade_A, int_rate_bin_Very Low (<8%)","fico_range_low_bin_High, dti_bin_Low (10-20)",0.053,0.316,2.483
+"fico_range_low_bin_High, dti_bin_Low (10-20)","grade_A, int_rate_bin_Very Low (<8%)",0.053,0.419,2.483
+"dti_bin_Low (10-20), fico_range_low_bin_High",int_rate_bin_Very Low (<8%),0.053,0.419,2.48
+int_rate_bin_Very Low (<8%),"dti_bin_Low (10-20), fico_range_low_bin_High",0.053,0.315,2.48
+"fico_range_low_bin_High, loan_status_Fully Paid","term_ 36 months, grade_A, int_rate_bin_Very Low (<8%)",0.058,0.391,2.439
+"term_ 36 months, grade_A, int_rate_bin_Very Low (<8%)","fico_range_low_bin_High, loan_status_Fully Paid",0.058,0.363,2.439
+"grade_A, home_ownership_MORTGAGE","last_fico_range_low_bin_High, term_ 36 months",0.063,0.589,2.438
+"fico_range_low_bin_High, loan_status_Fully Paid","term_ 36 months, int_rate_bin_Very Low (<8%)",0.058,0.392,2.438
+"last_fico_range_low_bin_High, term_ 36 months","grade_A, home_ownership_MORTGAGE",0.063,0.262,2.438
+"term_ 36 months, int_rate_bin_Very Low (<8%)","fico_range_low_bin_High, loan_status_Fully Paid",0.058,0.363,2.438
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE","grade_A, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.051,0.288,2.433
+"grade_A, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, home_ownership_MORTGAGE",0.051,0.435,2.433
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, home_ownership_MORTGAGE",0.051,0.435,2.432
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE","fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.051,0.288,2.432
+grade_A,"last_fico_range_low_bin_High, term_ 36 months",0.112,0.583,2.417
+"last_fico_range_low_bin_High, term_ 36 months",grade_A,0.112,0.463,2.417
+"last_fico_range_low_bin_High, term_ 36 months","grade_A, loan_status_Current",0.05,0.209,2.417
+"fico_range_low_bin_High, dti_bin_Low (10-20)",grade_A,0.059,0.463,2.415
+grade_A,"fico_range_low_bin_High, dti_bin_Low (10-20)",0.059,0.307,2.415
+"last_fico_range_low_bin_High, term_ 36 months","dti_bin_Low (10-20), grade_A",0.051,0.211,2.413
+"grade_A, fico_range_low_bin_High","last_fico_range_low_bin_High, home_ownership_MORTGAGE",0.056,0.428,2.395
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE","grade_A, fico_range_low_bin_High",0.056,0.314,2.395
+"grade_A, int_rate_bin_Very Low (<8%)","fico_range_low_bin_High, loan_status_Fully Paid",0.06,0.355,2.383
+"fico_range_low_bin_High, loan_status_Fully Paid","grade_A, int_rate_bin_Very Low (<8%)",0.06,0.402,2.383
+int_rate_bin_Very Low (<8%),"fico_range_low_bin_High, loan_status_Fully Paid",0.06,0.354,2.38
+"fico_range_low_bin_High, loan_status_Fully Paid",int_rate_bin_Very Low (<8%),0.06,0.402,2.38
+"fico_range_low_bin_High, dti_bin_Low (10-20)","term_ 36 months, grade_A",0.055,0.43,2.377
+loan_status_Charged Off,"term_ 36 months, last_fico_range_low_bin_Low",0.069,0.585,2.375
+"fico_range_low_bin_High, loan_status_Fully Paid","term_ 36 months, grade_A",0.064,0.429,2.371
+"term_ 36 months, grade_A","fico_range_low_bin_High, loan_status_Fully Paid",0.064,0.353,2.371
+"fico_range_low_bin_High, home_ownership_MORTGAGE","grade_A, int_rate_bin_Very Low (<8%)",0.069,0.395,2.34
+"grade_A, int_rate_bin_Very Low (<8%)","fico_range_low_bin_High, home_ownership_MORTGAGE",0.069,0.408,2.34
+"fico_range_low_bin_High, home_ownership_MORTGAGE",int_rate_bin_Very Low (<8%),0.069,0.395,2.337
+int_rate_bin_Very Low (<8%),"fico_range_low_bin_High, home_ownership_MORTGAGE",0.069,0.408,2.337
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE","term_ 36 months, fico_range_low_bin_High, grade_A",0.051,0.287,2.336
+grade_A,"fico_range_low_bin_High, loan_status_Fully Paid",0.066,0.345,2.317
+"fico_range_low_bin_High, loan_status_Fully Paid",grade_A,0.066,0.444,2.317
+"fico_range_low_bin_High, home_ownership_MORTGAGE","term_ 36 months, grade_A, int_rate_bin_Very Low (<8%)",0.064,0.366,2.283
+"fico_range_low_bin_High, home_ownership_MORTGAGE","term_ 36 months, int_rate_bin_Very Low (<8%)",0.064,0.366,2.281
+"grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.069,0.723,2.274
+fico_range_low_bin_High,"grade_A, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.069,0.217,2.274
+"fico_range_low_bin_High, home_ownership_MORTGAGE",grade_A,0.076,0.435,2.273
+grade_A,"fico_range_low_bin_High, home_ownership_MORTGAGE",0.076,0.397,2.273
+"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.069,0.722,2.272
+fico_range_low_bin_High,"grade_A, loan_status_Current, int_rate_bin_Very Low (<8%)",0.055,0.172,2.272
+"grade_A, loan_status_Current, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.055,0.722,2.272
+fico_range_low_bin_High,"home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.069,0.217,2.272
+"loan_status_Current, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.055,0.721,2.27
+fico_range_low_bin_High,"loan_status_Current, int_rate_bin_Very Low (<8%)",0.055,0.172,2.27
+"fico_range_low_bin_High, loan_status_Current","grade_A, int_rate_bin_Very Low (<8%)",0.055,0.383,2.267
+"grade_A, int_rate_bin_Very Low (<8%)","fico_range_low_bin_High, loan_status_Current",0.055,0.324,2.267
+"fico_range_low_bin_High, loan_status_Current",int_rate_bin_Very Low (<8%),0.055,0.383,2.265
+int_rate_bin_Very Low (<8%),"fico_range_low_bin_High, loan_status_Current",0.055,0.324,2.265
+fico_range_low_bin_High,"term_ 36 months, home_ownership_MORTGAGE, grade_A, int_rate_bin_Very Low (<8%)",0.064,0.201,2.249
+fico_range_low_bin_High,"term_ 36 months, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.064,0.201,2.248
+last_fico_range_low_bin_High,"grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.051,0.154,2.241
+"grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",last_fico_range_low_bin_High,0.051,0.747,2.241
+"fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",last_fico_range_low_bin_High,0.051,0.747,2.24
+last_fico_range_low_bin_High,"fico_range_low_bin_High, home_ownership_MORTGAGE, int_rate_bin_Very Low (<8%)",0.051,0.155,2.24
+fico_range_low_bin_High,"grade_A, home_ownership_MORTGAGE",0.076,0.239,2.226
+"grade_A, home_ownership_MORTGAGE",fico_range_low_bin_High,0.076,0.707,2.226
+int_rate_bin_Very High (>20%),term_ 60 months,0.05,0.64,2.224
+term_ 60 months,int_rate_bin_Very High (>20%),0.05,0.175,2.224
+grade_A,"fico_range_low_bin_High, loan_status_Current",0.061,0.318,2.222
+"fico_range_low_bin_High, loan_status_Current",grade_A,0.061,0.426,2.222
+"grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High",last_fico_range_low_bin_High,0.056,0.739,2.218
+last_fico_range_low_bin_High,"grade_A, home_ownership_MORTGAGE, fico_range_low_bin_High",0.056,0.169,2.218
+fico_range_low_bin_High,"grade_A, loan_status_Current",0.061,0.192,2.215
+"grade_A, loan_status_Current",fico_range_low_bin_High,0.061,0.704,2.215
+"fico_range_low_bin_High, home_ownership_MORTGAGE","term_ 36 months, grade_A",0.07,0.4,2.21
+"grade_A, int_rate_bin_Very Low (<8%)",fico_range_low_bin_High,0.118,0.702,2.207
+fico_range_low_bin_High,"grade_A, int_rate_bin_Very Low (<8%)",0.118,0.373,2.207
+"grade_A, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, term_ 36 months, loan_status_Fully Paid",0.055,0.328,2.205
+fico_range_low_bin_High,int_rate_bin_Very Low (<8%),0.118,0.373,2.205
+int_rate_bin_Very Low (<8%),fico_range_low_bin_High,0.118,0.701,2.205
+"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",last_fico_range_low_bin_High,0.087,0.734,2.203
+last_fico_range_low_bin_High,"fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.087,0.261,2.203
+last_fico_range_low_bin_High,"grade_A, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.087,0.261,2.203
+"grade_A, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",last_fico_range_low_bin_High,0.087,0.734,2.203
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, term_ 36 months, loan_status_Fully Paid",0.055,0.327,2.202
+last_fico_range_low_bin_High,"term_ 36 months, home_ownership_MORTGAGE, fico_range_low_bin_High, grade_A",0.051,0.154,2.201
+fico_range_low_bin_High,"term_ 36 months, home_ownership_MORTGAGE, grade_A",0.07,0.22,2.199
+last_fico_range_low_bin_High,"term_ 36 months, fico_range_low_bin_High, int_rate_bin_Very Low (<8%)",0.081,0.244,2.191
+last_fico_range_low_bin_High,"term_ 36 months, fico_range_low_bin_High, grade_A, int_rate_bin_Very Low (<8%)",0.081,0.244,2.191
+fico_range_low_bin_High,"term_ 36 months, loan_status_Current, grade_A",0.055,0.172,2.188
+fico_range_low_bin_High,"term_ 36 months, grade_A, int_rate_bin_Very Low (<8%)",0.111,0.351,2.185
+fico_range_low_bin_High,"term_ 36 months, int_rate_bin_Very Low (<8%)",0.111,0.351,2.184
+last_fico_range_low_bin_High,"grade_A, fico_range_low_bin_High",0.095,0.286,2.18
+"grade_A, fico_range_low_bin_High",last_fico_range_low_bin_High,0.095,0.726,2.18
+fico_range_low_bin_High,"grade_A, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.06,0.188,2.174
+fico_range_low_bin_High,"int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.06,0.189,2.171
+last_fico_range_low_bin_High,"term_ 36 months, fico_range_low_bin_High, grade_A",0.089,0.266,2.165
+fico_range_low_bin_High,"grade_A, dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",0.053,0.168,2.165
+fico_range_low_bin_High,"dti_bin_Low (10-20), int_rate_bin_Very Low (<8%)",0.053,0.168,2.163
+fico_range_low_bin_High,"loan_status_Fully Paid, term_ 36 months, grade_A, int_rate_bin_Very Low (<8%)",0.058,0.183,2.162
+fico_range_low_bin_High,"term_ 36 months, int_rate_bin_Very Low (<8%), loan_status_Fully Paid",0.058,0.183,2.16
+fico_range_low_bin_High,grade_A,0.131,0.413,2.157
+grade_A,fico_range_low_bin_High,0.131,0.686,2.157
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE, loan_status_Current",fico_range_low_bin_High,0.051,0.68,2.138
+fico_range_low_bin_High,"last_fico_range_low_bin_High, home_ownership_MORTGAGE, loan_status_Current",0.051,0.16,2.138
+grade_A,"last_fico_range_low_bin_High, term_ 36 months, loan_status_Fully Paid",0.061,0.318,2.137
+fico_range_low_bin_High,"term_ 36 months, grade_A",0.123,0.386,2.134
+fico_range_low_bin_High,"grade_A, loan_status_Fully Paid",0.066,0.208,2.128
+fico_range_low_bin_High,"grade_A, dti_bin_Low (10-20)",0.059,0.185,2.112
+fico_range_low_bin_High,"term_ 36 months, grade_A, loan_status_Fully Paid",0.064,0.201,2.112
+"grade_A, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, loan_status_Current",0.05,0.299,2.098
+"last_fico_range_low_bin_High, loan_status_Current","grade_A, int_rate_bin_Very Low (<8%)",0.05,0.354,2.098
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, loan_status_Current",0.05,0.299,2.096
+"last_fico_range_low_bin_High, loan_status_Current",int_rate_bin_Very Low (<8%),0.05,0.354,2.096
+fico_range_low_bin_High,"term_ 36 months, dti_bin_Low (10-20), grade_A",0.055,0.172,2.087
+fico_range_low_bin_High,"last_fico_range_low_bin_High, term_ 36 months, loan_status_Current",0.06,0.189,2.069
+"last_fico_range_low_bin_High, term_ 36 months, loan_status_Current",fico_range_low_bin_High,0.06,0.658,2.069
+"fico_range_low_bin_High, loan_status_Fully Paid","last_fico_range_low_bin_High, home_ownership_MORTGAGE",0.055,0.369,2.068
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE","fico_range_low_bin_High, loan_status_Fully Paid",0.055,0.308,2.068
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE","grade_A, int_rate_bin_Very Low (<8%)",0.062,0.349,2.067
+"grade_A, int_rate_bin_Very Low (<8%)","last_fico_range_low_bin_High, home_ownership_MORTGAGE",0.062,0.369,2.067
+grade_A,"last_fico_range_low_bin_High, loan_status_Current",0.056,0.294,2.065
+"last_fico_range_low_bin_High, loan_status_Current",grade_A,0.056,0.395,2.065
+int_rate_bin_Very Low (<8%),"last_fico_range_low_bin_High, home_ownership_MORTGAGE",0.062,0.369,2.064
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE",int_rate_bin_Very Low (<8%),0.062,0.349,2.064
+"fico_range_low_bin_High, loan_status_Fully Paid","last_fico_range_low_bin_High, term_ 36 months",0.074,0.496,2.053
+"last_fico_range_low_bin_High, term_ 36 months","fico_range_low_bin_High, loan_status_Fully Paid",0.074,0.306,2.053
+"fico_range_low_bin_High, home_ownership_MORTGAGE","last_fico_range_low_bin_High, loan_status_Current",0.051,0.292,2.048
+"last_fico_range_low_bin_High, loan_status_Current","fico_range_low_bin_High, home_ownership_MORTGAGE",0.051,0.357,2.048
+"last_fico_range_low_bin_High, loan_status_Current",fico_range_low_bin_High,0.092,0.644,2.026
+fico_range_low_bin_High,"last_fico_range_low_bin_High, loan_status_Current",0.092,0.289,2.026
+"last_fico_range_low_bin_High, dti_bin_Low (10-20)",grade_A,0.055,0.388,2.023
+grade_A,"last_fico_range_low_bin_High, dti_bin_Low (10-20)",0.055,0.286,2.023
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE","term_ 36 months, grade_A, int_rate_bin_Very Low (<8%)",0.058,0.324,2.018
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE","term_ 36 months, int_rate_bin_Very Low (<8%)",0.058,0.324,2.016
+grade_A,"last_fico_range_low_bin_High, home_ownership_MORTGAGE",0.069,0.359,2.011
+"last_fico_range_low_bin_High, home_ownership_MORTGAGE",grade_A,0.069,0.385,2.011
