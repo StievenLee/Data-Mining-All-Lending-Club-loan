@@ -8,4 +8,6 @@ clean_accepted_loans2.csv
 clean_rejected_loans.csv
 clean_rejected_loans2.csv
 clean_accepted_loan_without_scaling.csv
-clean_for_apriori.csv
+clean_for_apriori_accepted.csv
+clean_for_apriori_rejected_columns.json
+clean_for_apriori_rejected_sparse.npz
