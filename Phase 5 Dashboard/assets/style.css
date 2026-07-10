@@ -1,0 +1,157 @@
+/* ============================================================
+   style.css — Financial Terminal theme
+   Dash memuat file di /assets otomatis. Semua warna diselaraskan
+   dengan theme.py.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+:root {
+  --ink: #0E1526;
+  --panel: #161F33;
+  --panel2: #1C2740;
+  --line: #26314D;
+  --amber: #E8A13A;
+  --teal: #3FB6A8;
+  --crimson: #E5533C;
+  --violet: #8B7DF0;
+  --text: #E7ECF5;
+  --muted: #8A97B1;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(232,161,58,0.06), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(63,182,168,0.05), transparent 55%),
+    var(--ink);
+  color: var(--text);
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---------- Layout shell ---------- */
+.shell { max-width: 1280px; margin: 0 auto; padding: 28px 24px 64px; }
+
+/* ---------- Masthead ---------- */
+.masthead {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 24px; padding-bottom: 20px; margin-bottom: 24px;
+  border-bottom: 1px solid var(--line);
+}
+.brand-eyebrow {
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--amber); margin: 0 0 6px;
+}
+.brand-title {
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 30px;
+  line-height: 1.05; margin: 0; color: var(--text);
+}
+.brand-sub { color: var(--muted); font-size: 14px; margin: 8px 0 0; max-width: 560px; }
+
+/* dataset toggle */
+.toggle-wrap { display: flex; align-items: center; gap: 10px; }
+.toggle-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* ---------- KPI strip ---------- */
+.kpi-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 26px; }
+.kpi {
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
+  border: 1px solid var(--line); border-radius: 14px; padding: 18px 18px 16px;
+  position: relative; overflow: hidden;
+}
+.kpi::after {
+  content: ""; position: absolute; left: 0; top: 0; height: 3px; width: 100%;
+  background: linear-gradient(90deg, var(--amber), transparent);
+  opacity: .8;
+}
+.kpi-value {
+  font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 30px;
+  color: var(--text); line-height: 1;
+}
+.kpi-label {
+  font-size: 12px; color: var(--muted); margin-top: 8px; letter-spacing: .02em;
+}
+.kpi.accent .kpi-value { color: var(--amber); }
+.kpi.danger .kpi-value { color: var(--crimson); }
+
+/* ---------- Tabs ---------- */
+.tabs-bar { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
+.tab-btn {
+  background: transparent; border: 1px solid var(--line); color: var(--muted);
+  font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: .08em;
+  text-transform: uppercase; padding: 9px 16px; border-radius: 999px; cursor: pointer;
+  transition: all .18s ease;
+}
+.tab-btn:hover { color: var(--text); border-color: var(--muted); }
+.tab-btn.active {
+  color: var(--ink); background: var(--amber); border-color: var(--amber); font-weight: 600;
+}
+
+/* ---------- Panels / cards ---------- */
+.grid { display: grid; gap: 18px; }
+.grid-2 { grid-template-columns: 1.4fr 1fr; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.card {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 16px;
+  padding: 18px 18px 12px;
+}
+.card h3 {
+  font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600;
+  margin: 0 0 4px; color: var(--text);
+}
+.card .hint { font-size: 12px; color: var(--muted); margin: 0 0 12px; }
+
+/* ---------- Case cards (investigasi) ---------- */
+.case { border-left: 3px solid var(--line); padding: 14px 16px; border-radius: 10px;
+        background: var(--panel2); margin-bottom: 12px; }
+.case.risk { border-left-color: var(--crimson); }
+.case.rare { border-left-color: var(--teal); }
+.case.err  { border-left-color: var(--amber); }
+.case-tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted);
+}
+.case-title { font-family: 'Space Grotesk', sans-serif; font-size: 16px; font-weight: 600;
+              margin: 4px 0 6px; }
+.case-body { font-size: 13.5px; color: var(--text); line-height: 1.55; }
+.case-body b { color: var(--amber); font-family: 'JetBrains Mono', monospace; }
+
+/* ---------- Discovery callout ---------- */
+.callout {
+  border: 1px solid var(--amber); background: rgba(232,161,58,0.07);
+  border-radius: 16px; padding: 22px 24px; margin-bottom: 24px;
+}
+.callout .q { font-family: 'JetBrains Mono', monospace; font-size: 12px;
+              letter-spacing: .1em; text-transform: uppercase; color: var(--amber); margin: 0 0 8px; }
+.callout .a { font-family: 'Space Grotesk', sans-serif; font-size: 20px; line-height: 1.4;
+              color: var(--text); margin: 0; }
+
+/* ---------- Controls (dropdown/slider) restyle ---------- */
+.Select-control, .Select-menu-outer {
+  background: var(--panel2) !important; border-color: var(--line) !important;
+  color: var(--text) !important;
+}
+.Select-value-label, .Select-placeholder { color: var(--text) !important; }
+.rc-slider-track { background: var(--amber) !important; }
+.rc-slider-handle { border-color: var(--amber) !important; background: var(--amber) !important; }
+
+/* ---------- Footer ---------- */
+.foot { margin-top: 40px; padding-top: 18px; border-top: 1px solid var(--line);
+        color: var(--muted); font-size: 12px; display: flex; justify-content: space-between; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  .brand-title { font-size: 24px; }
+  .masthead { flex-direction: column; align-items: flex-start; }
+}
+
+/* reduced motion */
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
