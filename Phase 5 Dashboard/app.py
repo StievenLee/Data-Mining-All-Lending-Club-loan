@@ -576,7 +576,7 @@ def tab_ringkasan(dataset):
                     html.H3("Anomali per tingkat keyakinan"),
                     html.Span("skala log", className="badge")]),
                 html.P("Makin ke bawah, makin banyak bukti yang disepakati.", className="hint"),
-                dcc.Graph(id="g-tier", style={"height":"320px"}, config={"displayModeBar": False, "responsive": True}),
+                dcc.Graph(id="g-tier", figure=fig_tier(DATASETS[dataset or "accepted"]), style={"height":"320px"}, config={"displayModeBar": False, "responsive": True}),
             ]),
             gauge_card(dataset),
         ]),
@@ -586,7 +586,7 @@ def tab_ringkasan(dataset):
                     html.H3("Komposisi tipologi anomali"),
                     html.Span("auto-verdict", className="badge")]),
                 html.P("Klasifikasi tiap anomali ke tiga tipologi bisnis.", className="hint"),
-                dcc.Graph(id="g-verdict", style={"height":"320px"}, config={"displayModeBar": False, "responsive": True}),
+                dcc.Graph(id="g-verdict", figure=fig_verdict(DATASETS[dataset or "accepted"]), style={"height":"320px"}, config={"displayModeBar": False, "responsive": True}),
             ]),
             html.Div(className="card", children=[
                 html.Div(className="card-head", children=[
@@ -622,7 +622,7 @@ def tab_rules(dataset):
             dcc.Slider(id="lift-slider", min=1.0, max=float(RULES["lift"].max()), step=0.1,
                        value=1.0, marks=None, tooltip={"placement": "bottom", "always_visible": True}),
         ]),
-        dcc.Graph(id="g-rules", style={"height":"520px"}, config={"displayModeBar": False, "responsive": True}),
+        dcc.Graph(id="g-rules", figure=fig_rules(RULES, 1.0), style={"height":"520px"}, config={"displayModeBar": False, "responsive": True}),
     ])
 
 
@@ -634,7 +634,7 @@ def tab_anomali(dataset):
                 html.Span("Isolation Forest × DBSCAN", className="badge")]),
             html.P("Warna = skor Isolation Forest (makin lime makin terisolasi). "
                    "Lingkaran cyan = record yang juga noise DBSCAN Fase 2.", className="hint"),
-            dcc.Graph(id="g-scatter", style={"height":"470px"}, config={"displayModeBar": True, "displaylogo": False, "responsive": True}),
+            dcc.Graph(id="g-scatter", figure=fig_scatter(DATASETS[dataset or "accepted"]), style={"height":"470px"}, config={"displayModeBar": True, "displaylogo": False, "responsive": True}),
         ]),
         html.Div(style={"height": "18px"}),
         html.Div(className="grid g-3", children=[
@@ -724,28 +724,7 @@ def render(active, dataset):
             page_head(active, dataset), TAB_FN[active](dataset))
 
 
-@app.callback(Output("g-tier", "figure"), Output("g-verdict", "figure"),
-              Output("g-gauge", "figure"),
-              Input("dataset-store", "data"), Input("active-tab", "data"),
-              prevent_initial_call=True)
-def upd_summary(dataset, active):
-    if active != "ringkasan":
-        return dash.no_update, dash.no_update, dash.no_update
-    df = DATASETS[dataset or "accepted"]
-    return fig_tier(df), fig_verdict(df), fig_gauge(dataset or "accepted")
-
-
-@app.callback(Output("g-scatter", "figure"),
-              Input("dataset-store", "data"), Input("active-tab", "data"),
-              prevent_initial_call=True)
-def upd_scatter(dataset, active):
-    if active != "anomali":
-        return dash.no_update
-    return fig_scatter(DATASETS[dataset or "accepted"])
-
-
-@app.callback(Output("g-rules", "figure"), Input("lift-slider", "value"),
-              prevent_initial_call=True)
+@app.callback(Output("g-rules", "figure"), Input("lift-slider", "value"))
 def upd_rules(min_lift):
     return fig_rules(RULES, min_lift or 1.0)
 
