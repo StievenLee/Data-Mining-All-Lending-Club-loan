@@ -1,0 +1,10 @@
+{
+  "highest_risk_cluster": 2,
+  "n_records": 1348099,
+  "cluster_sizes": {
+    "0": 512208,
+    "1": 488402,
+    "2": 347489
+  },
+  "note": "orig_row_pos = posisi baris pada clean_accepted_loans.csv sebelum dropna"
+}
