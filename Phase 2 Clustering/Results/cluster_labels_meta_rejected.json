@@ -1,0 +1,15 @@
+{
+  "most_extreme_cluster": 1,
+  "note_risk": "proksi risiko = klaster dengan median DTI (z-score) tertinggi; Rejected tidak punya label default seperti Accepted",
+  "n_records": 27490787,
+  "cluster_sizes": {
+    "0": 23780149,
+    "1": 490276,
+    "2": 3220362
+  },
+  "year_range": [
+    2007,
+    2018
+  ],
+  "note": "orig_row_pos = posisi baris pada clean_rejected_loans.csv sebelum dropna"
+}

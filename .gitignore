@@ -13,3 +13,6 @@ clean_for_apriori_rejected_columns.json
 clean_for_apriori_rejected_sparse.npz
 
 *.csv
+
+# Fase 2 - kirim file langsung untuk proses Fase 4/5 bila perlu.
+Phase 2 Clustering/Results/cluster_labels_rejected.parquet
