@@ -187,6 +187,31 @@ def verdict_counts(df: pd.DataFrame) -> pd.DataFrame:
     return vc
 
 
+# ---------------------------------------------------------------------------
+# Dimensi waktu (Fase 5) — filter per tahun
+# ---------------------------------------------------------------------------
+def year_bounds(*frames: pd.DataFrame) -> tuple[int, int] | None:
+    """Rentang tahun yang tersedia lintas dataset. None bila kolom 'year' tak ada."""
+    vals = []
+    for df in frames:
+        if df is not None and "year" in df.columns:
+            s = pd.to_numeric(df["year"], errors="coerce").dropna()
+            if len(s):
+                vals.append((int(s.min()), int(s.max())))
+    if not vals:
+        return None
+    return min(v[0] for v in vals), max(v[1] for v in vals)
+
+
+def filter_years(df: pd.DataFrame, yr: tuple[int, int] | None) -> pd.DataFrame:
+    """Saring baris ke rentang [lo, hi]. Tanpa kolom 'year' atau yr=None -> apa adanya."""
+    if yr is None or "year" not in df.columns:
+        return df
+    lo, hi = yr
+    s = pd.to_numeric(df["year"], errors="coerce")
+    return df[s.between(lo, hi)]
+
+
 def load_rules() -> pd.DataFrame:
     df, is_dummy = _read_or_dummy(RULES_PATH, _dummy_rules, "association rules")
     # Normalisasi nama kolom bila CSV asli Fase 3 dipakai (antecedents/consequents).

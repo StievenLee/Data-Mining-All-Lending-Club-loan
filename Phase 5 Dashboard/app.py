@@ -27,6 +27,63 @@ KPI = dl.kpi_summary(ACC, REJ, RULES)
 DB_META = {"accepted": dl.load_dbscan_meta("accepted"),
            "rejected": dl.load_dbscan_meta("rejected")}
 DATASETS = {"accepted": ACC, "rejected": REJ}
+YEAR_RANGE = dl.year_bounds(ACC, REJ)   # None bila kolom 'year' belum ada -> filter disembunyikan
+
+
+def dataset_for(dataset, years=None):
+    """Dataframe dataset terpilih, sudah disaring ke rentang tahun."""
+    return dl.filter_years(DATASETS[dataset or "accepted"], years)
+
+
+def year_presets(lo, hi):
+    """Tombol preset: lompat cepat tanpa men-drag dua handle."""
+    opts = [("Semua", lo, hi)]
+    for n in (10, 5, 3):
+        if hi - n + 1 > lo:
+            opts.append((f"{n}Y terakhir", hi - n + 1, hi))
+    return html.Div(className="year-presets", children=[
+        html.Button(lbl, id={"type": "yr-preset", "index": f"{a}-{b}"},
+                    className="year-preset-btn", n_clicks=0)
+        for lbl, a, b in opts
+    ])
+
+
+def year_slider(value=None):
+    """Slider rentang tahun. None bila data tak punya kolom 'year'."""
+    if not YEAR_RANGE:
+        return None
+    lo, hi = YEAR_RANGE
+    if lo >= hi:
+        return None
+    val = list(value) if value else [lo, hi]
+    val = [max(lo, int(val[0])), min(hi, int(val[1]))]
+
+    span = hi - lo
+    step_mark = 1 if span <= 8 else (2 if span <= 16 else max(1, span // 8))
+    marks = {}
+    for y in range(lo, hi + 1):
+        if (y - lo) % step_mark == 0 or y in (lo, hi):
+            marks[y] = {"label": str(y) if span <= 16 else f"'{str(y)[2:]}"}
+
+    return html.Div(className="year-filter", children=[
+        html.Div(className="year-filter-head", children=[
+            html.Div(className="year-filter-title", children=[
+                html.Span("Rentang tahun", className="year-filter-label"),
+                html.Span(id="year-readout", className="year-badge",
+                          children=(f"{val[0]}" if val[0] == val[1]
+                                    else f"{val[0]}\u2013{val[1]}")),
+            ]),
+            html.Div(className="year-filter-actions", children=[
+                html.Span(id="year-count", className="year-count"),
+                year_presets(lo, hi),
+            ]),
+        ]),
+        dcc.RangeSlider(id="year-slider", min=lo, max=hi, step=1,
+                        value=val, marks=marks,
+                        tooltip={"placement": "bottom", "always_visible": False},
+                        allowCross=False, updatemode="mouseup",
+                        className="year-slider"),
+    ])
 
 
 # ---------------------------------------------------------------------------
@@ -55,8 +112,8 @@ TABS = [("ringkasan", "Ringkasan"), ("segmentasi", "Segmentasi"),
         ("rules", "Association Rules"), ("anomali", "Anomali")]
 
 
-def hero_metrics(dataset):
-    df = DATASETS[dataset]
+def hero_metrics(dataset, years=None):
+    df = dataset_for(dataset, years)
     tier = dl.tier_counts(df)
     strong = int(tier[tier["tier"].isin([
         "Kritis (DBSCAN + 3 metode)", "Sangat Kuat (DBSCAN + metode)",
@@ -370,9 +427,9 @@ PAGE_META = {
 }
 
 
-def page_head(active, dataset):
+def page_head(active, dataset, years=None):
     title, sub = PAGE_META[active]
-    m = hero_metrics(dataset)
+    m = hero_metrics(dataset, years)
     if active == "rules":
         pills = [("Rules", f"{KPI['n_rules']}", "ai"),
                  ("Lift tertinggi", f"{KPI['max_lift']:.2f}", "accent")]
@@ -395,7 +452,7 @@ def page_head(active, dataset):
                 html.Div(val, className="pill-value"),
             ]) for lbl, val, cls in pills
         ]),
-    ])
+    ] + ([_ys] if (active != "rules" and (_ys := year_slider(years))) else []))
 
 
 # ---------------------------------------------------------------------------
@@ -539,8 +596,8 @@ def fig_cluster(df):
 # ---------------------------------------------------------------------------
 # Panel per tab
 # ---------------------------------------------------------------------------
-def gauge_card(dataset):
-    m = hero_metrics(dataset)
+def gauge_card(dataset, years=None):
+    m = hero_metrics(dataset, years)
     return html.Div(className="card gauge-card", children=[
         html.Div(className="card-head", style={"width": "100%"}, children=[
             html.H3("Sinyal Keyakinan"),
@@ -561,7 +618,8 @@ def gauge_card(dataset):
     ])
 
 
-def tab_ringkasan(dataset):
+def tab_ringkasan(dataset, years=None):
+    _df = dataset_for(dataset, years)
     return html.Div([
         html.Div(className="callout", children=[
             html.P("Pertanyaan sentral KDD — apa yang tidak obvious dari data mentah?", className="q"),
@@ -576,9 +634,9 @@ def tab_ringkasan(dataset):
                     html.H3("Anomali per tingkat keyakinan"),
                     html.Span("skala log", className="badge")]),
                 html.P("Makin ke bawah, makin banyak bukti yang disepakati.", className="hint"),
-                dcc.Graph(id="g-tier", figure=fig_tier(DATASETS[dataset or "accepted"]), style={"height":"320px"}, config={"displayModeBar": False, "responsive": True}),
+                dcc.Graph(id="g-tier", figure=fig_tier(_df), style={"height":"320px"}, config={"displayModeBar": False, "responsive": True}),
             ]),
-            gauge_card(dataset),
+            gauge_card(dataset, years),
         ]),
         html.Div(className="grid g-11", children=[
             html.Div(className="card", children=[
@@ -586,7 +644,7 @@ def tab_ringkasan(dataset):
                     html.H3("Komposisi tipologi anomali"),
                     html.Span("auto-verdict", className="badge")]),
                 html.P("Klasifikasi tiap anomali ke tiga tipologi bisnis.", className="hint"),
-                dcc.Graph(id="g-verdict", figure=fig_verdict(DATASETS[dataset or "accepted"]), style={"height":"320px"}, config={"displayModeBar": False, "responsive": True}),
+                dcc.Graph(id="g-verdict", figure=fig_verdict(_df), style={"height":"320px"}, config={"displayModeBar": False, "responsive": True}),
             ]),
             html.Div(className="card", children=[
                 html.Div(className="card-head", children=[
@@ -599,7 +657,7 @@ def tab_ringkasan(dataset):
     ])
 
 
-def tab_segmentasi(dataset):
+def tab_segmentasi(dataset, years=None):
     return html.Div(className="card", children=[
         html.Div(className="card-head", children=[
             html.H3("Peta segmen nasabah"),
@@ -611,7 +669,7 @@ def tab_segmentasi(dataset):
     ])
 
 
-def tab_rules(dataset):
+def tab_rules(dataset, years=None):
     return html.Div(className="card", children=[
         html.Div(className="card-head", children=[
             html.H3("Association rules berperingkat"),
@@ -626,7 +684,8 @@ def tab_rules(dataset):
     ])
 
 
-def tab_anomali(dataset):
+def tab_anomali(dataset, years=None):
+    _df = dataset_for(dataset, years)
     return html.Div([
         html.Div(className="card", children=[
             html.Div(className="card-head", children=[
@@ -634,7 +693,7 @@ def tab_anomali(dataset):
                 html.Span("Isolation Forest × DBSCAN", className="badge")]),
             html.P("Warna = skor Isolation Forest (makin lime makin terisolasi). "
                    "Lingkaran cyan = record yang juga noise DBSCAN Fase 2.", className="hint"),
-            dcc.Graph(id="g-scatter", figure=fig_scatter(DATASETS[dataset or "accepted"]), style={"height":"470px"}, config={"displayModeBar": True, "displaylogo": False, "responsive": True}),
+            dcc.Graph(id="g-scatter", figure=fig_scatter(_df), style={"height":"470px"}, config={"displayModeBar": True, "displaylogo": False, "responsive": True}),
         ]),
         html.Div(style={"height": "18px"}),
         html.Div(className="grid g-3", children=[
@@ -673,6 +732,7 @@ TAB_FN = {"ringkasan": tab_ringkasan, "segmentasi": tab_segmentasi,
 app.layout = html.Div([
     dcc.Store(id="active-tab", data="ringkasan"),
     dcc.Store(id="dataset-store", data="accepted"),
+    dcc.Store(id="year-store", data=list(YEAR_RANGE) if YEAR_RANGE else None),
     topnav(),
     html.Div(id="sidebar-slot"),
     html.Div(className="main", children=[
@@ -717,11 +777,45 @@ def sync_dataset(v):
     Output("tab-content", "children"),
     Input("active-tab", "data"),
     Input("dataset-store", "data"),
+    Input("year-store", "data"),
 )
-def render(active, dataset):
+def render(active, dataset, years):
     active = active or "ringkasan"; dataset = dataset or "accepted"
+    yr = tuple(years) if years else None
     return (breadcrumb(active), sidebar(active), mobile_tabs(active),
-            page_head(active, dataset), TAB_FN[active](dataset))
+            page_head(active, dataset, yr), TAB_FN[active](dataset, yr))
+
+
+@app.callback(
+    Output("year-store", "data"),
+    Input("year-slider", "value"),
+    Input({"type": "yr-preset", "index": dash.ALL}, "n_clicks"),
+    prevent_initial_call=True,
+)
+def sync_years(v, _clicks):
+    trig = dash.callback_context.triggered_id
+    if isinstance(trig, dict):                      # tombol preset ditekan
+        a, b = trig["index"].split("-")
+        return [int(a), int(b)]
+    if not v:
+        return dash.no_update
+    return [int(v[0]), int(v[1])]
+
+
+@app.callback(
+    Output("year-readout", "children"),
+    Output("year-count", "children"),
+    Input("year-store", "data"),
+    Input("dataset-store", "data"),
+)
+def year_feedback(years, dataset):
+    yr = tuple(years) if years else None
+    lo, hi = yr if yr else (YEAR_RANGE or (0, 0))
+    label = f"{lo}" if lo == hi else f"{lo}\u2013{hi}"
+    n = len(dataset_for(dataset, yr))
+    total = len(DATASETS[dataset or "accepted"])
+    pct = (n / total * 100) if total else 0
+    return label, f"{n:,} dari {total:,} record ({pct:.0f}%)"
 
 
 @app.callback(Output("g-rules", "figure"), Input("lift-slider", "value"))

@@ -155,3 +155,73 @@ body {
 
 /* reduced motion */
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+/* ---------- Year range filter (Fase 5) ---------- */
+.year-filter {
+  grid-column: 1 / -1;
+  margin-top: 18px; padding: 14px 20px 10px;
+  background: var(--panel2); border: 1px solid var(--line); border-radius: 12px;
+}
+.year-filter-head {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 6px;
+}
+.year-filter-title { display: flex; align-items: baseline; gap: 12px; }
+.year-filter-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--muted);
+}
+.year-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: 15px; font-weight: 700;
+  color: var(--amber); letter-spacing: .02em;
+}
+.year-filter-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.year-count {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted);
+  white-space: nowrap;
+}
+
+/* preset buttons */
+.year-presets { display: flex; gap: 6px; }
+.year-preset-btn {
+  background: transparent; border: 1px solid var(--line); color: var(--muted);
+  font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: .06em;
+  padding: 5px 12px; border-radius: 999px; cursor: pointer;
+  transition: color .15s ease, border-color .15s ease, background .15s ease;
+}
+.year-preset-btn:hover {
+  color: var(--ink); background: var(--amber); border-color: var(--amber);
+}
+.year-preset-btn:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+
+/* slider — target lebih besar & kontras jelas */
+.year-filter .rc-slider { margin: 6px 8px 30px; }
+.year-filter .rc-slider-rail { background: var(--line) !important; height: 6px; }
+.year-filter .rc-slider-track { background: var(--amber) !important; height: 6px; }
+.year-filter .rc-slider-handle {
+  width: 18px !important; height: 18px !important; margin-top: -6px !important;
+  border: 2px solid var(--ink) !important; background: var(--amber) !important;
+  box-shadow: 0 0 0 1px var(--amber) !important; opacity: 1 !important;
+}
+.year-filter .rc-slider-handle:hover,
+.year-filter .rc-slider-handle-dragging {
+  box-shadow: 0 0 0 5px rgba(232,161,58,0.25) !important;
+}
+.year-filter .rc-slider-mark-text {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--muted);
+}
+.year-filter .rc-slider-mark-text-active { color: var(--text); }
+.year-filter .rc-slider-dot {
+  border-color: var(--line) !important; background: var(--panel) !important;
+  width: 6px; height: 6px; bottom: -1px;
+}
+.year-filter .rc-slider-dot-active { border-color: var(--amber) !important; }
+.year-filter .rc-slider-tooltip-inner {
+  font-family: 'JetBrains Mono', monospace; background: var(--panel) !important;
+  border: 1px solid var(--amber); color: var(--text) !important; box-shadow: none;
+}
+
+@media (max-width: 720px) {
+  .year-filter-head { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .year-filter-actions { width: 100%; justify-content: space-between; }
+}
