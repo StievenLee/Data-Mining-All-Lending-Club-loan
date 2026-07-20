@@ -7,9 +7,15 @@ import {
   totalRecords,
   verdictCounts,
 } from "../data/filters";
-import { gaugeOption, tierBarOption, verdictOption } from "../components/charts/options";
+import {
+  clusterOption,
+  gaugeOption,
+  tierBarOption,
+  verdictOption,
+} from "../components/charts/options";
 import EChart from "../components/EChart";
 import Card from "../components/Card";
+import Callout from "../components/Callout";
 import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
 
@@ -34,11 +40,12 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
   const gauge = useMemo(() => gaugeOption(strong.pct), [strong.pct]);
   const tierBar = useMemo(() => tierBarOption(counts), [counts]);
   const verdict = useMemo(() => verdictOption(verdicts), [verdicts]);
+  const cluster = useMemo(() => clusterOption(data.clusters), [data.clusters]);
 
   return (
     <>
       <PageHead
-        eyebrow="Fase 4 · Deteksi Anomali"
+        eyebrow="Fase 4 Deteksi Anomali"
         title="Ringkasan Temuan"
         sub={
           <>
@@ -63,32 +70,27 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
           <EChart option={gauge} height={320} />
         </Card>
       </div>
+      <Callout eyebrow="Pertanyaan Sentral KDD — apa yang tidak obvious dari data mentah?">
+        Anomali paling penting bukan nilai tunggal yang ekstrem, melainkan{" "}
+        <b>record yang disepakati banyak metode sekaligus</b> dan terisolasi dari seluruh
+        klaster — titik tempat bukti statistik dan struktural bertemu, dan tempat sinyal
+        risiko sejati berada.
+      </Callout>
+
       <div className="mb-[18px] grid min-w-0 grid-cols-2 gap-[18px] max-[1080px]:grid-cols-1">
         <Card
-          title="Tipologi Verdict"
-          sub={
-            dataset === "accepted"
-              ? "Klasifikasi otomatis: Sinyal Risiko, Kesalahan Data, Kasus Langka."
-              : "Tipologi verdict hanya tersedia untuk dataset accepted."
-          }
+          title="Komposisi tipologi anomali"
+          note="auto-verdict"
+          sub="Klasifikasi tiap anomali ke tiga tipologi bisnis."
         >
           <EChart option={verdict} height={320} />
         </Card>
         <Card
-          title="Cara Membaca"
-          sub="Tier makin tinggi = makin banyak metode sepakat menandai baris sebagai anomali."
+          title="Segmen risiko nasabah"
+          note="Fase 2 · K=3"
+          sub="Default rate naik monoton dari Prime ke Highest-Risk."
         >
-          <div className="mt-3 flex flex-wrap gap-3.5">
-            {counts.map((c) => (
-              <span
-                key={c.tier}
-                className="flex items-center gap-[7px] font-mono text-[11px] text-muted"
-              >
-                <span className="h-[11px] w-[11px] rounded-[3px] bg-violet" />
-                {c.tier}: {c.count.toLocaleString("id-ID")}
-              </span>
-            ))}
-          </div>
+          <EChart option={cluster} height={320} />
         </Card>
       </div>
     </>

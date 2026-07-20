@@ -17,7 +17,7 @@ export default function YearRangeSlider({ bounds, recordCount }: Props) {
   for (const n of [10, 5, 3]) if (hi - n + 1 > lo) presets.push([`${n}Y terakhir`, hi - n + 1, hi]);
 
   return (
-    <div className="mb-[18px] rounded-[20px] border border-line bg-glass px-5 py-4">
+    <div className="sticky top-[calc(var(--nav)_+_8px)] z-20 mb-[18px] rounded-[20px] border border-line bg-bg-deep/85 px-5 py-4 backdrop-blur-[16px]">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
