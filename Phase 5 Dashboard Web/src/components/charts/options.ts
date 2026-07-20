@@ -11,7 +11,7 @@ import {
   VERDICT_COLORS,
   tooltipStyle,
 } from "../../theme/colors";
-import type { ClusterProfile, Rule, SampleColumnar } from "../../types";
+import type { ClusterProfile, SampleColumnar } from "../../types";
 
 const axisCommon = {
   axisLine: { lineStyle: { color: COLORS.line } },
@@ -252,101 +252,112 @@ export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
   };
 }
 
-const short = (s: string, n = 42) => (s.length <= n ? s : s.slice(0, n - 1) + "…");
-
-/** Bar rules by lift, warna = confidence, disaring minLift. */
-export function rulesOption(rules: Rule[], minLift: number): EChartsOption {
-  if (rules.length === 0) {
-    return {
-      graphic: {
-        type: "text",
-        left: "center",
-        top: "middle",
-        style: {
-          text: "Belum ada aturan asosiasi untuk dataset ini",
-          fill: COLORS.muted,
-          font: `12px ${FONT_MONO}`,
-        },
-      },
-    };
-  }
-  const d = rules
-    .filter((r) => r.lift >= minLift)
-    .sort((a, b) => a.lift - b.lift);
-  const labels = d.map((r) => short(`${r.antecedent}  →  ${r.consequent}`));
-  const confs = d.map((r) => r.confidence);
-  return {
-    grid: { left: 8, right: 60, top: 12, bottom: 40, containLabel: true },
-    tooltip: {
-      ...tooltipStyle,
-      trigger: "item",
-      formatter: (p: any) => {
-        const r = d[p.dataIndex];
-        return `${r.antecedent} → ${r.consequent}<br/>lift=${r.lift.toFixed(
-          2
-        )}<br/>support=${r.support.toFixed(3)}<br/>confidence=${r.confidence.toFixed(3)}`;
-      },
-    },
-    visualMap: {
-      min: Math.min(...confs, 0),
-      max: Math.max(...confs, 1),
-      dimension: 0,
-      calculable: false,
-      show: true,
-      right: 0,
-      top: "center",
-      itemHeight: 120,
-      text: ["conf\ntinggi", "rendah"],
-      textStyle: { color: COLORS.muted, fontFamily: FONT_MONO, fontSize: 10 },
-      inRange: { color: ISO_SCALE },
-    },
-    xAxis: { type: "value", name: "lift", nameLocation: "middle", nameGap: 28, ...axisCommon },
-    yAxis: {
-      type: "category",
-      data: labels,
-      ...axisCommon,
-      axisLabel: { ...axisCommon.axisLabel, fontSize: 10 },
-    },
-    series: [
-      {
-        type: "bar",
-        data: d.map((r) => ({ value: r.lift, raw: r })),
-        barWidth: "62%",
-        itemStyle: { borderRadius: [0, 4, 4, 0] },
-      },
-    ],
-  };
-}
-
-/** Scatter anomali: x,y = fitur terpilih, warna = iso_score, overlay noise DBSCAN. */
+/** Scatter anomali: x,y = fitur terpilih, warna = iso_score, overlay noise DBSCAN
+ *  + jenis anomali Fase 4 (kontekstual/kolektif) + tier tinggi. Overlay hanya muncul
+ *  bila kolomnya ada di sample (accepted saja — rejected tak punya kolom ini). */
 export function anomalyScatterOption(
   sample: SampleColumnar,
   rows: number[],
   xKey: string,
-  yKey: string
+  yKey: string,
+  tierOrder: string[] = []
 ): EChartsOption {
   const cx = sample.columns[xKey] as number[] | undefined;
   const cy = sample.columns[yKey] as number[] | undefined;
   const iso = sample.columns["iso_score"] as number[] | undefined;
   const noise = sample.columns["is_dbscan_noise"] as number[] | undefined;
   const tier = sample.columns["anomaly_tier"] as string[] | undefined;
+  const contextual = sample.columns["is_contextual_outlier"] as number[] | undefined;
+  const collective = sample.columns["is_collective_outlier"] as number[] | undefined;
+  const highTiers = new Set(tierOrder.slice(0, 2));
 
   const main: any[] = [];
   const noisePts: any[] = [];
+  const collectivePts: any[] = [];
+  const contextualPts: any[] = [];
+  const highTierPts: any[] = [];
   if (cx && cy) {
     for (const i of rows) {
       const x = cx[i];
       const y = cy[i];
       if (x == null || y == null) continue;
       const isoV = iso ? iso[i] : 0.5;
-      main.push({ value: [x, y, isoV], name: tier ? tier[i] : "" });
+      const t = tier ? tier[i] : "";
+      main.push({ value: [x, y, isoV], name: t });
       if (noise && noise[i]) noisePts.push([x, y]);
+      if (collective && collective[i]) collectivePts.push([x, y]);
+      if (contextual && contextual[i]) contextualPts.push([x, y]);
+      if (t && highTiers.has(t)) highTierPts.push({ value: [x, y], name: t });
     }
   }
   const isoVals = main.map((m) => m.value[2]);
 
+  const series: any[] = [
+    {
+      type: "scatter",
+      name: "Anomali",
+      large: true,
+      largeThreshold: 2000,
+      symbolSize: 7,
+      itemStyle: { opacity: 0.72 },
+      data: main,
+    },
+  ];
+  if (collectivePts.length) {
+    series.push({
+      type: "scatter",
+      name: "Kolektif",
+      symbol: "rect",
+      symbolSize: 7,
+      itemStyle: { color: "transparent", borderColor: COLORS.violet, borderWidth: 1.1, opacity: 0.5 },
+      data: collectivePts,
+      tooltip: { formatter: "Kolektif" },
+    });
+  }
+  if (contextualPts.length) {
+    series.push({
+      type: "scatter",
+      name: "Kontekstual",
+      symbol: "diamond",
+      symbolSize: 9,
+      itemStyle: { color: "transparent", borderColor: COLORS.amber, borderWidth: 1.4, opacity: 0.9 },
+      data: contextualPts,
+      tooltip: { formatter: "Kontekstual" },
+    });
+  }
+  if (highTierPts.length) {
+    series.push({
+      type: "scatter",
+      name: "Tier tinggi (Kritis / Sangat Kuat)",
+      symbolSize: 12,
+      itemStyle: { color: COLORS.lime, opacity: 0.95, borderColor: COLORS.bgDeep, borderWidth: 1.2 },
+      data: highTierPts,
+      tooltip: { formatter: (p: any) => p.name || "Tier tinggi" },
+    });
+  }
+  series.push({
+    type: "scatter",
+    name: "Noise DBSCAN (Fase 2)",
+    symbolSize: 15,
+    itemStyle: {
+      color: "rgba(0,0,0,0)",
+      borderColor: COLORS.cyan,
+      borderWidth: 1.6,
+    },
+    data: noisePts,
+    tooltip: { formatter: "Noise DBSCAN" },
+  });
+
   return {
-    grid: { left: 8, right: 66, top: 20, bottom: 44, containLabel: true },
+    grid: { left: 8, right: 66, top: 44, bottom: 44, containLabel: true },
+    legend: {
+      top: 4,
+      icon: "circle",
+      itemWidth: 9,
+      itemHeight: 9,
+      textStyle: { color: COLORS.muted, fontFamily: FONT_MONO, fontSize: 10.5 },
+      inactiveColor: COLORS.line,
+    },
     tooltip: {
       ...tooltipStyle,
       trigger: "item",
@@ -359,6 +370,7 @@ export function anomalyScatterOption(
       min: Math.min(...(isoVals.length ? isoVals : [0])),
       max: Math.max(...(isoVals.length ? isoVals : [1])),
       dimension: 2,
+      seriesIndex: 0,
       calculable: false,
       show: true,
       right: 0,
@@ -370,27 +382,6 @@ export function anomalyScatterOption(
     },
     xAxis: { type: "value", name: xKey, nameLocation: "middle", nameGap: 30, scale: true, ...axisCommon },
     yAxis: { type: "value", name: yKey, nameLocation: "middle", nameGap: 40, scale: true, ...axisCommon },
-    series: [
-      {
-        type: "scatter",
-        large: true,
-        largeThreshold: 2000,
-        symbolSize: 7,
-        itemStyle: { opacity: 0.72 },
-        data: main,
-      },
-      {
-        type: "scatter",
-        name: "Noise DBSCAN (Fase 2)",
-        symbolSize: 15,
-        itemStyle: {
-          color: "rgba(0,0,0,0)",
-          borderColor: COLORS.cyan,
-          borderWidth: 1.6,
-        },
-        data: noisePts,
-        tooltip: { formatter: "Noise DBSCAN" },
-      },
-    ],
+    series,
   };
 }

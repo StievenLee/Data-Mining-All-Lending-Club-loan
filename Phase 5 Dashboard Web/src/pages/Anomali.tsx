@@ -22,8 +22,8 @@ export default function Anomali({ data }: { data: DashboardData }) {
 
   const rows = useMemo(() => filterSampleRows(sample, years), [sample, years]);
   const option = useMemo(
-    () => anomalyScatterOption(sample, rows, safeX, safeY),
-    [sample, rows, safeX, safeY]
+    () => anomalyScatterOption(sample, rows, safeX, safeY, data.summary.tier_order),
+    [sample, rows, safeX, safeY, data.summary.tier_order]
   );
   const total = totalRecords(data.tiers, dataset, years);
 
@@ -38,8 +38,10 @@ export default function Anomali({ data }: { data: DashboardData }) {
         sub={
           <>
             Sample <b>{rows.length.toLocaleString("id-ID")}</b> titik dari{" "}
-            {total.toLocaleString("id-ID")} record {dataset}. Warna = iso_score;
-            lingkaran cyan = noise DBSCAN (Fase 2).
+            {total.toLocaleString("id-ID")} record {dataset}. Warna = iso_score. Titik
+            lime besar = tier tinggi; lingkaran cyan = noise DBSCAN (Fase 2); belah
+            ketupat amber = anomali kontekstual; kotak violet = anomali kolektif. Klik
+            legenda untuk toggle jenis.
           </>
         }
         pills={[

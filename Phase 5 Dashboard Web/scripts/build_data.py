@@ -95,8 +95,9 @@ def dedupe_year(df: pd.DataFrame) -> pd.DataFrame:
 
 def sample_scatter(df: pd.DataFrame, feats: list[str]) -> pd.DataFrame:
     """Pertahankan tier kuat, sample sisanya sampai total ~SCATTER_SAMPLE."""
-    keep_cols = [c for c in feats + ["iso_score", "anomaly_tier",
-                                     "is_dbscan_noise", "auto_verdict", "year"]
+    keep_cols = [c for c in feats + ["iso_score", "anomaly_tier", "is_dbscan_noise",
+                                     "is_contextual_outlier", "is_collective_outlier",
+                                     "auto_verdict", "year"]
                  if c in df.columns]
     d = df[keep_cols].dropna(subset=[c for c in feats if c in df.columns], how="all")
     if len(d) <= SCATTER_SAMPLE:
