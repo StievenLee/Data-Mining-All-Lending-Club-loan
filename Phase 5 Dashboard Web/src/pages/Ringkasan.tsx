@@ -60,6 +60,12 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
           { label: "Noise DBSCAN", value: String(data.summary.kpi.dbscan_noise_acc), kind: "ai" },
         ]}
       />
+      <Callout eyebrow="Pertanyaan Sentral KDD: apa yang tidak obvious dari data mentah?">
+        Anomali paling penting bukan nilai tunggal yang ekstrem, melainkan{" "}
+        <b>record yang disepakati banyak metode sekaligus</b> dan terisolasi dari seluruh
+        klaster — titik tempat bukti statistik dan struktural bertemu, dan tempat sinyal
+        risiko sejati berada.
+      </Callout>
       <YearRangeSlider bounds={data.summary.year_bounds!} recordCount={total} />
 
       <div className="mb-[18px] grid min-w-0 grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-[18px] max-[1080px]:grid-cols-1">
@@ -70,12 +76,6 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
           <EChart option={gauge} height={320} />
         </Card>
       </div>
-      <Callout eyebrow="Pertanyaan Sentral KDD — apa yang tidak obvious dari data mentah?">
-        Anomali paling penting bukan nilai tunggal yang ekstrem, melainkan{" "}
-        <b>record yang disepakati banyak metode sekaligus</b> dan terisolasi dari seluruh
-        klaster — titik tempat bukti statistik dan struktural bertemu, dan tempat sinyal
-        risiko sejati berada.
-      </Callout>
 
       <div className="mb-[18px] grid min-w-0 grid-cols-2 gap-[18px] max-[1080px]:grid-cols-1">
         <Card
@@ -87,8 +87,8 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
         </Card>
         <Card
           title="Segmen risiko nasabah"
-          note="Fase 2 · K=3"
-          sub="Default rate naik monoton dari Prime ke Highest-Risk."
+          note="Fase 2 · agregat"
+          sub="Default rate naik dari Prime ke Highest-Risk · profil klaster seluruh periode (tak difilter tahun)."
         >
           <EChart option={cluster} height={320} />
         </Card>

@@ -29,7 +29,7 @@ export default function TopNav() {
         {DATASET_TABS.has(tab) && <DatasetToggle />}
         <span className="flex items-center gap-[7px] rounded-full border border-lime/40 px-3 py-1.5 font-mono text-[11px] tracking-[0.09em] text-lime">
           <span className="h-[7px] w-[7px] animate-[pulseDot_2.4s_infinite] rounded-full bg-lime shadow-[0_0_8px_var(--color-lime)]" />
-          Live
+          LIVE
         </span>
         <span
           className="h-8 w-8 flex-none rounded-full border border-line bg-[conic-gradient(from_210deg,var(--color-violet),var(--color-lime),var(--color-cyan),var(--color-violet))]"
