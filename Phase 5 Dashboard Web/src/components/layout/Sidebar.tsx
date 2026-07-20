@@ -1,16 +1,17 @@
 import { useDashboard } from "../../store/useDashboard";
 import type { TabId } from "../../types";
-import { TIER_COLORS } from "../../theme/colors";
+import NavIcon from "./NavIcon";
 
-const NAV: { id: TabId; label: string; color: string }[] = [
-  { id: "ringkasan", label: "Ringkasan", color: TIER_COLORS["Kritis (DBSCAN + 3 metode)"] },
-  { id: "segmentasi", label: "Segmentasi", color: TIER_COLORS["Kuat (3 metode)"] },
-  { id: "rules", label: "Association Rules", color: TIER_COLORS["Sedang (2 metode)"] },
-  { id: "anomali", label: "Anomali", color: TIER_COLORS["Sangat Kuat (DBSCAN + metode)"] },
+const NAV: { id: TabId; label: string }[] = [
+  { id: "ringkasan", label: "Ringkasan" },
+  { id: "segmentasi", label: "Segmentasi" },
+  { id: "rules", label: "Association Rules" },
+  { id: "anomali", label: "Anomali" },
 ];
 
+// Tanpa background — hanya ikon + nama. Aktif ditandai warna lime saja.
 const NAV_BASE =
-  "flex w-full items-center gap-3 rounded-xl border px-3 py-[11px] text-left text-sm mb-1 transition-all duration-150";
+  "flex w-full items-center gap-3 bg-transparent px-2 py-[11px] text-left text-sm mb-1 transition-colors duration-150";
 
 export default function Sidebar() {
   const tab = useDashboard((s) => s.tab);
@@ -28,7 +29,7 @@ export default function Sidebar() {
           </div>
         </div>
       </div>
-      <div className="mb-2.5 mt-1 px-2.5 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
+      <div className="mb-2.5 mt-1 px-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted">
         Eksplorasi
       </div>
       {NAV.map((n) => {
@@ -37,17 +38,9 @@ export default function Sidebar() {
           <button
             key={n.id}
             onClick={() => setTab(n.id)}
-            className={
-              NAV_BASE +
-              (active
-                ? " border-lime/35 bg-glass2 font-medium text-lime"
-                : " border-transparent text-muted hover:bg-glass hover:text-text")
-            }
+            className={NAV_BASE + (active ? " font-medium text-lime" : " text-muted hover:text-text")}
           >
-            <span
-              className="h-2 w-2 flex-none rounded-[3px] bg-current opacity-80"
-              style={{ color: n.color }}
-            />
+            <NavIcon tab={n.id} className="flex-none" />
             {n.label}
           </button>
         );

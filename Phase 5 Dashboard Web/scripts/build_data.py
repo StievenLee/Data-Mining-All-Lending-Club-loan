@@ -190,10 +190,12 @@ def process_rejected() -> tuple[pd.DataFrame, pd.DataFrame]:
     total = 0
     for i, chunk in enumerate(pd.read_csv(ANOMALY_REJ, usecols=usecols, chunksize=500_000)):
         total += len(chunk)
-        for (yr, tier), c in chunk.groupby(["year", "anomaly_tier"]).size().items():
-            tier_year_counts[(yr, tier)] = tier_year_counts.get((yr, tier), 0) + int(c)
-        # simpan hanya tier kuat (rank <= REJECTED_MIN_TIER_RANK) utk scatter
+        # Rejected disamakan dg dashboard Dash lama: HANYA tier kuat (rank<=REJECTED_MIN_TIER_RANK)
+        # yang dihitung — baik utk KPI/gauge maupun scatter. Sehingga "% bukti kuat" rejected = 100%
+        # (semua baris rejected yang ditampilkan memang sudah tier kuat), konsisten dg Dash.
         strong = chunk[chunk["anomaly_tier"].map(TIER_RANK).fillna(99) <= REJECTED_MIN_TIER_RANK]
+        for (yr, tier), c in strong.groupby(["year", "anomaly_tier"]).size().items():
+            tier_year_counts[(yr, tier)] = tier_year_counts.get((yr, tier), 0) + int(c)
         if len(strong):
             strong_chunks.append(strong)
         if (i + 1) % 10 == 0:

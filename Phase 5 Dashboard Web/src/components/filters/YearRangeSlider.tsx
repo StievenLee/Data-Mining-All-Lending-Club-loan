@@ -1,19 +1,17 @@
 import { useDashboard } from "../../store/useDashboard";
+import DualRangeSlider from "./DualRangeSlider";
 
 interface Props {
   bounds: [number, number];
   recordCount: number;
 }
 
-/** Filter rentang tahun: dua slider (dari/sampai) + preset cepat. */
+/** Filter rentang tahun: dual-range slider (2 thumb) + preset cepat. */
 export default function YearRangeSlider({ bounds, recordCount }: Props) {
   const [lo, hi] = bounds;
   const years = useDashboard((s) => s.years) ?? bounds;
   const setYears = useDashboard((s) => s.setYears);
   const [a, b] = years;
-
-  const setLo = (v: number) => setYears([Math.min(v, b), b]);
-  const setHi = (v: number) => setYears([a, Math.max(v, a)]);
 
   const presets: [string, number, number][] = [["Semua", lo, hi]];
   for (const n of [10, 5, 3]) if (hi - n + 1 > lo) presets.push([`${n}Y terakhir`, hi - n + 1, hi]);
@@ -46,28 +44,7 @@ export default function YearRangeSlider({ bounds, recordCount }: Props) {
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-3.5">
-        <span className="font-mono text-[11px] text-muted">dari</span>
-        <input
-          type="range"
-          min={lo}
-          max={hi}
-          step={1}
-          value={a}
-          onChange={(e) => setLo(Number(e.target.value))}
-          className="h-1 flex-1 accent-lime"
-        />
-        <span className="font-mono text-[11px] text-muted">sampai</span>
-        <input
-          type="range"
-          min={lo}
-          max={hi}
-          step={1}
-          value={b}
-          onChange={(e) => setHi(Number(e.target.value))}
-          className="h-1 flex-1 accent-lime"
-        />
-      </div>
+      <DualRangeSlider lo={lo} hi={hi} a={a} b={b} onChange={setYears} />
     </div>
   );
 }

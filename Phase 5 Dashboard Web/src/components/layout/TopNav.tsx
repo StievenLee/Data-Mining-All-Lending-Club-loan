@@ -1,4 +1,5 @@
 import { useDashboard } from "../../store/useDashboard";
+import DatasetToggle from "../filters/DatasetToggle";
 
 const TAB_LABEL: Record<string, string> = {
   ringkasan: "Ringkasan",
@@ -6,6 +7,9 @@ const TAB_LABEL: Record<string, string> = {
   rules: "Association Rules",
   anomali: "Anomali",
 };
+
+// Toggle dataset hanya relevan di tab yang memakainya
+const DATASET_TABS = new Set(["ringkasan", "anomali"]);
 
 export default function TopNav() {
   const tab = useDashboard((s) => s.tab);
@@ -22,6 +26,7 @@ export default function TopNav() {
         </nav>
       </div>
       <div className="ml-auto flex flex-none items-center gap-3.5">
+        {DATASET_TABS.has(tab) && <DatasetToggle />}
         <span className="flex items-center gap-[7px] rounded-full border border-lime/40 px-3 py-1.5 font-mono text-[11px] tracking-[0.09em] text-lime">
           <span className="h-[7px] w-[7px] animate-[pulseDot_2.4s_infinite] rounded-full bg-lime shadow-[0_0_8px_var(--color-lime)]" />
           STATIS · 0.8 MB

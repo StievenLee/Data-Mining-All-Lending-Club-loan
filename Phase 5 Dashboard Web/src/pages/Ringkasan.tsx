@@ -11,7 +11,6 @@ import { gaugeOption, tierBarOption, verdictOption } from "../components/charts/
 import EChart from "../components/EChart";
 import Card from "../components/Card";
 import PageHead from "../components/PageHead";
-import DatasetToggle from "../components/filters/DatasetToggle";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
 
 export default function Ringkasan({ data }: { data: DashboardData }) {
@@ -54,9 +53,6 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
           { label: "Noise DBSCAN", value: String(data.summary.kpi.dbscan_noise_acc), kind: "ai" },
         ]}
       />
-      <div className="flex justify-end mb-3.5">
-        <DatasetToggle />
-      </div>
       <YearRangeSlider bounds={data.summary.year_bounds!} recordCount={total} />
 
       <div className="mb-[18px] grid min-w-0 grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-[18px] max-[1080px]:grid-cols-1">

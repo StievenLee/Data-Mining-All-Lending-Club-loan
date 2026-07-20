@@ -6,7 +6,6 @@ import { anomalyScatterOption } from "../components/charts/options";
 import EChart from "../components/EChart";
 import Card from "../components/Card";
 import PageHead from "../components/PageHead";
-import DatasetToggle from "../components/filters/DatasetToggle";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
 
 export default function Anomali({ data }: { data: DashboardData }) {
@@ -63,7 +62,6 @@ export default function Anomali({ data }: { data: DashboardData }) {
             </option>
           ))}
         </select>
-        <DatasetToggle />
       </div>
       <YearRangeSlider bounds={data.summary.year_bounds!} recordCount={total} />
       <Card title="Scatter Anomali" note={`${safeX} × ${safeY}`}>
