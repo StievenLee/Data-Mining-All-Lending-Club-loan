@@ -47,9 +47,8 @@ ISSUE_YEAR_PARQUET = os.path.join(PROJECT_ROOT, "Datasets", "Cleaning", "Phase 2
 # ---------------------------------------------------------------------------
 # Konstanta (selaras dashboard lama)
 # ---------------------------------------------------------------------------
-SCATTER_SAMPLE = 15_000         # titik non-tier-kuat per dataset (tier kuat selalu lengkap)
 REJECTED_MIN_TIER_RANK = 2      # rejected: hanya muat tier <= rank ini (0=Kritis..)
-MAX_TOTAL_MB = 3.0              # ambang validasi ukuran total output
+MAX_TOTAL_MB = 50.0              # ambang validasi ukuran total output (scatter tanpa sampling, selaras Dash)
 
 TIER_ORDER = [
     "Kritis (DBSCAN + 3 metode)",
@@ -59,7 +58,6 @@ TIER_ORDER = [
     "Lemah (1 metode)",
 ]
 TIER_RANK = {t: i for i, t in enumerate(TIER_ORDER)}
-STRONG_TIERS = TIER_ORDER[:3]   # Kritis, Sangat Kuat, Kuat
 
 FEATURES = {
     "accepted": ["int_rate", "fico_range_low", "installment",
@@ -94,28 +92,15 @@ def dedupe_year(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def sample_scatter(df: pd.DataFrame, feats: list[str]) -> pd.DataFrame:
-    """Pertahankan tier kuat, sample sisanya sampai total ~SCATTER_SAMPLE.
-    Dash terbaru menggambar SEMUA titik (196rb/547rb) lewat WebGL server-side -- kita
-    sudah coba samakan persis (uncapped) tapi TERBUKTI membekukan browser klien:
-    ganti dataset butuh >15 detik, kadang >45 detik (canvas ECharts + rebuild array
-    JS ratusan ribu elemen per re-render, bukan sekali render seperti Dash). Karena
-    filter <100ms di browser adalah alasan utama migrasi dari Dash, sampling tier-aware
-    dipertahankan: titik tier kuat (paling penting secara analitis) tetap 100% lengkap,
-    hanya cloud latar belakang yang di-sample -> visual tetap representatif & instan."""
+    """TANPA sampling: seluruh titik terfilter dikirim (selaras dashboard Dash
+    terbaru, yang juga menggambar semua titik). CATATAN: terbukti bikin browser
+    klien lag/freeze saat ganti dataset (rebuild+render ratusan ribu titik canvas
+    tiap re-render) -- dipertahankan begini atas permintaan eksplisit."""
     keep_cols = [c for c in feats + ["iso_score", "anomaly_tier", "is_dbscan_noise",
                                      "is_contextual_outlier", "is_collective_outlier",
                                      "auto_verdict", "year"]
                  if c in df.columns]
-    d = df[keep_cols].dropna(subset=[c for c in feats if c in df.columns], how="all")
-    if len(d) <= SCATTER_SAMPLE:
-        return d
-    hi = d[d["anomaly_tier"].isin(STRONG_TIERS[:2])]      # Kritis + Sangat Kuat: semua
-    lo = d.drop(hi.index)
-    n_lo = max(0, SCATTER_SAMPLE - len(hi))
-    if len(lo) > n_lo:
-        lo = lo.sample(n_lo, random_state=42)
-    out = pd.concat([hi, lo])
-    return out
+    return df[keep_cols].dropna(subset=[c for c in feats if c in df.columns], how="all")
 
 
 # ---------------------------------------------------------------------------
