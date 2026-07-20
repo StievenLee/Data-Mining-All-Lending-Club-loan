@@ -25,6 +25,17 @@ export interface ClusterProfile {
   avg_fico: number;
 }
 
+// Profil klaster per (tahun, klaster) — untuk kartu segmen yang responsif tahun.
+export interface ClusterYearRow {
+  year: number;
+  cluster: number;
+  nama_profil: string;
+  n_anggota: number;
+  default_rate: number;
+  avg_int_rate: number;
+  avg_fico: number;
+}
+
 export interface Rule {
   antecedent: string;
   consequent: string;
@@ -67,6 +78,7 @@ export interface DashboardData {
   tiers: TierYearRow[];
   verdicts: VerdictYearRow[];
   clusters: ClusterProfile[];
+  clustersByYear: ClusterYearRow[];
   rules: Rule[];
   samples: Record<Dataset, SampleColumnar>;
 }

@@ -39,6 +39,11 @@ RULES_CSV = os.path.join(DATA_IN, "results_apriori_cleaned.csv")   # Fase 3 (ops
 DBSCAN_ACC_JSON = os.path.join(OLD_DASH, "dbscan_outliers_accepted.json")
 DBSCAN_REJ_JSON = os.path.join(OLD_DASH, "dbscan_outliers_rejected.json")
 
+# Sumber utk agregasi klaster PER TAHUN (populasi penuh accepted, join per posisi baris).
+CLEAN_ACC_CSV = os.path.join(PROJECT_ROOT, "Datasets", "Cleaning", "Phase 2", "clean_accepted_loans.csv")
+CLUSTER_LABELS_PARQUET = os.path.join(PROJECT_ROOT, "Phase 2 Clustering", "Results", "cluster_labels_accepted.parquet")
+ISSUE_YEAR_PARQUET = os.path.join(PROJECT_ROOT, "Datasets", "Cleaning", "Phase 2", "issue_year_accepted.parquet")
+
 # ---------------------------------------------------------------------------
 # Konstanta (selaras dashboard lama)
 # ---------------------------------------------------------------------------
@@ -248,6 +253,55 @@ def process_rules() -> list[dict]:
     return df[keep].to_dict(orient="records")
 
 
+def process_clusters_by_year() -> list[dict]:
+    """Agregasi profil klaster PER (tahun, klaster) dari populasi penuh accepted.
+    Join tiga sumber sejajar posisi baris (1.35jt): clean_accepted (fitur+loan_status),
+    cluster_labels (Cluster_Label), issue_year (tahun). Nama profil diturunkan dari
+    urutan default rate (terendah=Prime) agar robust terhadap penomoran label K-Means."""
+    src = [CLEAN_ACC_CSV, CLUSTER_LABELS_PARQUET, ISSUE_YEAR_PARQUET]
+    if not all(os.path.exists(p) for p in src):
+        log("clusters_by_year: sumber populasi penuh tak lengkap -> lewati (kartu segmen tetap agregat)")
+        return []
+    log("clusters_by_year: join populasi penuh (1.35jt) & agregasi per tahun ...")
+    acc = pd.read_csv(CLEAN_ACC_CSV, usecols=["int_rate", "fico_range_low", "loan_status_binary"])
+    cl = pd.read_parquet(CLUSTER_LABELS_PARQUET).sort_values("orig_row_pos").reset_index(drop=True)
+    yr = pd.read_parquet(ISSUE_YEAR_PARQUET).sort_values("row_pos").reset_index(drop=True)
+    n = len(acc)
+    if not (len(cl) == n and len(yr) == n):
+        log(f"  ukuran tak cocok ({n}/{len(cl)}/{len(yr)}) -> lewati")
+        return []
+    acc = acc.reset_index(drop=True)
+    acc["cluster"] = cl["Cluster_Label"].astype(int).to_numpy()
+    acc["year"] = yr["issue_year"].astype(int).to_numpy()
+
+    # nama profil dari peringkat default rate overall (terendah -> Prime)
+    rank_names = ["Prime / Low-Risk", "Moderate-Risk", "Highest-Risk"]
+    order = acc.groupby("cluster")["loan_status_binary"].mean().sort_values().index.tolist()
+    name_by_cluster = {c: rank_names[i] if i < len(rank_names) else f"Cluster {c}"
+                       for i, c in enumerate(order)}
+
+    g = acc.groupby(["year", "cluster"]).agg(
+        n_anggota=("loan_status_binary", "size"),
+        default_rate=("loan_status_binary", "mean"),
+        avg_int_rate=("int_rate", "mean"),
+        avg_fico=("fico_range_low", "mean"),
+    ).reset_index()
+    out = []
+    for _, r in g.iterrows():
+        c = int(r["cluster"])
+        out.append({
+            "year": int(r["year"]),
+            "cluster": c,
+            "nama_profil": name_by_cluster.get(c, f"Cluster {c}"),
+            "n_anggota": int(r["n_anggota"]),
+            "default_rate": round(float(r["default_rate"]), 4),
+            "avg_int_rate": round(float(r["avg_int_rate"]), 3),
+            "avg_fico": round(float(r["avg_fico"]), 3),
+        })
+    log(f"  clusters_by_year: {len(out)} baris (tahun x klaster)")
+    return out
+
+
 # ---------------------------------------------------------------------------
 # Penulisan output
 # ---------------------------------------------------------------------------
@@ -294,6 +348,7 @@ def main() -> None:
     acc_tby, acc_vby, acc_scat = process_accepted()
     rej_tby, rej_scat = process_rejected()
     clusters = process_clusters()
+    clusters_by_year = process_clusters_by_year()
     rules = process_rules()
 
     meta_acc = dbscan_meta("accepted")
@@ -313,6 +368,7 @@ def main() -> None:
 
     # --- clusters & rules ---
     write_json("clusters.json", clusters)
+    write_json("clusters_by_year.json", clusters_by_year)
     write_json("rules.json", rules)
 
     # --- year bounds & KPI summary ---

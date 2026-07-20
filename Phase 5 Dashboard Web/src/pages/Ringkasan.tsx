@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import type { DashboardData } from "../types";
 import { useDashboard } from "../store/useDashboard";
 import {
+  clusterProfilesForYears,
   strongPct,
   tierCounts,
   totalRecords,
@@ -40,7 +41,14 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
   const gauge = useMemo(() => gaugeOption(strong.pct), [strong.pct]);
   const tierBar = useMemo(() => tierBarOption(counts), [counts]);
   const verdict = useMemo(() => verdictOption(verdicts), [verdicts]);
-  const cluster = useMemo(() => clusterOption(data.clusters), [data.clusters]);
+  const clusterProfiles = useMemo(
+    () =>
+      data.clustersByYear.length
+        ? clusterProfilesForYears(data.clustersByYear, years)
+        : data.clusters,
+    [data.clustersByYear, data.clusters, years]
+  );
+  const cluster = useMemo(() => clusterOption(clusterProfiles), [clusterProfiles]);
 
   return (
     <>
@@ -87,8 +95,8 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
         </Card>
         <Card
           title="Segmen risiko nasabah"
-          note="Fase 2 · agregat"
-          sub="Default rate naik dari Prime ke Highest-Risk · profil klaster seluruh periode (tak difilter tahun)."
+          note={`Fase 2 · ${years[0]}–${years[1]}`}
+          sub="Default rate naik dari Prime ke Highest-Risk · mengikuti rentang tahun."
         >
           <EChart option={cluster} height={320} />
         </Card>
