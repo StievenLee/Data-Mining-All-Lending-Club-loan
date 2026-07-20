@@ -55,16 +55,7 @@ export default function Anomali({ data }: { data: DashboardData }) {
           { label: "Dataset", value: dataset, kind: "ai" },
         ]}
       />
-      <div
-        style={{
-          display: "flex",
-          gap: 12,
-          justifyContent: "flex-end",
-          alignItems: "center",
-          flexWrap: "wrap",
-          marginBottom: 14,
-        }}
-      >
+      <div className="flex flex-wrap items-center justify-end gap-3 mb-3.5">
         <select style={selStyle} value={safeX} onChange={(e) => setXKey(e.target.value)}>
           {feats.map((f) => (
             <option key={f} value={f}>

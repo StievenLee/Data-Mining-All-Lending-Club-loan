@@ -1,24 +1,51 @@
 /* styles.css — "Synthetic Capital" (port dari dashboard Dash lama).
-   Glassmorphism + Cyber-Futurism. Kanvas Deep Space, aksen Neon Lime & Electric Violet. */
+   Glassmorphism + Cyber-Futurism. Kanvas Deep Space, aksen Neon Lime & Electric Violet.
+
+   Tailwind v4 (hybrid): impor theme + utilities SAJA (tanpa Preflight) supaya
+   utility class tersedia untuk tweak cepat, tapi reset Tailwind TIDAK mengubah
+   custom class glassmorphism yang sudah jadi. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* SUMBER TUNGGAL token desain. Dipakai Tailwind (bg-lime, text-violet, font-mono, dst)
+   SEKALIGUS custom class di bawah. Ubah di sini → berubah di dua-duanya. */
+@theme {
+  --color-bg: #131318;
+  --color-bg-deep: #0e0e13;
+  --color-lime: #c3f400;
+  --color-lime-dim: #abd600;
+  --color-violet: #d0bcff;
+  --color-violet-deep: #571bc1;
+  --color-cyan: #7df4ff;
+  --color-error: #ffb4ab;
+  --color-amber: #ffd479;
+  --color-text: #e4e1e9;
+  --color-muted: #c4c9ac;
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Courier New", monospace;
+}
 
 :root {
-  --bg: #131318;
-  --bg-deep: #0e0e13;
-  --lime: #c3f400;
-  --lime-dim: #abd600;
-  --violet: #d0bcff;
-  --violet-deep: #571bc1;
-  --cyan: #7df4ff;
-  --error: #ffb4ab;
-  --amber: #ffd479;
-  --text: #e4e1e9;
-  --muted: #c4c9ac;
+  /* alias pendek untuk custom CSS lama — mengacu ke @theme di atas (1 sumber) */
+  --bg: var(--color-bg);
+  --bg-deep: var(--color-bg-deep);
+  --lime: var(--color-lime);
+  --lime-dim: var(--color-lime-dim);
+  --violet: var(--color-violet);
+  --violet-deep: var(--color-violet-deep);
+  --cyan: var(--color-cyan);
+  --error: var(--color-error);
+  --amber: var(--color-amber);
+  --text: var(--color-text);
+  --muted: var(--color-muted);
   --line: rgba(255, 255, 255, 0.12);
   --glass: rgba(255, 255, 255, 0.03);
   --glass2: rgba(255, 255, 255, 0.06);
-  --display: "Space Grotesk", system-ui, sans-serif;
-  --body: "Inter", system-ui, sans-serif;
-  --mono: "JetBrains Mono", "Courier New", monospace;
+  --display: var(--font-display);
+  --body: var(--font-body);
+  --mono: var(--font-mono);
   --side: 238px;
   --nav: 66px;
 }

@@ -54,7 +54,7 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
           { label: "Noise DBSCAN", value: String(data.summary.kpi.dbscan_noise_acc), kind: "ai" },
         ]}
       />
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 14 }}>
+      <div className="flex justify-end mb-3.5">
         <DatasetToggle />
       </div>
       <YearRangeSlider bounds={data.summary.year_bounds!} recordCount={total} />
