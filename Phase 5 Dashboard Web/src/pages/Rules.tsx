@@ -8,33 +8,41 @@ import PageHead from "../components/PageHead";
 import LiftSlider from "../components/filters/LiftSlider";
 
 export default function Rules({ data }: { data: DashboardData }) {
+  const dataset = useDashboard((s) => s.dataset);
   const minLift = useDashboard((s) => s.minLift);
-  const maxLift = useMemo(
-    () => Math.max(...data.rules.map((r) => r.lift), 2),
-    [data.rules]
+  const datasetLabel = dataset === "accepted" ? "Accepted" : "Rejected";
+
+  const rules = useMemo(
+    () => data.rules.filter((r) => r.dataset === datasetLabel),
+    [data.rules, datasetLabel]
   );
+  const maxLift = useMemo(() => Math.max(...rules.map((r) => r.lift), 2), [rules]);
   const shown = useMemo(
-    () => data.rules.filter((r) => r.lift >= minLift).length,
-    [data.rules, minLift]
+    () => rules.filter((r) => r.lift >= minLift).length,
+    [rules, minLift]
   );
-  const option = useMemo(() => rulesOption(data.rules, minLift), [data.rules, minLift]);
+  const option = useMemo(() => rulesOption(rules, minLift), [rules, minLift]);
   const height = Math.max(360, shown * 34 + 90);
 
   return (
     <>
       <PageHead
-        eyebrow="Fase 3 · Apriori Association Rules"
+        eyebrow="Fase 3 Apriori Association Rules"
         title="Aturan Asosiasi"
         sub={
-          <>
-            <b>{shown}</b> dari {data.rules.length} aturan dengan lift ≥{" "}
-            <b>{minLift.toFixed(1)}</b>. Geser slider — grafik ter-filter di
-            browser secara instan.
-          </>
+          rules.length > 0 ? (
+            <>
+              <b>{shown}</b> dari {rules.length} aturan {dataset} dengan lift ≥{" "}
+              <b>{minLift.toFixed(1)}</b>. Geser slider — grafik ter-filter di
+              browser secara instan.
+            </>
+          ) : (
+            `Belum ada aturan asosiasi untuk dataset ${dataset}.`
+          )
         }
         pills={[
           { label: "Aturan tampil", value: String(shown) },
-          { label: "Lift maks", value: maxLift.toFixed(2), kind: "accent" },
+          { label: "Lift maks", value: rules.length ? maxLift.toFixed(2) : "–", kind: "accent" },
         ]}
       />
       <div className="mb-3.5 flex justify-end">

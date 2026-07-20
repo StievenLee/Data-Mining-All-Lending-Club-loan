@@ -8,8 +8,8 @@ const TAB_LABEL: Record<string, string> = {
   anomali: "Anomali",
 };
 
-// Toggle dataset hanya relevan di tab yang memakainya
-const DATASET_TABS = new Set(["ringkasan", "anomali"]);
+// Toggle dataset relevan di semua tab (rules & segmentasi difilter/dibatasi per dataset juga)
+const DATASET_TABS = new Set(["ringkasan", "segmentasi", "rules", "anomali"]);
 
 export default function TopNav() {
   const tab = useDashboard((s) => s.tab);
@@ -27,14 +27,6 @@ export default function TopNav() {
       </div>
       <div className="ml-auto flex flex-none items-center gap-2 min-[640px]:gap-3.5">
         {DATASET_TABS.has(tab) && <DatasetToggle />}
-        <span className="flex items-center gap-[7px] rounded-full border border-lime/40 px-2.5 py-1.5 font-mono text-[11px] tracking-[0.09em] text-lime min-[480px]:px-3">
-          <span className="h-[7px] w-[7px] animate-[pulseDot_2.4s_infinite] rounded-full bg-lime shadow-[0_0_8px_var(--color-lime)]" />
-          <span className="max-[480px]:hidden">LIVE</span>
-        </span>
-        <span
-          className="h-8 w-8 flex-none rounded-full border border-line bg-[conic-gradient(from_210deg,var(--color-violet),var(--color-lime),var(--color-cyan),var(--color-violet))] max-[380px]:hidden"
-          aria-hidden
-        />
       </div>
     </header>
   );

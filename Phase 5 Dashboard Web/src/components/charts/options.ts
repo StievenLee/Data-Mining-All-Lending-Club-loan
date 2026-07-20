@@ -173,6 +173,20 @@ export function verdictOption(
 
 /** Bubble klaster: x=avg_int_rate, y=avg_fico, size=n_anggota, color=default_rate. */
 export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
+  if (clusters.length === 0) {
+    return {
+      graphic: {
+        type: "text",
+        left: "center",
+        top: "middle",
+        style: {
+          text: "Segmentasi K-Means hanya tersedia untuk Accepted",
+          fill: COLORS.muted,
+          font: `12px ${FONT_MONO}`,
+        },
+      },
+    };
+  }
   const maxN = Math.max(...clusters.map((c) => c.n_anggota), 1);
   const rates = clusters.map((c) => c.default_rate);
   return {
@@ -242,6 +256,20 @@ const short = (s: string, n = 42) => (s.length <= n ? s : s.slice(0, n - 1) + "â
 
 /** Bar rules by lift, warna = confidence, disaring minLift. */
 export function rulesOption(rules: Rule[], minLift: number): EChartsOption {
+  if (rules.length === 0) {
+    return {
+      graphic: {
+        type: "text",
+        left: "center",
+        top: "middle",
+        style: {
+          text: "Belum ada aturan asosiasi untuk dataset ini",
+          fill: COLORS.muted,
+          font: `12px ${FONT_MONO}`,
+        },
+      },
+    };
+  }
   const d = rules
     .filter((r) => r.lift >= minLift)
     .sort((a, b) => a.lift - b.lift);

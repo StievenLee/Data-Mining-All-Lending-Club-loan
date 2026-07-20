@@ -33,7 +33,7 @@ export default function Anomali({ data }: { data: DashboardData }) {
   return (
     <>
       <PageHead
-        eyebrow="Fase 4 · Isolation Forest + DBSCAN"
+        eyebrow="Fase 4 Isolation Forest + DBSCAN"
         title="Peta Anomali"
         sub={
           <>
