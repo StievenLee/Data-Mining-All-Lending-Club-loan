@@ -2,7 +2,7 @@ import { useDashboard } from "../../store/useDashboard";
 import type { Dataset } from "../../types";
 
 const SEG_BASE =
-  "cursor-pointer whitespace-nowrap rounded-full border-0 px-[15px] py-[7px] font-mono text-xs transition-all duration-150";
+  "cursor-pointer whitespace-nowrap rounded-full border-0 px-2.5 py-1.5 font-mono text-[11px] transition-all duration-150 min-[640px]:px-[15px] min-[640px]:py-[7px] min-[640px]:text-xs";
 
 export default function DatasetToggle() {
   const dataset = useDashboard((s) => s.dataset);

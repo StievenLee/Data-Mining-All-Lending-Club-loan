@@ -17,26 +17,26 @@ export default function YearRangeSlider({ bounds, recordCount }: Props) {
   for (const n of [10, 5, 3]) if (hi - n + 1 > lo) presets.push([`${n}Y terakhir`, hi - n + 1, hi]);
 
   return (
-    <div className="sticky top-[calc(var(--nav)_+_8px)] z-20 mb-[18px] rounded-[20px] border border-line bg-bg-deep/85 px-5 py-4 backdrop-blur-[16px]">
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
+    <div className="sticky top-[calc(var(--nav)_+_8px)] z-20 mb-[18px] rounded-2xl border border-line bg-bg-deep/85 px-3.5 py-3 backdrop-blur-[16px] min-[640px]:rounded-[20px] min-[640px]:px-5 min-[640px]:py-4">
+      <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
+        <div className="flex items-center gap-2.5 min-[640px]:gap-3">
+          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted min-[640px]:text-[11px]">
             Rentang tahun
           </span>
-          <span className="font-mono text-[15px] font-bold text-lime">
+          <span className="font-mono text-sm font-bold text-lime min-[640px]:text-[15px]">
             {a === b ? a : `${a}–${b}`}
           </span>
         </div>
-        <div className="flex items-center gap-3.5">
-          <span className="font-mono text-[11px] text-muted">
+        <div className="flex flex-wrap items-center gap-2 min-[640px]:gap-3.5">
+          <span className="font-mono text-[10px] text-muted min-[640px]:text-[11px]">
             {recordCount.toLocaleString("id-ID")} record
           </span>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-1.5 min-[640px]:gap-2">
             {presets.map(([lbl, x, y]) => (
               <button
                 key={lbl}
                 onClick={() => setYears([x, y])}
-                className="cursor-pointer rounded-full border border-line bg-bg-deep px-[11px] py-[5px] font-mono text-[11px] text-muted transition-all duration-150 hover:border-violet hover:text-text"
+                className="cursor-pointer rounded-full border border-line bg-bg-deep px-2.5 py-1 font-mono text-[10px] text-muted transition-all duration-150 hover:border-violet hover:text-text min-[640px]:px-[11px] min-[640px]:py-[5px] min-[640px]:text-[11px]"
               >
                 {lbl}
               </button>

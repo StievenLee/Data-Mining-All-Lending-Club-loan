@@ -4,6 +4,7 @@ import { useDashboard } from "./store/useDashboard";
 import type { DashboardData } from "./types";
 import TopNav from "./components/layout/TopNav";
 import Sidebar from "./components/layout/Sidebar";
+import MobileNav from "./components/layout/MobileNav";
 import Ringkasan from "./pages/Ringkasan";
 import Segmentasi from "./pages/Segmentasi";
 import Rules from "./pages/Rules";
@@ -28,7 +29,8 @@ export default function App() {
     <>
       <TopNav />
       <Sidebar />
-      <main className="ml-[var(--side)] mt-[var(--nav)] min-w-0 max-w-[1520px] px-[34px] pb-[60px] pt-[30px] w-[calc(100%-var(--side))] max-[900px]:ml-0 max-[900px]:w-full">
+      <MobileNav />
+      <main className="ml-[var(--side)] mt-[var(--nav)] min-w-0 max-w-[1520px] px-4 pb-[60px] pt-5 w-[calc(100%-var(--side))] min-[640px]:px-[34px] min-[640px]:pt-[30px] max-[900px]:ml-0 max-[900px]:w-full max-[900px]:pb-[92px]">
         {error && (
           <div className="grid min-h-[60vh] place-items-center font-mono tracking-[0.1em] text-muted">
             ⚠ {error}
