@@ -290,7 +290,17 @@ export function anomalyScatterOption(
       if (t && highTiers.has(t)) highTierPts.push({ value: [x, y], name: t });
     }
   }
-  const isoVals = main.map((m) => m.value[2]);
+  // Loop manual, BUKAN Math.min(...isoVals): spread ke apply() meledakkan call
+  // stack begitu titik > ~100rb (scatter sekarang tanpa sampling, bisa ratusan ribu).
+  let isoMin = Infinity;
+  let isoMax = -Infinity;
+  for (const m of main) {
+    const v = m.value[2];
+    if (v < isoMin) isoMin = v;
+    if (v > isoMax) isoMax = v;
+  }
+  if (!Number.isFinite(isoMin)) isoMin = 0;
+  if (!Number.isFinite(isoMax)) isoMax = 1;
 
   const series: any[] = [
     {
@@ -367,8 +377,8 @@ export function anomalyScatterOption(
         )}<br/>${p.name || ""}`,
     },
     visualMap: {
-      min: Math.min(...(isoVals.length ? isoVals : [0])),
-      max: Math.max(...(isoVals.length ? isoVals : [1])),
+      min: isoMin,
+      max: isoMax,
       dimension: 2,
       seriesIndex: 0,
       calculable: false,

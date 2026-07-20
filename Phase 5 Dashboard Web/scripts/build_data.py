@@ -47,7 +47,7 @@ ISSUE_YEAR_PARQUET = os.path.join(PROJECT_ROOT, "Datasets", "Cleaning", "Phase 2
 # ---------------------------------------------------------------------------
 # Konstanta (selaras dashboard lama)
 # ---------------------------------------------------------------------------
-SCATTER_SAMPLE = 6000
+SCATTER_SAMPLE = 15_000         # titik non-tier-kuat per dataset (tier kuat selalu lengkap)
 REJECTED_MIN_TIER_RANK = 2      # rejected: hanya muat tier <= rank ini (0=Kritis..)
 MAX_TOTAL_MB = 3.0              # ambang validasi ukuran total output
 
@@ -94,7 +94,14 @@ def dedupe_year(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def sample_scatter(df: pd.DataFrame, feats: list[str]) -> pd.DataFrame:
-    """Pertahankan tier kuat, sample sisanya sampai total ~SCATTER_SAMPLE."""
+    """Pertahankan tier kuat, sample sisanya sampai total ~SCATTER_SAMPLE.
+    Dash terbaru menggambar SEMUA titik (196rb/547rb) lewat WebGL server-side -- kita
+    sudah coba samakan persis (uncapped) tapi TERBUKTI membekukan browser klien:
+    ganti dataset butuh >15 detik, kadang >45 detik (canvas ECharts + rebuild array
+    JS ratusan ribu elemen per re-render, bukan sekali render seperti Dash). Karena
+    filter <100ms di browser adalah alasan utama migrasi dari Dash, sampling tier-aware
+    dipertahankan: titik tier kuat (paling penting secara analitis) tetap 100% lengkap,
+    hanya cloud latar belakang yang di-sample -> visual tetap representatif & instan."""
     keep_cols = [c for c in feats + ["iso_score", "anomaly_tier", "is_dbscan_noise",
                                      "is_contextual_outlier", "is_collective_outlier",
                                      "auto_verdict", "year"]
