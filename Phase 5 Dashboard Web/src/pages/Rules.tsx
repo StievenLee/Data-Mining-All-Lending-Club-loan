@@ -37,7 +37,7 @@ export default function Rules({ data }: { data: DashboardData }) {
           { label: "Lift maks", value: maxLift.toFixed(2), kind: "accent" },
         ]}
       />
-      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 14 }}>
+      <div className="mb-3.5 flex justify-end">
         <LiftSlider max={maxLift} />
       </div>
       <Card

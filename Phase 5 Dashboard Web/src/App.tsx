@@ -28,9 +28,17 @@ export default function App() {
     <>
       <TopNav />
       <Sidebar />
-      <main className="main">
-        {error && <div className="loading">⚠ {error}</div>}
-        {!data && !error && <div className="loading">MEMUAT DATA…</div>}
+      <main className="ml-[var(--side)] mt-[var(--nav)] min-w-0 max-w-[1520px] px-[34px] pb-[60px] pt-[30px] w-[calc(100%-var(--side))] max-[900px]:ml-0 max-[900px]:w-full">
+        {error && (
+          <div className="grid min-h-[60vh] place-items-center font-mono tracking-[0.1em] text-muted">
+            ⚠ {error}
+          </div>
+        )}
+        {!data && !error && (
+          <div className="grid min-h-[60vh] place-items-center font-mono tracking-[0.1em] text-muted">
+            MEMUAT DATA…
+          </div>
+        )}
         {data && (
           <>
             {tab === "ringkasan" && <Ringkasan data={data} />}

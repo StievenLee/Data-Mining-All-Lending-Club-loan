@@ -28,15 +28,8 @@ export default function Anomali({ data }: { data: DashboardData }) {
   );
   const total = totalRecords(data.tiers, dataset, years);
 
-  const selStyle = {
-    fontFamily: "var(--mono)",
-    fontSize: 12,
-    background: "var(--bg-deep)",
-    color: "var(--text)",
-    border: "1px solid var(--line)",
-    borderRadius: 8,
-    padding: "6px 10px",
-  } as const;
+  const selCls =
+    "cursor-pointer rounded-lg border border-line bg-bg-deep px-2.5 py-1.5 font-mono text-xs text-text";
 
   return (
     <>
@@ -56,14 +49,14 @@ export default function Anomali({ data }: { data: DashboardData }) {
         ]}
       />
       <div className="flex flex-wrap items-center justify-end gap-3 mb-3.5">
-        <select style={selStyle} value={safeX} onChange={(e) => setXKey(e.target.value)}>
+        <select className={selCls} value={safeX} onChange={(e) => setXKey(e.target.value)}>
           {feats.map((f) => (
             <option key={f} value={f}>
               X: {f}
             </option>
           ))}
         </select>
-        <select style={selStyle} value={safeY} onChange={(e) => setYKey(e.target.value)}>
+        <select className={selCls} value={safeY} onChange={(e) => setYKey(e.target.value)}>
           {feats.map((f) => (
             <option key={f} value={f}>
               Y: {f}

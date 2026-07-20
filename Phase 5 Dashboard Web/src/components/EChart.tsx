@@ -44,7 +44,7 @@ export default function EChart({ option, height = 340, onRenderMs }: Props) {
   return (
     <div
       ref={hostRef}
-      className="echart"
+      className="w-full"
       style={{ height: typeof height === "number" ? `${height}px` : height }}
     />
   );

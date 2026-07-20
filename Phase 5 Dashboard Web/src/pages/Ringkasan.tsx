@@ -59,7 +59,7 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
       </div>
       <YearRangeSlider bounds={data.summary.year_bounds!} recordCount={total} />
 
-      <div className="grid g-21">
+      <div className="mb-[18px] grid min-w-0 grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-[18px] max-[1080px]:grid-cols-1">
         <Card title="Distribusi Tier Keyakinan" note="skala log">
           <EChart option={tierBar} height={320} />
         </Card>
@@ -67,7 +67,7 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
           <EChart option={gauge} height={320} />
         </Card>
       </div>
-      <div className="grid g-11">
+      <div className="mb-[18px] grid min-w-0 grid-cols-2 gap-[18px] max-[1080px]:grid-cols-1">
         <Card
           title="Tipologi Verdict"
           sub={
@@ -82,13 +82,13 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
           title="Cara Membaca"
           sub="Tier makin tinggi = makin banyak metode sepakat menandai baris sebagai anomali."
         >
-          <div className="legend-row">
+          <div className="mt-3 flex flex-wrap gap-3.5">
             {counts.map((c) => (
-              <span key={c.tier} className="legend-chip">
-                <span
-                  className="swatch"
-                  style={{ background: "var(--violet)" }}
-                />
+              <span
+                key={c.tier}
+                className="flex items-center gap-[7px] font-mono text-[11px] text-muted"
+              >
+                <span className="h-[11px] w-[11px] rounded-[3px] bg-violet" />
                 {c.tier}: {c.count.toLocaleString("id-ID")}
               </span>
             ))}

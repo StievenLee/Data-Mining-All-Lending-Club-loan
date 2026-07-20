@@ -32,47 +32,26 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
           },
         ]}
       />
-      <div className="grid g-21">
+      <div className="mb-[18px] grid min-w-0 grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-[18px] max-[1080px]:grid-cols-1">
         <Card title="Peta Segmen" note="bubble = n anggota">
           <EChart option={option} height={470} />
         </Card>
         <Card title="Profil Segmen" sub="Diurutkan dari risiko terendah.">
-          <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className="flex flex-col gap-3.5">
             {[...data.clusters]
               .sort((a, b) => a.default_rate - b.default_rate)
               .map((c, i) => (
                 <div
                   key={c.cluster}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    padding: "12px 14px",
-                    borderRadius: 14,
-                    background: "var(--glass)",
-                    border: "1px solid var(--line)",
-                  }}
+                  className="flex items-center gap-3 rounded-[14px] border border-line bg-glass px-3.5 py-3"
                 >
                   <span
-                    className="swatch"
-                    style={{
-                      width: 14,
-                      height: 14,
-                      borderRadius: 4,
-                      background: RISK_SCALE[Math.min(i, RISK_SCALE.length - 1)],
-                    }}
+                    className="h-3.5 w-3.5 rounded"
+                    style={{ background: RISK_SCALE[Math.min(i, RISK_SCALE.length - 1)] }}
                   />
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontFamily: "var(--display)", fontWeight: 600 }}>
-                      {c.nama_profil}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--mono)",
-                        fontSize: 11,
-                        color: "var(--muted)",
-                      }}
-                    >
+                  <div className="flex-1">
+                    <div className="font-display font-semibold">{c.nama_profil}</div>
+                    <div className="font-mono text-[11px] text-muted">
                       {c.n_anggota.toLocaleString("id-ID")} anggota · default{" "}
                       {(c.default_rate * 100).toFixed(1)}%
                     </div>
