@@ -159,7 +159,7 @@ body {
 /* ---------- Year range filter (Fase 5) ---------- */
 .year-filter {
   grid-column: 1 / -1;
-  margin-top: 18px; padding: 14px 20px 10px;
+  margin: 0 0 22px; padding: 14px 20px 10px;
   background: var(--panel2); border: 1px solid var(--line); border-radius: 12px;
 }
 .year-filter-head {
