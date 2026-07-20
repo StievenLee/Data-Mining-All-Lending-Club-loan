@@ -1,12 +1,51 @@
 import { useMemo, useState } from "react";
+import type { ReactNode } from "react";
 import type { DashboardData } from "../types";
 import { useDashboard } from "../store/useDashboard";
 import { filterSampleRows, totalRecords } from "../data/filters";
 import { anomalyScatterOption } from "../components/charts/options";
+import { COLORS } from "../theme/colors";
 import EChart from "../components/EChart";
 import Card from "../components/Card";
 import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
+import AnomalyGlossary from "../components/AnomalyGlossary";
+
+const CASES: { tag: string; title: string; color: string; body: ReactNode }[] = [
+  {
+    tag: "Kasus 1 · idx 526595",
+    title: "Sinyal Risiko",
+    color: COLORS.error,
+    body: (
+      <>
+        Membuka banyak akun kredit baru (<b>num_tl_op z +5,5</b>) + FICO rendah + bunga
+        tinggi. Profil credit-hungry — eskalasi ke tim risiko.
+      </>
+    ),
+  },
+  {
+    tag: "Kasus 2 · idx 1067675",
+    title: "Kasus Langka (Sah)",
+    color: COLORS.cyan,
+    body: (
+      <>
+        Skor kredit sangat baik (<b>FICO z +2,8</b>) + cicilan besar, bunga normal.
+        Nasabah premium — aman, tanpa tindakan.
+      </>
+    ),
+  },
+  {
+    tag: "Kasus 3 · idx 536084",
+    title: "Kesalahan Data",
+    color: COLORS.amber,
+    body: (
+      <>
+        Nilai mustahil (<b>num_tl_op z +9,9</b>). Kemungkinan kesalahan input —
+        verifikasi ke sumber data.
+      </>
+    ),
+  },
+];
 
 export default function Anomali({ data }: { data: DashboardData }) {
   const dataset = useDashboard((s) => s.dataset);
@@ -69,6 +108,38 @@ export default function Anomali({ data }: { data: DashboardData }) {
       <Card title="Scatter Anomali" note={`${safeX} × ${safeY}`}>
         <EChart option={option} height={480} />
       </Card>
+      <div className="h-[18px]" />
+      <AnomalyGlossary dataset={dataset} />
+      {dataset === "accepted" && (
+        <>
+          <div className="h-[18px]" />
+          <div className="grid grid-cols-3 gap-[18px] max-[1080px]:grid-cols-1">
+            {CASES.map((c) => (
+              <div
+                key={c.tag}
+                className="relative overflow-hidden rounded-[20px] border border-line bg-glass px-5 py-[18px]"
+              >
+                <div
+                  className="absolute inset-y-0 left-0 w-[3px]"
+                  style={{ background: c.color }}
+                />
+                <div className="mb-2.5 font-mono text-[11px] tracking-[0.05em] text-muted">
+                  {c.tag}
+                </div>
+                <div
+                  className="mb-2.5 font-display text-base font-semibold"
+                  style={{ color: c.color }}
+                >
+                  {c.title}
+                </div>
+                <div className="text-[13.5px] leading-[1.6] text-text [&_b]:font-mono [&_b]:text-[12.5px]">
+                  {c.body}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </>
   );
 }
