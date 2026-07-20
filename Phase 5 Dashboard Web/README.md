@@ -8,9 +8,16 @@ Deploy sebagai situs statis (Vercel/Cloudflare/Netlify) — gratis, tanpa mainte
 
 ## Stack
 - **Vite + React + TypeScript** (SPA statis)
+- **Tailwind CSS v4** (styling — utility class di komponen; token desain di `@theme`)
 - **Apache ECharts** (chart canvas, cepat)
 - **Zustand** (state + sinkron URL)
 - Data prep: **Python** (`scripts/build_data.py`)
+
+### Cara ubah tampilan
+- **Warna/font global** → `src/styles.css` blok `@theme` (1 sumber; ubah `--color-lime` →
+  semua `bg-lime`/`text-lime` ikut berubah).
+- **Layout/spacing** → utility class langsung di komponen (`src/components`, `src/pages`).
+- **Efek kompleks** (glassmorphism, keyframe) → `src/styles.css` (base + `@keyframes`).
 
 ## Cara menjalankan (lokal)
 
