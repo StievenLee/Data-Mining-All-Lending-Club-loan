@@ -10,7 +10,7 @@ Menjalankan:  pip install dash plotly pandas ; python app.py  ->  http://127.0.0
 from __future__ import annotations
 import base64
 import dash
-from dash import dcc, html, Input, Output
+from dash import dcc, html, Input, Output, State
 import plotly.graph_objects as go
 
 import data_loader as dl
@@ -21,9 +21,10 @@ from theme import COLORS, VERDICT_COLORS, TIER_COLORS, plotly_layout, FONT_MONO
 # ---------------------------------------------------------------------------
 ACC = dl.load_anomaly("accepted")
 REJ = dl.load_anomaly("rejected")
-RULES = dl.load_rules()
+RULES = {"accepted": dl.load_rules("accepted"),
+         "rejected": dl.load_rules("rejected")}
 CLUSTERS = dl.load_clusters()
-KPI = dl.kpi_summary(ACC, REJ, RULES)
+KPI = dl.kpi_summary(ACC, REJ, RULES["accepted"])
 DB_META = {"accepted": dl.load_dbscan_meta("accepted"),
            "rejected": dl.load_dbscan_meta("rejected")}
 DATASETS = {"accepted": ACC, "rejected": REJ}
@@ -33,6 +34,11 @@ YEAR_RANGE = dl.year_bounds(ACC, REJ)   # None bila kolom 'year' belum ada -> fi
 def dataset_for(dataset, years=None):
     """Dataframe dataset terpilih, sudah disaring ke rentang tahun."""
     return dl.filter_years(DATASETS[dataset or "accepted"], years)
+
+
+def rules_for(dataset):
+    """Association rules Fase 3 untuk dataset terpilih (accepted/rejected)."""
+    return RULES.get(dataset or "accepted", RULES["accepted"])
 
 
 def year_presets(lo, hi):
@@ -292,6 +298,40 @@ INDEX_HTML = """
       .case.rare{border-color:rgba(125,244,255,.4)}.case.rare .case-title{color:var(--cyan)}.case.rare::before{background:var(--cyan)}
       .case.err{border-color:rgba(255,212,121,.45)}.case.err .case-title{color:var(--amber)}.case.err::before{background:var(--amber)}
 
+      /* Glosarium / legenda tab Anomali */
+      .glossary{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px 30px;margin-top:6px}
+      @media (max-width:820px){.glossary{grid-template-columns:minmax(0,1fr)}}
+      .gloss-group-label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+        color:var(--muted);margin:0 0 12px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+      .gloss-item{display:flex;gap:12px;align-items:flex-start;margin-bottom:13px}
+      .gloss-sw{flex:none;width:16px;height:16px;margin-top:2px;display:grid;place-items:center}
+      .sw{width:13px;height:13px;box-sizing:border-box}
+      .sw.dot{border-radius:50%;background:var(--violet)}
+      .sw.dot-hi{border-radius:50%;background:var(--lime);box-shadow:0 0 7px rgba(195,244,0,.5)}
+      .sw.ring{border-radius:50%;background:transparent;border:1.8px solid var(--cyan)}
+      .sw.sq-open{background:transparent;border:1.8px solid var(--violet)}
+      .sw.dia-open{width:11px;height:11px;background:transparent;border:1.8px solid var(--amber);transform:rotate(45deg)}
+      .sw.chip{width:14px;height:14px;border-radius:4px}
+      .gloss-text{min-width:0}
+      .gloss-term{font-family:var(--body);font-weight:600;font-size:13.5px;line-height:1.3}
+      .gloss-desc{color:var(--muted);font-size:12.5px;line-height:1.5;margin-top:2px}
+      .gloss-desc b{color:var(--text);font-family:var(--mono);font-size:11.5px;font-weight:500}
+      .gloss-note{color:var(--muted);font-size:12px;line-height:1.5;margin:6px 0 0;font-style:italic}
+
+      /* Kartu narasi Association Rules */
+      .rule-card{background:var(--glass);border:1px solid var(--line);border-radius:18px;
+        padding:16px 20px;margin-bottom:12px;position:relative;overflow:hidden}
+      .rule-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--lime)}
+      .rule-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:8px}
+      .rule-no{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--muted)}
+      .rule-lift{font-family:var(--mono);font-weight:700;font-size:13px;color:#161e00;background:var(--lime);
+        border-radius:9999px;padding:4px 12px;box-shadow:0 0 12px rgba(195,244,0,.3)}
+      .rule-narr{font-family:var(--body);font-size:15px;line-height:1.55;margin:0 0 12px;color:var(--text)}
+      .rule-meter{height:6px;border-radius:9999px;background:var(--glass2);overflow:hidden;margin-bottom:8px}
+      .rule-meter-fill{height:100%;border-radius:9999px;
+        background:linear-gradient(90deg,var(--violet),var(--lime))}
+      .rule-meta{font-family:var(--mono);font-size:11px;letter-spacing:.03em;color:var(--muted)}
+
       .rc-slider-track{background:var(--lime)!important}
       .rc-slider-handle{border-color:var(--lime)!important;background:var(--bg-deep)!important;
         box-shadow:0 0 10px rgba(195,244,0,.5)!important;opacity:1!important}
@@ -431,8 +471,10 @@ def page_head(active, dataset, years=None):
     title, sub = PAGE_META[active]
     m = hero_metrics(dataset, years)
     if active == "rules":
-        pills = [("Rules", f"{KPI['n_rules']}", "ai"),
-                 ("Lift tertinggi", f"{KPI['max_lift']:.2f}", "accent")]
+        r = rules_for(dataset)
+        max_lift = float(r["lift"].max()) if len(r) else 0.0
+        pills = [("Rules", f"{len(r)}", "ai"),
+                 ("Lift tertinggi", f"{max_lift:.2f}", "accent")]
     elif active == "segmentasi":
         n = CLUSTERS["n_anggota"].sum()
         pills = [("Klaster", "3", "ai"),
@@ -572,34 +614,107 @@ def fig_scatter(df):
     return fig
 
 
-def _short(s, n=46):
-    s = str(s)
-    return s if len(s) <= n else s[:n - 1] + "…"
+# ---------------------------------------------------------------------------
+# Association Rules -> narasi bisnis (agar mudah dipahami awam)
+# ---------------------------------------------------------------------------
+import re as _re
+
+# (prefix, kategori, kata-benda). Urut terpanjang dulu: 'sub_grade_' menang atas 'grade_'.
+_RULE_PREFIX = [
+    ("Amount Requested_bin_", "size",  "jumlah diminta"),
+    ("Debt-To-Income Ratio_bin_", "level", "DTI"),
+    ("Employment Length_bin_", "emp", "masa kerja"),
+    ("int_rate_bin_", "level", "bunga"),
+    ("loan_amnt_bin_", "size",  "jumlah pinjaman"),
+    ("income_bin_",   "level", "pendapatan"),
+    ("dti_bin_",      "level", "DTI"),
+    ("sub_grade_",    "plain", "sub-grade"),
+    ("home_ownership_", "home", ""),
+    ("loan_status_",  "status", ""),
+    ("grade_",        "plain", "grade"),
+    ("term_",         "term",  ""),
+]
+_LEVEL = {"Very Low": "sangat rendah", "Low": "rendah", "Lower-Mid": "menengah-bawah",
+          "Mid": "menengah", "Medium": "sedang", "High": "tinggi", "Very High": "sangat tinggi"}
+_SIZE  = {"Small": "kecil", "Medium": "menengah", "Large": "besar", "Very Small": "sangat kecil",
+          "Very Large": "sangat besar"}
+_HOME  = {"MORTGAGE": "berstatus KPR (mortgage)", "RENT": "berstatus sewa", "OWN": "milik sendiri"}
+_STATUS = {"Fully Paid": "lunas penuh", "Charged Off": "gagal bayar (charged off)",
+           "Default": "menunggak (default)"}
 
 
-def fig_rules(df, min_lift=1.0):
-    d = df[df["lift"] >= min_lift].sort_values("lift", ascending=True)
-    label = d["antecedent"].astype(str)
-    if "consequent" in d.columns:
-        label = label + "  →  " + d["consequent"].astype(str)
-    label = label.map(lambda s: _short(s, 44))
-    full = (d["antecedent"].astype(str) + "  →  " + d["consequent"].astype(str)
-            if "consequent" in d.columns else d["antecedent"].astype(str))
-    fig = go.Figure(go.Bar(
-        x=d["lift"], y=label, orientation="h",
-        marker=dict(color=d["confidence"],
-                    colorscale=[[0, COLORS["violet_deep"]], [0.5, COLORS["violet"]], [1, COLORS["lime"]]],
-                    showscale=True, colorbar=dict(title="conf", thickness=10,
-                    tickfont=dict(family=FONT_MONO, size=10))),
-        customdata=list(zip(d["support"], d["confidence"], full)),
-        hovertemplate=("%{customdata[2]}<br>lift=%{x:.2f}<br>support=%{customdata[0]:.3f}"
-                       "<br>confidence=%{customdata[1]:.3f}<extra></extra>")))
-    lay = plotly_layout(height=max(360, len(d) * 30 + 80))
-    lay["xaxis"]["title"] = "lift"
-    lay["margin"]["l"] = 240
-    lay["yaxis"]["tickfont"] = dict(family=FONT_MONO, size=10)
-    fig.update_layout(**lay)
-    return fig
+def humanize_item(token: str) -> str:
+    """Terjemahkan satu item rule berkode jadi frasa bisnis Indonesia."""
+    t = str(token).strip()
+    for prefix, kind, noun in _RULE_PREFIX:
+        if t.startswith(prefix):
+            val = t[len(prefix):].strip()
+            m = _re.match(r"^(.*?)(\s*\([^)]*\))?$", val)
+            level, rng = (m.group(1).strip(), (m.group(2) or "").strip()) if m else (val, "")
+            if kind == "level":
+                return " ".join(x for x in [noun, _LEVEL.get(level, level.lower()), rng] if x)
+            if kind == "size":
+                return " ".join(x for x in [noun, _SIZE.get(level, level.lower()), rng] if x)
+            if kind == "emp":
+                return " ".join(x for x in [noun, level.lower(), rng] if x)
+            if kind == "home":
+                return _HOME.get(val, f"kepemilikan rumah {val.lower()}")
+            if kind == "status":
+                return _STATUS.get(val, val.lower())
+            if kind == "term":
+                return f"tenor {val} bulan"
+            return f"{noun} {val}".strip()          # plain: grade A / sub-grade B1
+    return t.replace("_", " ")                       # fallback aman: tak pernah kosong
+
+
+def _join_id(parts) -> str:
+    """Gabung frasa gaya Indonesia: 'a', 'a dan b', 'a, b, dan c'."""
+    parts = [p for p in parts if p]
+    if len(parts) <= 1:
+        return parts[0] if parts else ""
+    if len(parts) == 2:
+        return f"{parts[0]} dan {parts[1]}"
+    return ", ".join(parts[:-1]) + ", dan " + parts[-1]
+
+
+def _humanize_side(itemset: str) -> str:
+    return _join_id([humanize_item(p) for p in str(itemset).split(" + ") if p.strip()])
+
+
+def rule_narrative(antecedent, consequent) -> str:
+    ant = _humanize_side(antecedent)
+    cons = _humanize_side(consequent)
+    return f"Bila pinjaman {ant}, maka {cons}."
+
+
+def rule_cards(dataset, min_lift=1.0, top_n=10):
+    """Daftar kartu narasi: {top_n} rule teratas per lift, sudah difilter min_lift."""
+    r = rules_for(dataset)
+    d = r[r["lift"] >= (min_lift or 1.0)].sort_values("lift", ascending=False).head(top_n)
+    if len(d) == 0:
+        return html.P("Tidak ada rule dengan lift di atas ambang ini. Turunkan slider lift.",
+                      className="hint")
+    def _num(v):
+        try:
+            f = float(v); return f if f == f else 0.0   # NaN != NaN
+        except (TypeError, ValueError):
+            return 0.0
+    cards = []
+    for i, (_, row) in enumerate(d.iterrows(), start=1):
+        conf = _num(row["confidence"]); sup = _num(row["support"]); lift = _num(row["lift"])
+        cards.append(html.Div(className="rule-card", children=[
+            html.Div(className="rule-head", children=[
+                html.Span(f"Rule #{i}", className="rule-no"),
+                html.Span(f"{lift:.1f}× lift", className="rule-lift"),
+            ]),
+            html.P(rule_narrative(row.get("antecedent", ""), row.get("consequent", "")),
+                   className="rule-narr"),
+            html.Div(className="rule-meter", children=html.Div(
+                className="rule-meter-fill", style={"width": f"{max(2, conf * 100):.0f}%"})),
+            html.Div(f"confidence {conf:.0%} · muncul di {sup:.1%} data · "
+                     f"{lift:.1f}× lebih sering dari kebetulan", className="rule-meta"),
+        ]))
+    return cards
 
 
 def fig_cluster(df):
@@ -698,18 +813,98 @@ def tab_segmentasi(dataset, years=None):
 
 
 def tab_rules(dataset, years=None):
+    r = rules_for(dataset)
+    ds_label = "Accepted" if (dataset or "accepted") == "accepted" else "Rejected"
+    smax = max(float(r["lift"].max()) if len(r) else 1.1, 1.1)
     return html.Div(className="card", children=[
         html.Div(className="card-head", children=[
             html.H3("Association rules berperingkat"),
-            html.Span("Fase 3 · Apriori", className="badge")]),
-        html.P("Geser untuk menyaring berdasarkan lift minimum. Warna batang = confidence "
-               "(violet → lime).", className="hint"),
+            html.Span(f"Fase 3 · Apriori · {ds_label}", className="badge")]),
+        html.P(f"Dari {len(r):,} rule dataset {ds_label}, ditampilkan 10 teratas per lift dalam "
+               "bahasa bisnis. Geser slider untuk menaikkan ambang lift minimum.",
+               className="hint"),
         html.Div(style={"padding": "4px 6px 20px"}, children=[
-            dcc.Slider(id="lift-slider", min=1.0, max=float(RULES["lift"].max()), step=0.1,
+            dcc.Slider(id="lift-slider", min=1.0, max=smax, step=0.1,
                        value=1.0, marks=None, tooltip={"placement": "bottom", "always_visible": True}),
         ]),
-        dcc.Graph(id="g-rules", figure=fig_rules(RULES, 1.0), style={"height":"520px"}, config={"displayModeBar": False, "responsive": True}),
+        html.Div(id="rules-list", children=rule_cards(dataset, 1.0)),
     ])
+
+
+def _gloss_item(sw_class, term, desc_children):
+    """Satu baris glosarium: swatch (mirip penanda scatter) + istilah + karakteristik."""
+    return html.Div(className="gloss-item", children=[
+        html.Div(className="gloss-sw", children=html.Span(className=f"sw {sw_class}")),
+        html.Div(className="gloss-text", children=[
+            html.Div(term, className="gloss-term"),
+            html.Div(desc_children, className="gloss-desc"),
+        ]),
+    ])
+
+
+def anomaly_glossary(dataset):
+    """Panduan membaca peta anomali. Definisi selaras sumber Fase 4 (notebook).
+    Dataset-aware: kolektif/kontekstual & tipologi bisnis hanya untuk Accepted."""
+    is_acc = (dataset or "accepted") == "accepted"
+
+    # --- Kelompok 1: sinyal pada peta (cocok dengan trace fig_scatter) ---
+    peta = [
+        _gloss_item("dot", "Anomali", [
+            "Tiap titik = satu record anomali. Warna = skor ", html.B("Isolation Forest"),
+            " (makin lime, makin terisolasi dari populasi)."]),
+    ]
+    if is_acc:
+        peta.append(_gloss_item("sq-open", "Kolektif", [
+            "Anggota klaster ", html.B("Highest-Risk"), " (Fase 2). Individu belum tentu ekstrem, "
+            "tapi kelompoknya menyimpang bersama (FICO rendah, bunga tinggi, gagal bayar tinggi)."]))
+        peta.append(_gloss_item("dia-open", "Kontekstual", [
+            "Bunga ekstrem ", html.B("relatif kelompok skor FICO-nya"), " (|z| > 3 dalam bucket), "
+            "meski terlihat normal secara global."]))
+    peta.append(_gloss_item("dot-hi", "Tier tinggi", [
+        "Keyakinan tertinggi: ", html.B("Kritis"), " (DBSCAN + 3 metode) atau ", html.B("Sangat Kuat"),
+        " (DBSCAN + metode). Bukti statistik & struktural bertemu."]))
+    peta.append(_gloss_item("ring", "Noise DBSCAN", [
+        "Ditandai noise oleh DBSCAN Fase 2: tak masuk klaster kepadatan mana pun → ",
+        "terisolasi secara struktural."]))
+
+    groups = [html.Div(className="gloss-group", children=[
+        html.Div("Sinyal pada peta", className="gloss-group-label"), *peta])]
+
+    # --- Kelompok 2: tipologi bisnis (auto-verdict) — hanya Accepted ---
+    if is_acc:
+        tipologi = [
+            _gloss_item("chip", "Sinyal Risiko", [
+                "Pola risiko kredit nyata: FICO rendah + bunga tinggi, atau buka sangat banyak akun "
+                "(loan-stacking), atau gagal bayar + multi-metode. → ", html.B("eskalasi ke tim risiko"), "."]),
+            _gloss_item("chip", "Kasus Langka (Sah)", [
+                "Ekstrem lintas fitur tapi konsisten, tanpa pola risiko/error. Nasabah tak biasa namun sah → ",
+                html.B("tanpa tindakan"), "."]),
+            _gloss_item("chip", "Kesalahan Data", [
+                "Nilai tak wajar (|z| > 8) → indikasi kesalahan input. → ", html.B("verifikasi ke sumber"), "."]),
+        ]
+        # Warnai chip sesuai tipologi (konsisten dgn kartu kasus & pie tipologi).
+        for it, col in zip(tipologi, [COLORS["error"], COLORS["cyan"], COLORS["amber"]]):
+            it.children[0].children.style = {"background": col, "borderRadius": "4px"}
+        groups.append(html.Div(className="gloss-group", children=[
+            html.Div("Tipologi bisnis (auto-verdict)", className="gloss-group-label"),
+            *tipologi,
+            html.P("Prioritas berjenjang: Kesalahan Data mengunci, lalu Sinyal Risiko, "
+                   "lalu Kasus Langka (Sah).", className="gloss-note"),
+        ]))
+
+    card_children = [
+        html.Div(className="card-head", children=[
+            html.H3("Panduan membaca peta anomali"),
+            html.Span("glosarium", className="badge")]),
+        html.P("Arti tiap warna, bentuk, dan istilah pada tab ini — agar temuan mudah dibaca "
+               "tanpa latar teknis.", className="hint"),
+        html.Div(className="glossary", children=groups),
+    ]
+    if not is_acc:
+        card_children.append(html.P(
+            "Catatan: anomali Kolektif/Kontekstual dan tipologi bisnis (auto-verdict) hanya "
+            "dihitung untuk dataset Accepted.", className="gloss-note"))
+    return html.Div(className="card", children=card_children)
 
 
 def tab_anomali(dataset, years=None):
@@ -729,6 +924,8 @@ def tab_anomali(dataset, years=None):
                    "Klik label di legenda untuk menyembunyikan/menampilkan tiap jenis.", className="hint"),
             dcc.Graph(id="g-scatter", figure=fig_scatter(_df), style={"height":"470px"}, config={"displayModeBar": True, "displaylogo": False, "responsive": True}),
         ]),
+        html.Div(style={"height": "18px"}),
+        anomaly_glossary(dataset),
         html.Div(style={"height": "18px"}),
         html.Div(className="grid g-3", children=[
             html.Div(className="case risk", children=[
@@ -876,9 +1073,10 @@ def year_feedback(years, dataset):
     return label, f"{n:,} dari {total:,} record ({pct:.0f}%)"
 
 
-@app.callback(Output("g-rules", "figure"), Input("lift-slider", "value"))
-def upd_rules(min_lift):
-    return fig_rules(RULES, min_lift or 1.0)
+@app.callback(Output("rules-list", "children"), Input("lift-slider", "value"),
+              State("dataset-store", "data"))
+def upd_rules(min_lift, dataset):
+    return rule_cards(dataset, min_lift or 1.0)
 
 
 if __name__ == "__main__":

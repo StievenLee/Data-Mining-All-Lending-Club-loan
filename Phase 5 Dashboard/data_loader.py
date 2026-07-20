@@ -17,6 +17,7 @@ Cara menyambungkan data asli:
 """
 from __future__ import annotations
 import os
+import re
 import json
 import numpy as np
 import pandas as pd
@@ -27,7 +28,8 @@ BASE_DIR = os.path.dirname(__file__)
 ANOMALY_ACCEPTED_PATH = os.path.join(DATA_DIR, "anomaly_report_accepted.csv")
 ANOMALY_REJECTED_PATH = os.path.join(DATA_DIR, "anomaly_report_rejected.csv")
 INVESTIGATION_PATH    = os.path.join(DATA_DIR, "investigation_table_accepted.csv")
-RULES_PATH            = os.path.join(DATA_DIR, "results_apriori_cleaned.csv")   # Fase 3
+RULES_ACCEPTED_PATH   = os.path.join(DATA_DIR, "results_apriori_accepted.csv")  # Fase 3
+RULES_REJECTED_PATH   = os.path.join(DATA_DIR, "results_apriori_rejected.csv")  # Fase 3
 CLUSTER_PATH          = os.path.join(DATA_DIR, "cluster_profiles.csv")          # Fase 2
 
 # JSON DBSCAN nyata dari Fase 2 (disertakan di repo dashboard)
@@ -208,19 +210,40 @@ def filter_years(df: pd.DataFrame, yr: tuple[int, int] | None) -> pd.DataFrame:
     return df[s.between(lo, hi)]
 
 
-def load_rules() -> pd.DataFrame:
-    df, is_dummy = _read_or_dummy(RULES_PATH, _dummy_rules, "association rules")
+def _clean_itemset(s) -> str:
+    """Ubah itemset apriori jadi label ringkas 'a + b + c'.
+    Menangani format frozenset({'x', 'y'}) (mlxtend/mlextend) maupun 'x, y' biasa."""
+    s = str(s).strip()
+    m = re.match(r"^frozenset\(\{(.*)\}\)$", s, re.S)
+    if m:
+        s = m.group(1)
+    s = s.replace("'", "").replace('"', "")
+    parts = [p.strip() for p in s.split(",") if p.strip()]
+    return " + ".join(parts)
+
+
+def load_rules(dataset: str = "accepted") -> pd.DataFrame:
+    """Association rules Fase 3 per dataset ('accepted' | 'rejected').
+    File: results_apriori_accepted.csv / results_apriori_rejected.csv."""
+    path = RULES_ACCEPTED_PATH if dataset == "accepted" else RULES_REJECTED_PATH
+    df, is_dummy = _read_or_dummy(
+        path,
+        lambda: _dummy_rules()[lambda d: d["dataset"].str.lower() == dataset],
+        f"association rules {dataset}")
     # Normalisasi nama kolom bila CSV asli Fase 3 dipakai (antecedents/consequents).
     if not is_dummy:
         ren = {}
         if "antecedents" in df.columns: ren["antecedents"] = "antecedent"
         if "consequents" in df.columns: ren["consequents"] = "consequent"
         df = df.rename(columns=ren)
+        for col in ["antecedent", "consequent"]:
+            if col in df.columns:
+                df[col] = df[col].map(_clean_itemset)
         for col in ["support", "confidence", "lift"]:
             if col not in df.columns:
                 df[col] = np.nan
-        if "dataset" not in df.columns:
-            df["dataset"] = "Accepted"
+        df["dataset"] = dataset.capitalize()
+    df = df.sort_values("lift", ascending=False).reset_index(drop=True)
     return df
 
 
