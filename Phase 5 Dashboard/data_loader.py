@@ -34,7 +34,6 @@ CLUSTER_PATH          = os.path.join(DATA_DIR, "cluster_profiles.csv")          
 DBSCAN_ACC_JSON = os.path.join(BASE_DIR, "dbscan_outliers_accepted.json")
 DBSCAN_REJ_JSON = os.path.join(BASE_DIR, "dbscan_outliers_rejected.json")
 
-SCATTER_SAMPLE = 6000
 REJECTED_MIN_TIER_RANK = 2     # 0=Kritis ... hanya muat tier <= rank ini utk rejected
 
 TIER_ORDER = [
@@ -161,15 +160,12 @@ def load_anomaly(dataset: str) -> pd.DataFrame:
 
 
 def scatter_frame(df: pd.DataFrame, x: str, y: str) -> pd.DataFrame:
-    keep = [c for c in [x, y, "iso_score", "anomaly_tier",
-                        "is_dbscan_noise", "auto_verdict"] if c in df.columns]
-    d = df[keep].dropna(subset=[x, y])
-    if len(d) > SCATTER_SAMPLE:
-        hi = d[d["anomaly_tier"].isin(TIER_ORDER[:2])]
-        lo = d.drop(hi.index)
-        lo = lo.sample(min(len(lo), SCATTER_SAMPLE - len(hi)), random_state=42)
-        d = pd.concat([hi, lo])
-    return d
+    # Tanpa sampling: seluruh titik terfilter digambar agar kepadatan scatter
+    # benar-benar mencerminkan filter tahun. Scattergl (WebGL) menanggung volume.
+    keep = [c for c in [x, y, "iso_score", "anomaly_tier", "is_dbscan_noise",
+                        "is_contextual_outlier", "is_collective_outlier",
+                        "auto_verdict"] if c in df.columns]
+    return df[keep].dropna(subset=[x, y])
 
 
 def tier_counts(df: pd.DataFrame) -> pd.DataFrame:

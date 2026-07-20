@@ -452,7 +452,7 @@ def page_head(active, dataset, years=None):
                 html.Div(val, className="pill-value"),
             ]) for lbl, val, cls in pills
         ]),
-    ] + ([_ys] if (active != "rules" and (_ys := year_slider(years))) else []))
+    ])
 
 
 # ---------------------------------------------------------------------------
@@ -532,6 +532,34 @@ def fig_scatter(df):
                     opacity=.72, line=dict(width=0)),
         text=d.get("anomaly_tier"),
         hovertemplate=f"{x}=%{{x:.2f}}<br>{y}=%{{y:.2f}}<br>%{{text}}<extra></extra>", name="anomali"))
+    # Overlay jenis anomali (Fase 4): kolektif = anomali berkelompok (relatif klaster),
+    # kontekstual = ekstrem pada konteksnya. Simbol terbuka agar awan dasar tetap tembus;
+    # bisa di-toggle lewat legenda. Hanya untuk Accepted (kolom ini tak ada di Rejected).
+    if "is_collective_outlier" in d.columns:
+        cl = d[d["is_collective_outlier"]]
+        if len(cl):
+            fig.add_trace(go.Scattergl(
+                x=cl[x], y=cl[y], mode="markers", name="Kolektif",
+                marker=dict(size=7, symbol="square-open", opacity=.5,
+                            color=COLORS["violet"], line=dict(width=1.1, color=COLORS["violet"])),
+                hovertemplate=f"Kolektif<br>{x}=%{{x:.2f}}<br>{y}=%{{y:.2f}}<extra></extra>"))
+    if "is_contextual_outlier" in d.columns:
+        cx = d[d["is_contextual_outlier"]]
+        if len(cx):
+            fig.add_trace(go.Scattergl(
+                x=cx[x], y=cx[y], mode="markers", name="Kontekstual",
+                marker=dict(size=9, symbol="diamond-open", opacity=.9,
+                            color=COLORS["amber"], line=dict(width=1.4, color=COLORS["amber"])),
+                hovertemplate=f"Kontekstual<br>{x}=%{{x:.2f}}<br>{y}=%{{y:.2f}}<extra></extra>"))
+    if "anomaly_tier" in d.columns:
+        hi = d[d["anomaly_tier"].isin(dl.TIER_ORDER[:2])]
+        if len(hi):
+            fig.add_trace(go.Scattergl(
+                x=hi[x], y=hi[y], mode="markers", name="Tier tinggi (Kritis / Sangat Kuat)",
+                marker=dict(size=12, color=COLORS["lime"], opacity=.95,
+                            line=dict(color=COLORS["bg_deep"], width=1.2)),
+                text=hi["anomaly_tier"],
+                hovertemplate=f"{x}=%{{x:.2f}}<br>{y}=%{{y:.2f}}<br>%{{text}}<extra></extra>"))
     if "is_dbscan_noise" in d.columns:
         db = d[d["is_dbscan_noise"]]
         fig.add_trace(go.Scattergl(x=db[x], y=db[y], mode="markers", name="Noise DBSCAN (Fase 2)",
@@ -686,13 +714,19 @@ def tab_rules(dataset, years=None):
 
 def tab_anomali(dataset, years=None):
     _df = dataset_for(dataset, years)
+    yr = years or YEAR_RANGE
+    yr_label = (f"{yr[0]}–{yr[1]}" if yr and yr[0] != yr[1]
+                else (f"{yr[0]}" if yr else "semua tahun"))
     return html.Div([
         html.Div(className="card", children=[
             html.Div(className="card-head", children=[
                 html.H3("Peta anomali — bunga vs skor kredit"),
-                html.Span("Isolation Forest × DBSCAN", className="badge")]),
+                html.Span(f"{len(_df):,} record · {yr_label}", className="badge")]),
             html.P("Warna = skor Isolation Forest (makin lime makin terisolasi). "
-                   "Lingkaran cyan = record yang juga noise DBSCAN Fase 2.", className="hint"),
+                   "Titik lime besar = tier tinggi (Kritis / Sangat Kuat). "
+                   "Lingkaran cyan = noise DBSCAN Fase 2. "
+                   "Belah ketupat amber = anomali kontekstual; kotak violet = anomali kolektif. "
+                   "Klik label di legenda untuk menyembunyikan/menampilkan tiap jenis.", className="hint"),
             dcc.Graph(id="g-scatter", figure=fig_scatter(_df), style={"height":"470px"}, config={"displayModeBar": True, "displaylogo": False, "responsive": True}),
         ]),
         html.Div(style={"height": "18px"}),
@@ -738,6 +772,7 @@ app.layout = html.Div([
     html.Div(className="main", children=[
         html.Div(id="mtabs-slot"),
         html.Div(id="page-head-slot"),
+        html.Div(id="year-slot", children=year_slider()),
         html.Div(id="tab-content"),
         html.Div(className="foot", children=[
             html.Span("Data Mining Project · KDD 5 Fase · Lending Club"),
@@ -758,8 +793,12 @@ app.layout = html.Div([
 )
 def switch_tab(*_):
     trig = dash.callback_context.triggered_id
-    if isinstance(trig, dict):
-        return trig["index"]
+    # Hanya terima trigger dari tombol navigasi (side/mtab). Tombol pattern-matching
+    # lain (mis. yr-preset) juga ber-ID dict, jadi tipe WAJIB diperiksa.
+    if isinstance(trig, dict) and trig.get("type") in ("side", "mtab"):
+        idx = trig.get("index")
+        if idx in TAB_FN:
+            return idx
     return dash.no_update
 
 
@@ -775,6 +814,7 @@ def sync_dataset(v):
     Output("mtabs-slot", "children"),
     Output("page-head-slot", "children"),
     Output("tab-content", "children"),
+    Output("year-slot", "style"),
     Input("active-tab", "data"),
     Input("dataset-store", "data"),
     Input("year-store", "data"),
@@ -783,20 +823,38 @@ def render(active, dataset, years):
     active = active or "ringkasan"; dataset = dataset or "accepted"
     yr = tuple(years) if years else None
     return (breadcrumb(active), sidebar(active), mobile_tabs(active),
-            page_head(active, dataset, yr), TAB_FN[active](dataset, yr))
+            page_head(active, dataset, yr), TAB_FN[active](dataset, yr),
+            {"display": "none"} if active == "rules" else {})
+
+
+# Preset menulis ke NILAI slider (bukan langsung ke store). Dengan begitu slider
+# adalah satu-satunya sumber kebenaran: handle-nya selalu mencerminkan rentang aktif,
+# dan geseran berikutnya tidak lagi membuang preset.
+@app.callback(
+    Output("year-slider", "value"),
+    Input({"type": "yr-preset", "index": dash.ALL}, "n_clicks"),
+    prevent_initial_call=True,
+)
+def apply_preset(clicks):
+    trig = dash.callback_context.triggered_id
+    if not (isinstance(trig, dict) and trig.get("type") == "yr-preset"):
+        return dash.no_update
+    # Abaikan trigger dari komponen yang baru di-mount (n_clicks 0/None).
+    if not any(c for c in (clicks or []) if c):
+        return dash.no_update
+    try:
+        a, b = trig["index"].split("-")
+        return [int(a), int(b)]
+    except (ValueError, KeyError):
+        return dash.no_update
 
 
 @app.callback(
     Output("year-store", "data"),
     Input("year-slider", "value"),
-    Input({"type": "yr-preset", "index": dash.ALL}, "n_clicks"),
     prevent_initial_call=True,
 )
-def sync_years(v, _clicks):
-    trig = dash.callback_context.triggered_id
-    if isinstance(trig, dict):                      # tombol preset ditekan
-        a, b = trig["index"].split("-")
-        return [int(a), int(b)]
+def sync_years(v):
     if not v:
         return dash.no_update
     return [int(v[0]), int(v[1])]
