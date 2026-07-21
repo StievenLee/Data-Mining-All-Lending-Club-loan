@@ -92,20 +92,19 @@ export default function AnomalyGlossary({ dataset }: { dataset: "accepted" | "re
             </div>
             <GlossItem chipColor={COLORS.error} term="Sinyal Risiko">
               Pola risiko kredit nyata: FICO rendah + bunga tinggi, atau buka sangat
-              banyak akun (loan-stacking), atau gagal bayar + multi-metode. →{" "}
-              <b>eskalasi ke tim risiko</b>.
+              banyak akun (loan-stacking), atau gagal bayar + multi-metode.
             </GlossItem>
             <GlossItem chipColor={COLORS.cyan} term="Kasus Langka (Sah)">
               Ekstrem lintas fitur tapi konsisten, tanpa pola risiko/error. Nasabah tak
-              biasa namun sah → <b>tanpa tindakan</b>.
+              biasa namun sah.
             </GlossItem>
             <GlossItem chipColor={COLORS.amber} term="Kesalahan Data">
-              Nilai tak wajar (|z| &gt; 8) → indikasi kesalahan input. →{" "}
-              <b>verifikasi ke sumber</b>.
+              Nilai tak wajar (|z| &gt; 8), indikasi kesalahan input dan bukan perilaku
+              nasabah.
             </GlossItem>
             <p className="mt-1 text-[12px] italic leading-[1.5] text-muted">
               Prioritas berjenjang: Kesalahan Data mengunci, lalu Sinyal Risiko, lalu
-              Kasus Langka (Sah).
+              Kasus Langka (Sah). Tindakan untuk tiap jenis ada di kartu kasus di bawah.
             </p>
           </div>
         ) : (
