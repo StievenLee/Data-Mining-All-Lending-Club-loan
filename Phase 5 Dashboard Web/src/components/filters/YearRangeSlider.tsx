@@ -4,6 +4,9 @@ import DualRangeSlider from "./DualRangeSlider";
 interface Props {
   bounds: [number, number];
   recordCount: number;
+  /** Satuan di samping angka — dipakai untuk membedakan "record" (accepted) dari
+   *  "record bukti kuat" (rejected, lihat lib/scope.ts). */
+  recordUnit?: string;
 }
 
 /** Filter rentang tahun: dual-range slider (2 thumb) + preset cepat.
@@ -11,7 +14,11 @@ interface Props {
  *  (Sticky ini bergantung pada <body> memakai `overflow-x: clip`, bukan `hidden`
  *  — lihat styles.css; `hidden` akan mengubah body jadi scroll-container dan
  *  membuat sticky tidak menempel.) */
-export default function YearRangeSlider({ bounds, recordCount }: Props) {
+export default function YearRangeSlider({
+  bounds,
+  recordCount,
+  recordUnit = "record",
+}: Props) {
   const [lo, hi] = bounds;
   const years = useDashboard((s) => s.years) ?? bounds;
   const setYears = useDashboard((s) => s.setYears);
@@ -33,7 +40,7 @@ export default function YearRangeSlider({ bounds, recordCount }: Props) {
         </div>
         <div className="flex flex-wrap items-center gap-2 min-[640px]:gap-3.5">
           <span className="font-mono text-[10px] text-muted min-[640px]:text-[11px]">
-            {recordCount.toLocaleString("id-ID")} record
+            {recordCount.toLocaleString("id-ID")} {recordUnit}
           </span>
           <div className="flex flex-wrap gap-1.5 min-[640px]:gap-2">
             {presets.map(([lbl, x, y]) => (

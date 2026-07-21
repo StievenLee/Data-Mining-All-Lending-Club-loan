@@ -20,6 +20,7 @@ import Callout from "../components/Callout";
 import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
 import { fmt2 } from "../lib/format";
+import { REJECTED_SCOPE_TEXT, isStrongOnly, recordUnit } from "../lib/scope";
 
 export default function Ringkasan({ data }: { data: DashboardData }) {
   const dataset = useDashboard((s) => s.dataset);
@@ -50,6 +51,7 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
     [data.clustersByYear, data.clusters, years]
   );
   const cluster = useMemo(() => clusterOption(clusterProfiles), [clusterProfiles]);
+  const strongOnly = isStrongOnly(dataset);
 
   return (
     <>
@@ -57,14 +59,26 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
         eyebrow="Fase 4 Deteksi Anomali"
         title="Ringkasan Temuan"
         sub={
-          <>
-            Dari <b>{total.toLocaleString("id-ID")}</b> record anomali{" "}
-            {dataset}, sebanyak <b>{fmt2(strong.pct)}%</b> tergolong bukti kuat
-            (3+ metode / DBSCAN). Semua filter dihitung langsung di browser.
-          </>
+          strongOnly ? (
+            <>
+              Dimuat <b>{total.toLocaleString("id-ID")}</b> record anomali {dataset}{" "}
+              <b>bukti kuat</b> (3+ metode / DBSCAN); tier Sedang &amp; Lemah tidak
+              diekspor, jadi ini bukan total anomali {dataset}. Semua filter dihitung
+              langsung di browser.
+            </>
+          ) : (
+            <>
+              Dari <b>{total.toLocaleString("id-ID")}</b> record anomali{" "}
+              {dataset}, sebanyak <b>{fmt2(strong.pct)}%</b> tergolong bukti kuat
+              (3+ metode / DBSCAN). Semua filter dihitung langsung di browser.
+            </>
+          )
         }
         pills={[
-          { label: "Record", value: total.toLocaleString("id-ID") },
+          {
+            label: strongOnly ? "Record bukti kuat" : "Record",
+            value: total.toLocaleString("id-ID"),
+          },
           { label: "Kritis", value: strong.kritis.toLocaleString("id-ID"), kind: "accent" },
           { label: "Noise DBSCAN", value: String(data.summary.dbscan[dataset].n_noise), kind: "ai" },
         ]}
@@ -75,13 +89,29 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
         seluruh klaster. Di titik itulah bukti statistik dan struktural bertemu, dan di sanalah sinyal
         risiko sejati berada.
       </Callout>
-      <YearRangeSlider bounds={data.summary.year_bounds!} recordCount={total} />
+      <YearRangeSlider
+        bounds={data.summary.year_bounds!}
+        recordCount={total}
+        recordUnit={recordUnit(dataset)}
+      />
 
       <div className="mb-[18px] grid min-w-0 grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-[18px] max-[1080px]:grid-cols-1">
-        <Card title="Distribusi tier keyakinan" note="skala log">
+        <Card
+          title="Distribusi tier keyakinan"
+          note="skala log"
+          sub={strongOnly ? REJECTED_SCOPE_TEXT : undefined}
+        >
           <EChart option={tierBar} height={320} />
         </Card>
-        <Card title="Bukti kuat" note="% dari total">
+        <Card
+          title="Bukti kuat"
+          note={strongOnly ? "cakupan data" : "% dari total"}
+          sub={
+            strongOnly
+              ? "Selalu 100% untuk rejected: yang dimuat memang hanya tier bukti kuat."
+              : undefined
+          }
+        >
           <EChart option={gauge} height={320} />
         </Card>
       </div>

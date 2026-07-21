@@ -10,6 +10,7 @@ import Card from "../components/Card";
 import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
 import AnomalyGlossary from "../components/AnomalyGlossary";
+import { recordPhrase, recordUnit } from "../lib/scope";
 
 type CaseCard = {
   tag: string;
@@ -122,7 +123,7 @@ export default function Anomali({ data }: { data: DashboardData }) {
         sub={
           <>
             Sample <b>{rows.length.toLocaleString("id-ID")}</b> titik dari{" "}
-            {total.toLocaleString("id-ID")} record {dataset}. Warna = iso_score. Titik
+            {total.toLocaleString("id-ID")} {recordPhrase(dataset)}. Warna = iso_score. Titik
             lime besar = tier tinggi; lingkaran cyan = noise DBSCAN (Fase 2); belah
             ketupat amber = anomali kontekstual; kotak violet = anomali kolektif. Klik
             legenda untuk toggle jenis.
@@ -149,7 +150,11 @@ export default function Anomali({ data }: { data: DashboardData }) {
           ))}
         </select>
       </div>
-      <YearRangeSlider bounds={data.summary.year_bounds!} recordCount={total} />
+      <YearRangeSlider
+        bounds={data.summary.year_bounds!}
+        recordCount={total}
+        recordUnit={recordUnit(dataset)}
+      />
       <Card title="Scatter Anomali" note={`${safeX} × ${safeY}`}>
         <EChart option={option} height={480} />
       </Card>
@@ -201,7 +206,8 @@ export default function Anomali({ data }: { data: DashboardData }) {
           <div className="mb-4 text-[13.5px] leading-[1.6] text-text">
             Dataset rejected hanya punya fitur pengajuan, sehingga tipologi bisnis
             (Sinyal Risiko / Kasus Langka / Kesalahan Data) tidak bisa dihitung. Prioritas
-            dibaca dari tier keyakinan pada peta di atas.
+            dibaca dari tier keyakinan pada peta di atas. Peta ini juga sengaja dibatasi ke
+            tier Kuat ke atas — tier Sedang &amp; Lemah rejected tidak dimuat.
           </div>
           <ActionBox
             color={COLORS.violet}

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { COLORS } from "../theme/colors";
+import { REJECTED_SCOPE_TEXT } from "../lib/scope";
 import Card from "./Card";
 
 type SwatchKind = "dot" | "dot-hi" | "ring" | "sq-open" | "dia-open";
@@ -108,10 +109,13 @@ export default function AnomalyGlossary({ dataset }: { dataset: "accepted" | "re
             </p>
           </div>
         ) : (
-          <p className="text-[12px] italic leading-[1.5] text-muted">
-            Catatan: anomali Kolektif/Kontekstual dan tipologi bisnis (auto-verdict) hanya
-            dihitung untuk dataset Accepted.
-          </p>
+          <div className="text-[12px] italic leading-[1.5] text-muted">
+            <p>
+              Catatan: anomali Kolektif/Kontekstual dan tipologi bisnis (auto-verdict) hanya
+              dihitung untuk dataset Accepted.
+            </p>
+            <p className="mt-2">Cakupan: {REJECTED_SCOPE_TEXT}</p>
+          </div>
         )}
       </div>
     </Card>
