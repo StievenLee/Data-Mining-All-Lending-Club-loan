@@ -3,6 +3,7 @@ import type { DashboardData } from "../types";
 import { useDashboard } from "../store/useDashboard";
 import RuleCard from "../components/RuleCard";
 import Card from "../components/Card";
+import Callout from "../components/Callout";
 import PageHead from "../components/PageHead";
 import LiftSlider from "../components/filters/LiftSlider";
 
@@ -44,6 +45,13 @@ export default function Rules({ data }: { data: DashboardData }) {
           { label: "Lift tertinggi", value: rules.length ? maxLift.toFixed(2) : "–", kind: "accent" },
         ]}
       />
+      <Callout eyebrow="Cara membaca setiap kartu">
+        Tiap kartu dibaca sebagai cerita: <b>JIKA</b> sebuah pinjaman punya ciri tertentu,{" "}
+        <b>MAKA</b> biasanya diikuti hal lain. <b>Support</b> = seberapa sering pola ini muncul
+        di seluruh data. <b>Confidence</b> = seberapa yakin (dari kasus ber-ciri itu, berapa persen
+        yang benar terjadi). <b>Lift</b> = seberapa kuat kaitannya dibanding terjadi kebetulan —
+        makin tinggi makin bermakna.
+      </Callout>
       <div className="mb-3.5 flex justify-end">
         <LiftSlider max={maxLift} />
       </div>

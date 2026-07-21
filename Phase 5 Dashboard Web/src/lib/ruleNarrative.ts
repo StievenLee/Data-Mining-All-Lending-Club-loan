@@ -86,17 +86,29 @@ function joinId(parts: string[]): string {
   return p.slice(0, -1).join(", ") + ", dan " + p[p.length - 1];
 }
 
-function humanizeSide(itemset: string): string {
-  return joinId(
-    String(itemset)
-      .split(" + ")
-      .map((p) => p.trim())
-      .filter(Boolean)
-      .map(humanizeItem)
-  );
+/** Pecah satu sisi itemset jadi token. Dukung 2 format:
+ *  - CSV Fase 3 asli: item dipisah koma  -> "grade_A, term_36"
+ *  - fallback dummy  : item dipisah " + " -> "dti Low + bunga Very Low"
+ *  (item individual tak pernah mengandung koma, jadi split ini aman.) */
+function splitItemset(itemset: string): string[] {
+  return String(itemset)
+    .split(/\s*[+,]\s*/)
+    .map((p) => p.trim())
+    .filter(Boolean);
 }
 
-/** "Bila pinjaman {antecedent}, maka {consequent}." dalam bahasa bisnis. */
+/** Daftar frasa bisnis per item -- dipakai untuk chip "JIKA/MAKA" di kartu. */
+export function humanizeItems(itemset: string): string[] {
+  return splitItemset(itemset).map(humanizeItem);
+}
+
+function humanizeSide(itemset: string): string {
+  return joinId(humanizeItems(itemset));
+}
+
+/** Kalimat narasi utuh yang mudah dipahami awam. */
 export function ruleNarrative(antecedent: string, consequent: string): string {
-  return `Bila pinjaman ${humanizeSide(antecedent)}, maka ${humanizeSide(consequent)}.`;
+  return `Ketika sebuah pinjaman ${humanizeSide(antecedent)}, umumnya diikuti ${humanizeSide(
+    consequent
+  )}.`;
 }
