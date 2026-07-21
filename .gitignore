@@ -13,3 +13,13 @@ clean_for_apriori_rejected_columns.json
 clean_for_apriori_rejected_sparse.npz
 
 *.csv
+
+# python cache
+__pycache__/
+*.pyc
+
+# node / web dashboard build artifacts
+node_modules/
+Phase 5 Dashboard Web/node_modules/
+Phase 5 Dashboard Web/dist/
+.DS_Store

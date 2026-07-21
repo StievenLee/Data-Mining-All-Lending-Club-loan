@@ -1,0 +1,13 @@
+node_modules/
+dist/
+*.local
+.vite/
+.DS_Store
+
+# artefak build TypeScript (emit dari `tsc -b` composite)
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+.vercel
+.env*
