@@ -3,13 +3,14 @@ import DatasetToggle from "../filters/DatasetToggle";
 
 const TAB_LABEL: Record<string, string> = {
   ringkasan: "Ringkasan",
+  preprocessing: "Preprocessing",
   segmentasi: "Segmentasi",
   rules: "Association Rules",
   anomali: "Anomali",
 };
 
-// Toggle dataset relevan di semua tab (rules & segmentasi difilter/dibatasi per dataset juga)
-const DATASET_TABS = new Set(["ringkasan", "segmentasi", "rules", "anomali"]);
+// Toggle dataset relevan di semua tab (preprocessing menampilkan report accepted/rejected)
+const DATASET_TABS = new Set(["ringkasan", "preprocessing", "segmentasi", "rules", "anomali"]);
 
 export default function TopNav() {
   const tab = useDashboard((s) => s.tab);

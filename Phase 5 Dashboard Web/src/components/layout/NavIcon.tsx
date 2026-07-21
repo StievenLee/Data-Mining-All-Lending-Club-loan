@@ -9,6 +9,10 @@ const PATHS: Record<TabId, JSX.Element> = {
       <line x1="4" y1="18" x2="14" y2="18" />
     </>
   ),
+  preprocessing: (
+    // corong (funnel): menyaring & merapikan data mentah jadi siap pakai
+    <path d="M4 5h16l-6 7v6l-4 2v-8z" />
+  ),
   segmentasi: (
     <>
       <rect x="4" y="4" width="6" height="6" rx="1" />

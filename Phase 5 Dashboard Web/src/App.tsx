@@ -6,6 +6,7 @@ import TopNav from "./components/layout/TopNav";
 import Sidebar from "./components/layout/Sidebar";
 import MobileNav from "./components/layout/MobileNav";
 import Ringkasan from "./pages/Ringkasan";
+import Preprocessing from "./pages/Preprocessing";
 import Segmentasi from "./pages/Segmentasi";
 import Rules from "./pages/Rules";
 import Anomali from "./pages/Anomali";
@@ -44,6 +45,7 @@ export default function App() {
         {data && (
           <>
             {tab === "ringkasan" && <Ringkasan data={data} />}
+            {tab === "preprocessing" && <Preprocessing />}
             {tab === "segmentasi" && <Segmentasi data={data} />}
             {tab === "rules" && <Rules data={data} />}
             {tab === "anomali" && <Anomali data={data} />}

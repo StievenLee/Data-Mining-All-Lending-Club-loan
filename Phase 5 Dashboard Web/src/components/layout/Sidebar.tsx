@@ -4,6 +4,7 @@ import NavIcon from "./NavIcon";
 
 const NAV: { id: TabId; label: string }[] = [
   { id: "ringkasan", label: "Ringkasan" },
+  { id: "preprocessing", label: "Preprocessing" },
   { id: "segmentasi", label: "Segmentasi" },
   { id: "rules", label: "Association Rules" },
   { id: "anomali", label: "Anomali" },

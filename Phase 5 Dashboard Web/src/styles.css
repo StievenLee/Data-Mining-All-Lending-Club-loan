@@ -46,7 +46,10 @@
       radial-gradient(44% 40% at 100% 0%, rgba(208, 188, 255, 0.1), transparent 60%);
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
+    /* clip (bukan hidden): mengeklip luapan horizontal TANPA menjadikan body
+       scroll-container, sehingga position: sticky (mis. YearRangeSlider) tetap
+       menempel ke viewport. `hidden` memaksa overflow-y jadi auto & merusak sticky. */
+    overflow-x: clip;
   }
 }
 

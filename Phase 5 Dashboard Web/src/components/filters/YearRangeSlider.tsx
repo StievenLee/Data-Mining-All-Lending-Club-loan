@@ -6,7 +6,11 @@ interface Props {
   recordCount: number;
 }
 
-/** Filter rentang tahun: dual-range slider (2 thumb) + preset cepat. */
+/** Filter rentang tahun: dual-range slider (2 thumb) + preset cepat.
+ *  Bar memakai position: sticky agar menempel di bawah TopNav saat digulir.
+ *  (Sticky ini bergantung pada <body> memakai `overflow-x: clip`, bukan `hidden`
+ *  — lihat styles.css; `hidden` akan mengubah body jadi scroll-container dan
+ *  membuat sticky tidak menempel.) */
 export default function YearRangeSlider({ bounds, recordCount }: Props) {
   const [lo, hi] = bounds;
   const years = useDashboard((s) => s.years) ?? bounds;
@@ -17,7 +21,7 @@ export default function YearRangeSlider({ bounds, recordCount }: Props) {
   for (const n of [10, 5, 3]) if (hi - n + 1 > lo) presets.push([`${n}Y terakhir`, hi - n + 1, hi]);
 
   return (
-    <div className="sticky top-[calc(var(--nav)_+_8px)] z-20 mb-[18px] rounded-2xl border border-line bg-bg-deep/85 px-3.5 py-3 backdrop-blur-[16px] min-[640px]:rounded-[20px] min-[640px]:px-5 min-[640px]:py-4">
+    <div className="sticky top-[calc(var(--nav)_+_8px)] z-30 mb-[18px] rounded-2xl border border-line bg-bg-deep/85 px-3.5 py-3 backdrop-blur-[16px] min-[640px]:rounded-[20px] min-[640px]:px-5 min-[640px]:py-4">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-2">
         <div className="flex items-center gap-2.5 min-[640px]:gap-3">
           <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted min-[640px]:text-[11px]">
