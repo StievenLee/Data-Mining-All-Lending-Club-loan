@@ -59,5 +59,12 @@ export const riskPillLabel = (dataset: Dataset): string =>
 
 /** Catatan yang wajib menyertai angka rejected agar proksi tidak dibaca sebagai fakta. */
 export const REJECTED_RISK_NOTE =
-  "Rejected tidak punya label gagal bayar, jadi tingkat risiko didekati dari DTI " +
+  "Rejected tidak punya label gagal bayar, jadi tingkat risiko didekati dari median DTI " +
   "(rasio utang terhadap pendapatan) sesuai Fase 2 — bukan angka gagal bayar sebenarnya.";
+
+/** Rentang >1 tahun pada rejected memakai rata-rata tertimbang median tiap tahun.
+ *  Untuk accepted metriknya mean, sehingga penggabungan lintas tahun eksak; median
+ *  tidak bisa digabung seperti itu, jadi nilainya hampiran — dinyatakan di UI. */
+export const REJECTED_MULTIYEAR_NOTE =
+  "Untuk rentang lebih dari satu tahun, DTI dihitung sebagai rata-rata tertimbang " +
+  "median tiap tahun (median tidak bisa digabung secara eksak).";

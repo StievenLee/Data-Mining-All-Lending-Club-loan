@@ -45,13 +45,12 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
   const gauge = useMemo(() => gaugeOption(strong.pct), [strong.pct]);
   const tierBar = useMemo(() => tierBarOption(counts), [counts]);
   const verdict = useMemo(() => verdictOption(verdicts), [verdicts]);
-  // Agregasi per tahun hanya ada untuk accepted; rejected memakai profil keseluruhan.
+  // Agregat per tahun tersedia untuk kedua dataset; profil keseluruhan hanya dipakai
+  // sebagai cadangan bila clusters_by_year belum dibangun untuk dataset itu.
   const clusterProfiles = useMemo(() => {
-    if (strongOnly) return clustersFor(data.clusters, "rejected");
-    return data.clustersByYear.length
-      ? clusterProfilesForYears(data.clustersByYear, years)
-      : clustersFor(data.clusters, "accepted");
-  }, [strongOnly, data.clustersByYear, data.clusters, years]);
+    const byYear = clusterProfilesForYears(data.clustersByYear, years, dataset);
+    return byYear.length ? byYear : clustersFor(data.clusters, dataset);
+  }, [dataset, data.clustersByYear, data.clusters, years]);
   const cluster = useMemo(
     () => clusterOption(clusterProfiles, dataset),
     [clusterProfiles, dataset]
@@ -130,7 +129,7 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
         </Card>
         <Card
           title="Segmen risiko nasabah"
-          note={strongOnly ? "Fase 2 · seluruh periode" : `Fase 2 · ${years[0]}–${years[1]}`}
+          note={`Fase 2 · ${years[0]}–${years[1]}`}
           sub={
             strongOnly
               ? REJECTED_RISK_NOTE

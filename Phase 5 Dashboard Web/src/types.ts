@@ -36,14 +36,9 @@ export interface ClusterProfile {
 }
 
 // Profil klaster per (tahun, klaster) — untuk kartu segmen yang responsif tahun.
-export interface ClusterYearRow {
+// Field metrik mengikuti ClusterProfile: beda dataset, beda kolom yang terisi.
+export interface ClusterYearRow extends ClusterProfile {
   year: number;
-  cluster: number;
-  nama_profil: string;
-  n_anggota: number;
-  default_rate: number;
-  avg_int_rate: number;
-  avg_fico: number;
 }
 
 export interface Rule {

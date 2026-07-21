@@ -48,6 +48,10 @@ DBSCAN_REJ_JSON = os.path.join(DATA_IN, "dbscan_outliers_rejected.json")
 CLEAN_ACC_CSV = os.path.join(PROJECT_ROOT, "Datasets", "Cleaning", "Phase 2", "clean_accepted_loans.csv")
 CLUSTER_LABELS_PARQUET = os.path.join(PROJECT_ROOT, "Phase 2 Clustering", "Results", "cluster_labels_accepted.parquet")
 ISSUE_YEAR_PARQUET = os.path.join(PROJECT_ROOT, "Datasets", "Cleaning", "Phase 2", "issue_year_accepted.parquet")
+# Idem untuk rejected. Tahunnya ikut di parquet label (application_year, ekspor Fase 2
+# oleh Randys) sehingga tak perlu file tahun terpisah seperti accepted.
+CLEAN_REJ_CSV = os.path.join(PROJECT_ROOT, "Datasets", "Cleaning", "Phase 2", "clean_rejected_loans.csv")
+CLUSTER_LABELS_REJ_PARQUET = os.path.join(PROJECT_ROOT, "Phase 2 Clustering", "Results", "cluster_labels_rejected.parquet")
 
 # ---------------------------------------------------------------------------
 # Konstanta (selaras dashboard lama)
@@ -325,11 +329,75 @@ def process_clusters_by_year() -> list[dict]:
             "cluster": c,
             "nama_profil": name_by_cluster.get(c, f"Cluster {c}"),
             "n_anggota": int(r["n_anggota"]),
+            "dataset": "accepted",
             "default_rate": round(float(r["default_rate"]), 4),
             "avg_int_rate": round(float(r["avg_int_rate"]), 3),
             "avg_fico": round(float(r["avg_fico"]), 3),
         })
     log(f"  clusters_by_year: {len(out)} baris (tahun x klaster)")
+    return out
+
+
+def process_clusters_by_year_rejected() -> list[dict]:
+    """Idem untuk rejected: join clean_rejected (3 fitur) dengan parquet label yang
+    sudah membawa application_year. Tanpa ini filter tahun tak berpengaruh pada tab
+    Segmentasi dataset rejected.
+
+    Rejected tak punya default_rate, jadi yang diagregasi adalah ketiga fitur Fase 2;
+    avg_dti dipakai front-end sebagai proksi risiko. Nama profil diambil dari
+    cluster_profiles_rejected.csv (deskriptif: "DTI Tinggi", dst) -- BUKAN dari
+    peringkat seperti accepted, karena namanya menggambarkan karakter klaster,
+    bukan tingkatan risiko.
+
+    PENTING: memakai MEDIAN, bukan mean. Notebook Fase 2 membangun profil rejected
+    dari median z-score ("Interpretasi Anti-Persona dibangun otomatis dari median
+    z-score"), jadi kolom bernama avg_* pada cluster_profiles_rejected.csv sebenarnya
+    berisi median. Kalau di sini dipakai mean, angka per tahun tak akan sebanding
+    dengan profil keseluruhan maupun laporan Fase 2 (mis. DTI Tinggi: mean 6,33 vs
+    median 7,45). Konsekuensinya median per tahun TIDAK bisa direkonstruksi jadi
+    median keseluruhan lewat rata-rata tertimbang -- itu sifat median, bukan galat.
+    Accepted tetap memakai mean karena notebooknya memang memakai mean."""
+    src = [CLEAN_REJ_CSV, CLUSTER_LABELS_REJ_PARQUET]
+    if not all(os.path.exists(p) for p in src):
+        log("clusters_by_year rejected: sumber tak lengkap -> lewati (profil rejected tetap agregat)")
+        return []
+    feats = FEATURES["rejected"]
+    log("clusters_by_year rejected: join populasi penuh (27.5jt) & agregasi per tahun ...")
+    lab = (pd.read_parquet(CLUSTER_LABELS_REJ_PARQUET,
+                           columns=["orig_row_pos", "Cluster_Label", "application_year"])
+           .sort_values("orig_row_pos").reset_index(drop=True))
+    rej = pd.read_csv(CLEAN_REJ_CSV, usecols=feats)
+    if len(rej) != len(lab):
+        log(f"  ukuran tak cocok ({len(rej):,}/{len(lab):,}) -> lewati")
+        return []
+    rej["cluster"] = lab["Cluster_Label"].astype(int).to_numpy()
+    rej["year"] = lab["application_year"].astype(int).to_numpy()
+
+    name_by_cluster: dict[int, str] = {}
+    if os.path.exists(CLUSTER_REJ_CSV):
+        prof = pd.read_csv(CLUSTER_REJ_CSV)
+        name_by_cluster = {int(r["cluster"]): str(r["nama_profil"]) for _, r in prof.iterrows()}
+
+    g = rej.groupby(["year", "cluster"]).agg(
+        n_anggota=(feats[0], "size"),
+        avg_amount_requested=(feats[0], "median"),
+        avg_dti=(feats[1], "median"),
+        avg_employment_length=(feats[2], "median"),
+    ).reset_index()
+    out = []
+    for _, r in g.iterrows():
+        c = int(r["cluster"])
+        out.append({
+            "year": int(r["year"]),
+            "cluster": c,
+            "nama_profil": name_by_cluster.get(c, f"Cluster {c}"),
+            "n_anggota": int(r["n_anggota"]),
+            "dataset": "rejected",
+            "avg_amount_requested": round(float(r["avg_amount_requested"]), 3),
+            "avg_dti": round(float(r["avg_dti"]), 3),
+            "avg_employment_length": round(float(r["avg_employment_length"]), 3),
+        })
+    log(f"  clusters_by_year rejected: {len(out)} baris (tahun x klaster)")
     return out
 
 
@@ -379,7 +447,7 @@ def main() -> None:
     acc_tby, acc_vby, acc_scat = process_accepted()
     rej_tby, rej_scat = process_rejected()
     clusters = process_clusters()
-    clusters_by_year = process_clusters_by_year()
+    clusters_by_year = process_clusters_by_year() + process_clusters_by_year_rejected()
     rules = process_rules()
 
     meta_acc = dbscan_meta("accepted")

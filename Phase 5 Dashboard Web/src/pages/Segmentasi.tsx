@@ -9,6 +9,7 @@ import Card from "../components/Card";
 import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
 import {
+  REJECTED_MULTIYEAR_NOTE,
   REJECTED_RISK_NOTE,
   clustersFor,
   riskPillLabel,
@@ -20,16 +21,13 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
   const dataset = useDashboard((s) => s.dataset);
   const years = useDashboard((s) => s.years) ?? data.summary.year_bounds!;
 
-  // Agregasi per tahun hanya tersedia untuk accepted (clusters_by_year.json dibangun
-  // dari populasi accepted). Rejected memakai profil keseluruhan, jadi filter tahun
-  // TIDAK berlaku di sana -- dinyatakan eksplisit di UI agar tak terbaca sebagai bug.
+  // Agregat per tahun tersedia untuk kedua dataset; profil keseluruhan (data.clusters)
+  // hanya dipakai bila clusters_by_year belum dibangun untuk dataset itu.
   const isRejected = dataset === "rejected";
   const clusters = useMemo(() => {
-    if (isRejected) return clustersFor(data.clusters, "rejected");
-    return data.clustersByYear.length
-      ? clusterProfilesForYears(data.clustersByYear, years)
-      : clustersFor(data.clusters, "accepted");
-  }, [isRejected, data.clustersByYear, data.clusters, years]);
+    const byYear = clusterProfilesForYears(data.clustersByYear, years, dataset);
+    return byYear.length ? byYear : clustersFor(data.clusters, dataset);
+  }, [dataset, data.clustersByYear, data.clusters, years]);
 
   const option = useMemo(() => clusterOption(clusters, dataset), [clusters, dataset]);
   const totalAnggota = clusters.reduce((s, c) => s + c.n_anggota, 0);
@@ -46,8 +44,9 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
           isRejected ? (
             <>
               <b>{clusters.length}</b> segmen pengajuan ditolak dari{" "}
-              <b>{totalAnggota.toLocaleString("id-ID")}</b> pengajuan. Ukuran gelembung =
-              jumlah anggota, warna = DTI sebagai proksi risiko. {REJECTED_RISK_NOTE}
+              <b>{totalAnggota.toLocaleString("id-ID")}</b> pengajuan ({years[0]}–{years[1]}).
+              Ukuran gelembung = jumlah anggota, warna = DTI sebagai proksi risiko.{" "}
+              {REJECTED_RISK_NOTE}
             </>
           ) : (
             <>
@@ -73,7 +72,7 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
           note="bubble = n anggota"
           sub={
             isRejected
-              ? "Profil rejected dihitung atas seluruh periode, sehingga filter tahun di atas tidak mengubah kartu ini."
+              ? `Posisi dan ukuran gelembung mengikuti rentang tahun pengajuan di atas. ${REJECTED_MULTIYEAR_NOTE}`
               : undefined
           }
         >

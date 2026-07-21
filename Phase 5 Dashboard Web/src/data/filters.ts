@@ -83,35 +83,54 @@ export function filterSampleRows(
   return idx;
 }
 
-/** Profil klaster teragregasi untuk rentang tahun. Rata-rata (default/int/fico)
-    di-weight jumlah anggota → sama persis dengan mean populasi pada rentang itu. */
+/** Metrik yang dirata-rata per dataset — kolom yang terisi memang berbeda. */
+const WEIGHTED_METRICS = [
+  "default_rate",
+  "avg_int_rate",
+  "avg_fico",
+  "avg_dti",
+  "avg_employment_length",
+  "avg_amount_requested",
+] as const;
+
+/** Profil klaster teragregasi untuk rentang tahun & dataset. Setiap rata-rata
+    di-weight jumlah anggota → sama persis dengan mean populasi pada rentang itu.
+    Metrik yang tidak dimiliki dataset ini dibiarkan undefined, bukan 0, supaya
+    tidak tampil sebagai "0%" yang menyesatkan. */
 export function clusterProfilesForYears(
   rows: ClusterYearRow[],
-  [lo, hi]: YearRange
+  [lo, hi]: YearRange,
+  dataset: Dataset = "accepted"
 ): ClusterProfile[] {
+  type Metric = (typeof WEIGHTED_METRICS)[number];
   const acc = new Map<
     number,
-    { name: string; n: number; defW: number; intW: number; ficoW: number }
+    { name: string; n: number; sums: Map<Metric, number> }
   >();
   for (const r of rows) {
+    if ((r.dataset ?? "accepted") !== dataset) continue;
     if (r.year < lo || r.year > hi) continue;
-    const e =
-      acc.get(r.cluster) ?? { name: r.nama_profil, n: 0, defW: 0, intW: 0, ficoW: 0 };
+    const e = acc.get(r.cluster) ?? { name: r.nama_profil, n: 0, sums: new Map() };
     e.n += r.n_anggota;
-    e.defW += r.default_rate * r.n_anggota;
-    e.intW += r.avg_int_rate * r.n_anggota;
-    e.ficoW += r.avg_fico * r.n_anggota;
+    for (const m of WEIGHTED_METRICS) {
+      const v = r[m];
+      if (v == null) continue;
+      e.sums.set(m, (e.sums.get(m) ?? 0) + v * r.n_anggota);
+    }
     acc.set(r.cluster, e);
   }
   return [...acc.entries()]
-    .map(([cluster, e]) => ({
-      cluster,
-      nama_profil: e.name,
-      n_anggota: e.n,
-      default_rate: e.n ? e.defW / e.n : 0,
-      avg_int_rate: e.n ? e.intW / e.n : 0,
-      avg_fico: e.n ? e.ficoW / e.n : 0,
-    }))
+    .map(([cluster, e]) => {
+      const metrics: Partial<Record<Metric, number>> = {};
+      for (const [m, sum] of e.sums) metrics[m] = e.n ? sum / e.n : 0;
+      return {
+        cluster,
+        nama_profil: e.name,
+        n_anggota: e.n,
+        dataset,
+        ...metrics,
+      };
+    })
     .sort((a, b) => a.cluster - b.cluster);
 }
 
