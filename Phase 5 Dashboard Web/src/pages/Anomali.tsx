@@ -18,8 +18,8 @@ const CASES: { tag: string; title: string; color: string; body: ReactNode }[] = 
     color: COLORS.error,
     body: (
       <>
-        Membuka banyak akun kredit baru (<b>num_tl_op z +5,5</b>) + FICO rendah + bunga
-        tinggi. Profil credit-hungry — eskalasi ke tim risiko.
+        Membuka banyak akun kredit baru (<b>num_tl_op z +5,50</b>) + FICO rendah + bunga
+        tinggi. Ini profil credit-hungry, jadi perlu dieskalasi ke tim risiko.
       </>
     ),
   },
@@ -29,8 +29,8 @@ const CASES: { tag: string; title: string; color: string; body: ReactNode }[] = 
     color: COLORS.cyan,
     body: (
       <>
-        Skor kredit sangat baik (<b>FICO z +2,8</b>) + cicilan besar, bunga normal.
-        Nasabah premium — aman, tanpa tindakan.
+        Skor kredit sangat baik (<b>FICO z +2,80</b>) + cicilan besar, bunga normal.
+        Ini nasabah premium yang aman, jadi tidak perlu tindakan.
       </>
     ),
   },
@@ -40,8 +40,8 @@ const CASES: { tag: string; title: string; color: string; body: ReactNode }[] = 
     color: COLORS.amber,
     body: (
       <>
-        Nilai mustahil (<b>num_tl_op z +9,9</b>). Kemungkinan kesalahan input —
-        verifikasi ke sumber data.
+        Nilai mustahil (<b>num_tl_op z +9,90</b>). Kemungkinan kesalahan input yang
+        sebaiknya diverifikasi ke sumber data.
       </>
     ),
   },

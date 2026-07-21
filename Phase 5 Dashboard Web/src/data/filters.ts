@@ -49,7 +49,7 @@ export function strongPct(counts: { tier: string; count: number }[]): {
     if (tier === "Kritis (DBSCAN + 3 metode)") kritis += count;
   }
   return {
-    pct: total ? +((strong / total) * 100).toFixed(1) : 0,
+    pct: total ? +((strong / total) * 100).toFixed(2) : 0,
     strong,
     total,
     kritis,

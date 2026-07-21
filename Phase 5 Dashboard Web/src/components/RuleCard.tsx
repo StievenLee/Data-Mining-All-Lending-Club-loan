@@ -1,5 +1,6 @@
 import type { Rule } from "../types";
-import { humanizeItems, ruleNarrative } from "../lib/ruleNarrative";
+import { humanizeItems, ruleAction, ruleNarrative } from "../lib/ruleNarrative";
+import { fmt2 } from "../lib/format";
 
 interface Props {
   rule: Rule;
@@ -51,6 +52,7 @@ export default function RuleCard({ rule, index }: Props) {
 
   const ifItems = humanizeItems(rule.antecedent);
   const thenItems = humanizeItems(rule.consequent);
+  const action = ruleAction(rule.antecedent, rule.consequent, rule.dataset);
 
   return (
     <div className="relative overflow-hidden rounded-[18px] border border-line bg-glass px-5 py-4 before:absolute before:inset-y-0 before:left-0 before:w-[3px] before:bg-lime before:content-['']">
@@ -58,7 +60,7 @@ export default function RuleCard({ rule, index }: Props) {
       <div className="mb-2.5 flex items-center justify-between gap-3">
         <span className="font-mono text-[11px] tracking-wide text-muted">Rule #{index}</span>
         <span className="rounded-full bg-lime px-3 py-1 font-mono text-[13px] font-bold text-ink shadow-[0_0_12px_rgba(195,244,0,0.3)]">
-          {lift.toFixed(1)}× lift
+          {fmt2(lift)}× lift
         </span>
       </div>
 
@@ -96,22 +98,36 @@ export default function RuleCard({ rule, index }: Props) {
       <div className="grid grid-cols-3 gap-2">
         <Metric
           label="Support"
-          value={`${(sup * 100).toFixed(1)}%`}
+          value={`${fmt2(sup * 100)}%`}
           hint="porsi dari seluruh data"
           accent="text-cyan"
         />
         <Metric
           label="Confidence"
-          value={`${(conf * 100).toFixed(0)}%`}
+          value={`${fmt2(conf * 100)}%`}
           hint="tingkat keyakinan pola"
           accent="text-violet"
         />
         <Metric
           label="Lift"
-          value={`${lift.toFixed(1)}×`}
+          value={`${fmt2(lift)}×`}
           hint="vs. terjadi kebetulan"
           accent="text-lime"
         />
+      </div>
+
+      {/* Call to action: rekomendasi tindakan untuk bank */}
+      <div
+        className="mt-3 rounded-[14px] border px-4 py-3"
+        style={{ borderColor: action.color + "44", background: action.color + "12" }}
+      >
+        <div
+          className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em]"
+          style={{ color: action.color }}
+        >
+          Rekomendasi untuk bank · {action.label}
+        </div>
+        <p className="text-[13px] leading-[1.6] text-text">{action.text}</p>
       </div>
     </div>
   );

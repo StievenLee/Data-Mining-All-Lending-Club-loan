@@ -12,6 +12,7 @@ import {
   tooltipStyle,
 } from "../../theme/colors";
 import type { ClusterProfile, SampleColumnar } from "../../types";
+import { fmt2 } from "../../lib/format";
 
 const axisCommon = {
   axisLine: { lineStyle: { color: COLORS.line } },
@@ -55,7 +56,7 @@ export function gaugeOption(pct: number): EChartsOption {
         title: { show: false },
         detail: {
           valueAnimation: true,
-          formatter: "{value}%",
+          formatter: (v: number) => fmt2(v) + "%",
           color: COLORS.text,
           fontFamily: FONT_MONO,
           fontSize: 38,
@@ -138,7 +139,7 @@ export function verdictOption(
       ...tooltipStyle,
       trigger: "item",
       formatter: (p: any) =>
-        `${p.name}<br/>${Number(p.value).toLocaleString("id-ID")} (${p.percent}%)`,
+        `${p.name}<br/>${Number(p.value).toLocaleString("id-ID")} (${fmt2(p.percent)}%)`,
     },
     legend: {
       bottom: 0,
@@ -154,7 +155,7 @@ export function verdictOption(
         itemStyle: { borderColor: COLORS.bgDeep, borderWidth: 3 },
         label: {
           show: true,
-          formatter: "{d}%",
+          formatter: (p: any) => fmt2(p.percent) + "%",
           color: COLORS.bgDeep,
           fontFamily: FONT_MONO,
           fontSize: 12,
@@ -198,7 +199,7 @@ export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
         const c = p.data.raw as ClusterProfile;
         return `${c.nama_profil}<br/>anggota=${c.n_anggota.toLocaleString(
           "id-ID"
-        )}<br/>default=${(c.default_rate * 100).toFixed(1)}%`;
+        )}<br/>default=${fmt2(c.default_rate * 100)}%`;
       },
     },
     visualMap: {
@@ -372,9 +373,7 @@ export function anomalyScatterOption(
       ...tooltipStyle,
       trigger: "item",
       formatter: (p: any) =>
-        `${xKey}=${(+p.value[0]).toFixed(2)}<br/>${yKey}=${(+p.value[1]).toFixed(
-          2
-        )}<br/>${p.name || ""}`,
+        `${xKey}=${fmt2(+p.value[0])}<br/>${yKey}=${fmt2(+p.value[1])}<br/>${p.name || ""}`,
     },
     visualMap: {
       min: isoMin,

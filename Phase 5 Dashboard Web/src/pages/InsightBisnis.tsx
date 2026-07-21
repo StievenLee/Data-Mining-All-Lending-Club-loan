@@ -4,6 +4,7 @@ import type { DashboardData } from "../types";
 import PageHead from "../components/PageHead";
 import Card from "../components/Card";
 import Callout from "../components/Callout";
+import { fmt2 } from "../lib/format";
 
 /* ============================================================================
    Insight Bisnis (Fase 1-4). Menyintesis temuan tiap fase jadi bahasa bisnis
@@ -16,8 +17,9 @@ import Callout from "../components/Callout";
 function idNum(n: number): string {
   return n.toLocaleString("id-ID");
 }
-function idPct(x: number, dp = 1): string {
-  return x.toFixed(dp).replace(".", ",") + "%";
+// dp dipertahankan agar call site lama tetap kompilasi, tetapi kini selalu 2 desimal (fmt2).
+function idPct(x: number, _dp?: number): string {
+  return fmt2(x) + "%";
 }
 
 function Tile({ value, label, accent = "text-text" }: { value: string; label: string; accent?: string }) {
@@ -223,7 +225,7 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
           })}
         </div>
         <Meaning>
-          Risiko kelompok tertinggi kira-kira <b>{riskGap.toFixed(1)} kali lipat</b> kelompok paling
+          Risiko kelompok tertinggi kira-kira <b>{fmt2(riskGap)} kali lipat</b> kelompok paling
           aman ({idPct(highest.default_rate * 100)} berbanding {idPct(prime.default_rate * 100)}). Bank
           bisa menyesuaikan bunga, limit, dan penawaran per segmen, bukan memperlakukan semua peminjam
           dengan aturan yang sama.
@@ -254,7 +256,7 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
             </div>
             <p className="mt-2 text-[13.5px] leading-[1.6] text-text">
               Peminjam <b>Grade A</b> dengan pinjaman menengah dan tenor 36 bulan hampir selalu
-              mendapat bunga sangat rendah dan berakhir lunas (keyakinan 84 persen, {kpi.max_lift.toFixed(1)} kali
+              mendapat bunga sangat rendah dan berakhir lunas (keyakinan 84 persen, {fmt2(kpi.max_lift)} kali
               lebih sering dari kebetulan).
             </p>
           </div>
@@ -271,7 +273,7 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
         <div className="mt-2.5 grid grid-cols-3 gap-2.5">
           <Tile value={idNum(rulesAcc)} label="Pola pada pinjaman diterima" accent="text-lime" />
           <Tile value={idNum(rulesRej)} label="Pola pada pengajuan ditolak" accent="text-violet" />
-          <Tile value={`${kpi.max_lift.toFixed(1)}x`} label="Kekuatan pola terkuat (lift)" accent="text-cyan" />
+          <Tile value={`${fmt2(kpi.max_lift)}x`} label="Kekuatan pola terkuat (lift)" accent="text-cyan" />
         </div>
         <Meaning>
           Sistem penilaian grade dan penetapan bunga sudah selaras dengan hasil nyata: peminjam

@@ -51,7 +51,7 @@ export default function AnomalyGlossary({ dataset }: { dataset: "accepted" | "re
     <Card
       title="Panduan membaca peta anomali"
       note="glosarium"
-      sub="Arti tiap warna, bentuk, dan istilah pada tab ini — agar temuan mudah dibaca tanpa latar teknis."
+      sub="Arti tiap warna, bentuk, dan istilah pada tab ini, agar temuan mudah dibaca tanpa latar teknis."
     >
       <div className="grid grid-cols-2 gap-x-[30px] gap-y-[22px] max-[820px]:grid-cols-1">
         <div>

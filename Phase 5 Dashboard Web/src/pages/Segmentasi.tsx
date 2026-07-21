@@ -8,6 +8,7 @@ import EChart from "../components/EChart";
 import Card from "../components/Card";
 import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
+import { fmt2 } from "../lib/format";
 
 export default function Segmentasi({ data }: { data: DashboardData }) {
   const dataset = useDashboard((s) => s.dataset);
@@ -41,7 +42,7 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
               Ukuran gelembung = jumlah anggota, warna = tingkat gagal bayar.
             </>
           ) : (
-            "Klasterisasi K-Means Fase 2 saat ini hanya dijalankan atas dataset Accepted — hasil untuk Rejected belum diekspor."
+            "Klasterisasi K-Means Fase 2 saat ini hanya dijalankan pada dataset Accepted. Hasil untuk Rejected belum diekspor."
           )
         }
         pills={
@@ -50,7 +51,7 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
                 { label: "Segmen", value: String(clusters.length) },
                 {
                   label: "Default tertinggi",
-                  value: worst ? `${(worst.default_rate * 100).toFixed(1)}%` : "–",
+                  value: worst ? `${fmt2(worst.default_rate * 100)}%` : "–",
                   kind: "accent",
                 },
               ]
@@ -84,7 +85,7 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
                       <div className="font-display font-semibold">{c.nama_profil}</div>
                       <div className="font-mono text-[11px] text-muted">
                         {c.n_anggota.toLocaleString("id-ID")} anggota · default{" "}
-                        {(c.default_rate * 100).toFixed(1)}%
+                        {fmt2(c.default_rate * 100)}%
                       </div>
                     </div>
                   </div>

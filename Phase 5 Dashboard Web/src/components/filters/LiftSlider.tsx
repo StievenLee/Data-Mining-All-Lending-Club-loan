@@ -1,4 +1,5 @@
 import { useDashboard } from "../../store/useDashboard";
+import { fmt2 } from "../../lib/format";
 
 interface Props {
   max: number;
@@ -19,7 +20,7 @@ export default function LiftSlider({ max }: Props) {
         onChange={(e) => setMinLift(Number(e.target.value))}
         className="w-40 accent-violet"
       />
-      <span className="min-w-[34px] font-mono text-[13px] text-violet">{minLift.toFixed(1)}</span>
+      <span className="min-w-[34px] font-mono text-[13px] text-violet">{fmt2(minLift)}</span>
     </div>
   );
 }

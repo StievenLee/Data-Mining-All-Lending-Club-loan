@@ -157,3 +157,87 @@ export function ruleFeatures(antecedent: string, consequent: string): FeatureMet
   }
   return [...seen.values()];
 }
+
+// ---------------------------------------------------------------------------
+// Call to action: dari ciri rule -> rekomendasi tindakan untuk bank
+// ---------------------------------------------------------------------------
+export interface RuleAction {
+  label: string; // ringkas, mis. "Rawat & kembangkan"
+  text: string; // narasi rekomendasi untuk bank
+  color: string; // aksen warna (hex) sesuai nada rekomendasi
+}
+
+/** Turunkan rekomendasi bisnis dari isi rule. Deterministik & mudah dipahami. */
+export function ruleAction(antecedent: string, consequent: string, dataset: string): RuleAction {
+  const toks = [...splitItemset(antecedent), ...splitItemset(consequent)];
+  const has = (re: RegExp) => toks.some((t) => re.test(t));
+
+  const fullyPaid = has(/Fully Paid/i);
+  const badStatus = has(/Charged Off|Default/i);
+  const goodGrade = has(/^grade_[AB]\b/) || has(/^sub_grade_[AB]/);
+  const badGrade = has(/^grade_[DEFG]\b/) || has(/^sub_grade_[DEFG]/);
+  const lowRate = has(/int_rate_bin_(Very Low|Low)/);
+  const highRate = has(/int_rate_bin_(High|Very High)/);
+  const highDti = has(/(Debt-To-Income Ratio|dti)_bin_(High|Very High)/i);
+  const lowDti = has(/(Debt-To-Income Ratio|dti)_bin_(Very Low|Low)/i);
+  const junior = has(/Employment Length_bin_Junior/);
+  const bigAmount = has(/(Amount Requested|loan_amnt)_bin_(Large|Very Large)/i);
+  const smallAmount = has(/(Amount Requested|loan_amnt)_bin_(Micro|Small)/i);
+
+  if (dataset === "Rejected") {
+    if (highDti || (junior && bigAmount)) {
+      return {
+        label: "Perketat kebijakan",
+        color: "#ffb4ab",
+        text: "Karena pola ini menandai pemohon dengan beban utang tinggi, yang sering digabung masa kerja pendek atau permintaan pinjaman besar, bank sebaiknya menjadikannya kriteria tinjau atau tolak otomatis. Alih-alih menolak mentah, tawarkan limit lebih kecil atau edukasi keuangan lebih dulu.",
+      };
+    }
+    if (lowDti && smallAmount) {
+      return {
+        label: "Peluang tersembunyi",
+        color: "#c3f400",
+        text: "Pemohon di pola ini justru konservatif, dengan utang rendah dan pinjaman kecil. Bank bisa meninjau ulang alasan penolakannya dan menawarkan jalur persetujuan cepat atau produk mikro, karena risikonya cenderung rendah.",
+      };
+    }
+    return {
+      label: "Pertajam penyaringan",
+      color: "#d0bcff",
+      text: "Gunakan pola ini untuk mempertajam kriteria penyaringan awal, sehingga keputusan penolakan menjadi lebih konsisten, transparan, dan mudah dijelaskan kepada pemohon.",
+    };
+  }
+
+  // Accepted
+  if (badStatus || (badGrade && highRate)) {
+    return {
+      label: "Kelola risiko",
+      color: "#ffb4ab",
+      text: "Karena kombinasi ini cenderung berujung gagal bayar, bank sebaiknya memperketat pemantauan, menyesuaikan bunga agar sepadan dengan risikonya, atau meninjau ulang batas kredit sebelum menyetujui pinjaman serupa.",
+    };
+  }
+  if (fullyPaid) {
+    return {
+      label: "Rawat & kembangkan",
+      color: "#c3f400",
+      text: "Karena kelompok ini cenderung melunasi pinjaman sampai selesai, bank sebaiknya mempertahankan mereka dengan limit lebih tinggi, bunga kompetitif, atau penawaran produk lanjutan, supaya mereka tidak berpindah ke pesaing.",
+    };
+  }
+  if (goodGrade || lowRate) {
+    return {
+      label: "Pertahankan nasabah prima",
+      color: "#7df4ff",
+      text: "Pola ini mencerminkan nasabah berkualitas baik, dengan grade tinggi atau bunga rendah. Bank sebaiknya memberi mereka penawaran terbaik untuk menjaga loyalitas, sambil memastikan penetapan bunga tetap selaras dengan grade.",
+    };
+  }
+  if (highRate || badGrade) {
+    return {
+      label: "Waspadai risiko",
+      color: "#ffd479",
+      text: "Pola ini condong ke profil berisiko lebih tinggi. Bank sebaiknya memastikan bunga yang dikenakan sepadan dengan risikonya dan menyiapkan pemantauan yang lebih ketat.",
+    };
+  }
+  return {
+    label: "Jadikan rujukan",
+    color: "#d0bcff",
+    text: "Pola ini menggambarkan kelompok pinjaman tertentu secara jelas. Bank bisa menjadikannya rujukan berbasis data saat menyusun kebijakan, penetapan harga, dan penawaran untuk kelompok seperti ini, supaya keputusan tetap konsisten dan mudah dijelaskan.",
+  };
+}

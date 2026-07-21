@@ -130,7 +130,7 @@ function AcceptedReport() {
       />
 
       <Callout eyebrow="Gambaran besar">
-        Data mentah tidak bisa langsung dianalisis — banyak nilai kosong, format berantakan,
+        Data mentah tidak bisa langsung dianalisis karena banyak nilai kosong, format berantakan,
         dan kolom yang menyesatkan. Fase 1 membereskan semua itu lewat <b>5 langkah</b> berurutan,
         sehingga menghasilkan file <b>CSV siap pakai</b> untuk Fase 2 (Segmentasi) dan Fase 3
         (Association Rules).
@@ -156,14 +156,14 @@ function AcceptedReport() {
         <div className="grid grid-cols-2 gap-2.5 min-[560px]:grid-cols-4">
           <Stat value="2,26 jt" label="Baris pinjaman DITERIMA (accepted)" accent="text-cyan" />
           <Stat value="151" label="Kolom awal accepted (banyak & campur)" />
-          <Stat value="27,6 jt" label="Baris pengajuan DITOLAK (rejected)" accent="text-violet" />
+          <Stat value="27,60 jt" label="Baris pengajuan DITOLAK (rejected)" accent="text-violet" />
           <Stat value="9" label="Kolom awal rejected (jauh lebih sederhana)" />
         </div>
         <p className="mt-3.5 text-[13.5px] leading-[1.6] text-muted">
           Dataset <b className="text-text">accepted</b> diproses penuh karena kaya fitur dan punya
           label hasil pinjaman (<span className="font-mono text-[12.5px]">loan_status</span>).
           Dataset <b className="text-text">rejected</b> diproses dengan pipeline lebih sederhana
-          sebagai pembanding — ia tidak punya label hasil.
+          sebagai pembanding, karena ia tidak punya label hasil.
         </p>
       </Card>
 
@@ -178,13 +178,13 @@ function AcceptedReport() {
           label hasil pinjaman yang belum final. Temuan ini menentukan keputusan di langkah cleaning.
         </p>
         <div className="mt-3.5 grid grid-cols-3 gap-2.5">
-          <Stat value="47,6%" label="Fully Paid (lunas)" accent="text-lime" />
-          <Stat value="11,9%" label="Charged Off (gagal bayar)" accent="text-error" />
-          <Stat value="38,9%" label="Current / berjalan — dibuang (belum final)" accent="text-amber" />
+          <Stat value="47,60%" label="Fully Paid (lunas)" accent="text-lime" />
+          <Stat value="11,90%" label="Charged Off (gagal bayar)" accent="text-error" />
+          <Stat value="38,90%" label="Current / berjalan, dibuang (belum final)" accent="text-amber" />
         </div>
         <p className="mt-3 text-[13px] leading-[1.55] text-muted">
           Status yang belum selesai (Current, Late, In Grace Period) <b className="text-text">dikeluarkan</b>{" "}
-          agar tidak menambah kebisingan — hanya pinjaman dengan hasil akhir yang dipakai.
+          agar tidak menambah kebisingan, sehingga hanya pinjaman dengan hasil akhir yang dipakai.
         </p>
       </Card>
 
@@ -197,7 +197,7 @@ function AcceptedReport() {
           <DoRow color="#ffb4ab" title="Buang kolom yang mayoritas kosong (>50%)"
             detail="Kolom yang lebih dari separuh nilainya hilang tidak bisa diisi ulang secara andal tanpa menimbulkan bias." />
           <DoRow color="#ffb4ab" title="Buang kolom identitas & tak informatif"
-            detail={<>Seperti <span className="font-mono text-[12px]">id, url, emp_title, zip_code, title</span> — unik atau terlalu beragam sehingga tidak stabil sebagai fitur.</>} />
+            detail={<>Seperti <span className="font-mono text-[12px]">id, url, emp_title, zip_code, title</span>, yang unik atau terlalu beragam sehingga tidak stabil sebagai fitur.</>} />
           <DoRow color="#d0bcff" title={<>Buang kolom &ldquo;bocor&rdquo; (data leakage)</>}
             detail={<>Kolom yang nilainya baru ada <b className="text-text">setelah</b> pinjaman berjalan (mis. <span className="font-mono text-[12px]">total_pymnt, last_fico_range</span>). Memakainya sama dengan &ldquo;mengintip masa depan&rdquo; sehingga hasil jadi tidak sah. FICO <b className="text-text">saat pengajuan</b> tetap dipertahankan karena sah.</>} />
           <DoRow color="#7df4ff" title="Rapikan tipe & format yang tidak konsisten"
@@ -240,8 +240,8 @@ function AcceptedReport() {
           Dua metode digabung agar lebih andal: <b className="text-text">Korelasi Pearson</b> (hubungan
           linear) dan <b className="text-text">Mutual Information</b> (menangkap pola non-linear).
           Skornya dirata-rata, lalu jumlah fitur ditentukan di titik <b className="text-text">elbow</b>
-          {" "}(top-16). Terakhir, dari pasangan fitur yang terlalu mirip (korelasi &gt;0,9) salah satunya
-          dibuang — menyisakan <b className="text-text">14 fitur final</b> untuk segmentasi.
+          {" "}(top-16). Terakhir, dari pasangan fitur yang terlalu mirip (korelasi &gt;0,90) salah satunya
+          dibuang, sehingga menyisakan <b className="text-text">14 fitur final</b> untuk segmentasi.
         </p>
         <div className="mt-3.5 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
           14 fitur final + target
@@ -262,7 +262,7 @@ function AcceptedReport() {
 
       {/* 5 Output */}
       <Card title={<span className="inline-flex items-center gap-2.5"><SectionNo n={5} /> Hasil: CSV Siap Pakai</span>}
-        sub="Tiga file bersih — inilah jembatan ke fase analisis berikutnya.">
+        sub="Tiga file bersih, jembatan ke fase analisis berikutnya.">
         <div className="grid grid-cols-1 gap-3 min-[820px]:grid-cols-3">
           <OutputCard
             file="clean_accepted_loans.csv"
@@ -316,7 +316,7 @@ const REJECTED_STEPS: { no: number; name: string; desc: string }[] = [
   { no: 1, name: "EDA ringkas", desc: "Kenali 9 kolom, missing, & outlier DTI" },
   { no: 2, name: "Cleaning", desc: "Buang duplikat & kolom kosong, rapikan tipe" },
   { no: 3, name: "Normalisasi", desc: "Samakan skala 3 fitur numerik" },
-  { no: 4, name: "Output", desc: "CSV bersih untuk pembanding" },
+  { no: 4, name: "Output", desc: "CSV pembanding + sparse (.npz) untuk Apriori" },
 ];
 
 /** Report dataset REJECTED (pipeline lebih sederhana, tanpa target/feature selection). */
@@ -328,25 +328,25 @@ function RejectedReport() {
         title="Data Ditolak: Pipeline yang Lebih Ringkas"
         sub={
           <>
-            Pengajuan yang <b>ditolak</b> punya jauh lebih sedikit informasi — hanya 9 kolom dan{" "}
+            Pengajuan yang <b>ditolak</b> punya jauh lebih sedikit informasi, yaitu hanya 9 kolom dan{" "}
             <b>tanpa label hasil pinjaman</b>. Maka pipeline-nya lebih sederhana: fokus merapikan
             dan menyamakan skala, lalu dipakai sebagai <b>pembanding</b> untuk memahami profil penolakan.
           </>
         }
         pills={[
-          { label: "Baris", value: "27,6 jt" },
-          { label: "Kolom final", value: "8", kind: "accent" },
+          { label: "Baris", value: "27,60 jt" },
+          { label: "File output", value: "3", kind: "accent" },
         ]}
       />
 
       <Callout eyebrow="Kenapa diproses terpisah">
         Dataset ditolak tidak punya kolom <b>loan_status</b> (tidak ada hasil lunas/gagal bayar),
-        sehingga metode yang butuh target — seperti feature selection — <b>tidak bisa dipakai</b>.
+        sehingga metode yang butuh target seperti feature selection <b>tidak bisa dipakai</b>.
         Perannya adalah <b>pembanding</b>: memahami seperti apa pengajuan yang tidak lolos kebijakan kredit.
       </Callout>
 
       {/* Alur ringkas */}
-      <Card title="Alur pengerjaan" sub="Lebih pendek dari pipeline accepted — hanya empat langkah.">
+      <Card title="Alur pengerjaan" sub="Lebih pendek dari pipeline accepted, hanya empat langkah.">
         <div className="grid grid-cols-1 gap-2.5 min-[560px]:grid-cols-2 min-[900px]:grid-cols-4">
           {REJECTED_STEPS.map((s) => (
             <div key={s.no} className="rounded-[14px] border border-line bg-glass2 px-3.5 py-3">
@@ -361,9 +361,9 @@ function RejectedReport() {
       <div className="h-[18px]" />
 
       {/* Titik awal */}
-      <Card title="Titik awal: 27,6 juta pengajuan ditolak" sub="Sederhana kolomnya, tetapi sangat banyak barisnya.">
+      <Card title="Titik awal: 27,60 juta pengajuan ditolak" sub="Sederhana kolomnya, tetapi sangat banyak barisnya.">
         <div className="grid grid-cols-3 gap-2.5">
-          <Stat value="27,6 jt" label="Baris pengajuan ditolak" accent="text-violet" />
+          <Stat value="27,60 jt" label="Baris pengajuan ditolak" accent="text-violet" />
           <Stat value="9" label="Kolom awal (mentah)" />
           <Stat value="8" label="Kolom setelah dibersihkan" accent="text-lime" />
         </div>
@@ -383,13 +383,13 @@ function RejectedReport() {
           <DoRow color="#c4c9ac" title="Hapus baris duplikat"
             detail="Baris identik hanya redundansi dan tidak menambah informasi." />
           <DoRow color="#7df4ff" title="Ubah DTI dari teks jadi angka"
-            detail={<>Nilai seperti <span className="font-mono text-[12px]">&ldquo;38.64%&rdquo;</span> disimpan sebagai teks — dikonversi ke angka agar bisa dihitung.</>} />
-          <DoRow color="#ffb4ab" title="Buang Risk_Score (66,8% kosong)"
+            detail={<>Nilai seperti <span className="font-mono text-[12px]">&ldquo;38.64%&rdquo;</span> disimpan sebagai teks, lalu dikonversi ke angka agar bisa dihitung.</>} />
+          <DoRow color="#ffb4ab" title="Buang Risk_Score (66,80% kosong)"
             detail="Terlalu banyak nilai hilang untuk diisi ulang secara andal. Kolom lain diisi median (angka) / modus (kategori)." />
           <DoRow color="#7df4ff" title="Samakan format Employment Length"
             detail={<><span className="font-mono text-[12px]">&ldquo;10+ years&rdquo;</span> → angka 0–10, konsisten dengan lama kerja di dataset accepted.</>} />
           <DoRow color="#c3f400" title="Jinakkan DTI yang absurd"
-            detail={<>Ada nilai DTI sampai puluhan juta persen. Dipangkas ringan (P1–P99) agar tidak merusak skala — <b className="text-text">nilai DTI tinggi yang realistis tetap dipertahankan</b> karena jadi sinyal penting (muncul sebagai Anti-Persona di Fase 2).</>} />
+            detail={<>Ada nilai DTI sampai puluhan juta persen. Dipangkas ringan (P1–P99) agar tidak merusak skala, tetapi <b className="text-text">nilai DTI tinggi yang realistis tetap dipertahankan</b> karena jadi sinyal penting (muncul sebagai Anti-Persona di Fase 2).</>} />
           <DoRow color="#d0bcff" title="Samakan skala 3 fitur numerik"
             detail={<>Jumlah diminta (ribuan), DTI (puluhan), dan lama kerja (0–10) berbeda skala jauh. StandardScaler menyeragamkannya (rata-rata 0, simpangan 1) agar setara saat dipakai di analisis berbasis jarak.</>} />
         </div>
@@ -419,21 +419,58 @@ function RejectedReport() {
 
       <div className="h-[18px]" />
 
+      {/* Siapkan untuk Apriori (sparse) */}
+      <Card
+        title="Siapkan untuk Apriori (format hemat memori)"
+        sub="Rejected juga disiapkan untuk Association Rules, tetapi tidak sebagai CSV biasa."
+      >
+        <p className="text-[13.5px] leading-[1.6] text-muted">
+          Tiga fitur di-bin lalu di-One-Hot menjadi <b className="text-text">12 kolom biner</b>: Amount
+          Requested, Debt-To-Income Ratio, dan Employment Length. Karena rejected punya sekitar{" "}
+          <b className="text-text">27 juta baris</b>, menyimpannya sebagai tabel biasa (dense) akan
+          menghabiskan lebih dari 10 GB RAM. Solusinya memakai <b className="text-text">sparse matrix</b>,
+          yaitu format yang hanya menyimpan nilai 1 dan mengabaikan nilai 0, sehingga hemat 10 sampai 50
+          kali lipat.
+        </p>
+        <div className="mt-3.5 grid grid-cols-2 gap-2.5 min-[560px]:grid-cols-4">
+          <Stat value="27,49 jt" label="Baris (seluruh data ditolak)" accent="text-violet" />
+          <Stat value="12" label="Kolom biner (item Apriori)" accent="text-lime" />
+          <Stat value="25%" label="Kepadatan nilai 1 (density)" />
+          <Stat value="66 MB" label="Ukuran file sparse (.npz)" accent="text-cyan" />
+        </div>
+      </Card>
+
+      <div className="h-[18px]" />
+
       {/* Output */}
-      <Card title="Hasil: CSV Pembanding" sub="Satu file bersih, siap disandingkan dengan data accepted.">
-        <div className="grid grid-cols-1">
+      <Card title="Hasil: Tiga File Output" sub="Satu untuk clustering/komparatif, dua untuk Apriori.">
+        <div className="grid grid-cols-1 gap-3 min-[820px]:grid-cols-3">
           <OutputCard
             file="clean_rejected_loans.csv"
             size="8 kolom (Amount Requested, DTI, Employment Length, …)"
-            desc="Pengajuan ditolak yang sudah bersih & ternormalisasi. Fitur numeriknya berskala sama sehingga langsung bisa dipakai pada analisis berbasis jarak."
-            use="Analisis komparatif · Fase 2 & 4"
+            desc="Tabel bersih dan ternormalisasi. Fitur numeriknya berskala sama sehingga langsung bisa dipakai pada analisis berbasis jarak."
+            use="Segmentasi & komparatif · Fase 2 & 4"
             accent="#d0bcff"
+          />
+          <OutputCard
+            file="clean_for_apriori_rejected_sparse.npz"
+            size="Matriks biner 27,49 jt × 12 (sparse, ~66 MB)"
+            desc="Data ditolak dalam bentuk One-Hot yang hemat memori, siap dijadikan pola co-occurrence tanpa membebani RAM."
+            use="Association Rules · Fase 3"
+            accent="#c3f400"
+          />
+          <OutputCard
+            file="clean_for_apriori_rejected_columns.json"
+            size="12 nama kolom biner"
+            desc="Daftar nama kolom untuk merekonstruksi matriks sparse saat Apriori dijalankan, karena file .npz tidak menyimpan nama kolom."
+            use="Pendamping file .npz"
+            accent="#7df4ff"
           />
         </div>
         <p className="mt-3.5 text-[13px] leading-[1.6] text-muted">
-          File ini menjadi kaca pembanding: dengan menyandingkan profil pinjaman{" "}
+          Ketiganya menjadikan sisi ditolak sebagai kaca pembanding: dengan menyandingkan profil pinjaman{" "}
           <b className="text-text">diterima</b> dan <b className="text-text">ditolak</b>, kita bisa
-          melihat batas kebijakan kredit — misalnya rentang DTI atau jumlah pinjaman yang cenderung ditolak.
+          melihat batas kebijakan kredit, misalnya rentang DTI atau jumlah pinjaman yang cenderung ditolak.
         </p>
       </Card>
     </>
