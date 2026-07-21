@@ -112,3 +112,48 @@ export function ruleNarrative(antecedent: string, consequent: string): string {
     consequent
   )}.`;
 }
+
+// ---------------------------------------------------------------------------
+// Fitur (untuk filter): petakan token ber-kode -> fitur asalnya (grade, loan_amnt, dst)
+// ---------------------------------------------------------------------------
+export interface FeatureMeta {
+  key: string;
+  label: string;
+}
+
+// [prefix token, key fitur, label tampil]. Urutan: prefix lebih spesifik dulu.
+const FEATURE_PREFIX: [string, string, string][] = [
+  ["Amount Requested_bin_", "amount_requested", "Jumlah diminta"],
+  ["Debt-To-Income Ratio_bin_", "dti", "DTI"],
+  ["Employment Length_bin_", "employment_length", "Masa kerja"],
+  ["int_rate_bin_", "int_rate", "Suku bunga"],
+  ["loan_amnt_bin_", "loan_amnt", "Jumlah pinjaman"],
+  ["income_bin_", "income", "Pendapatan"],
+  ["dti_bin_", "dti", "DTI"],
+  ["sub_grade_", "sub_grade", "Sub-grade"],
+  ["home_ownership_", "home_ownership", "Kepemilikan rumah"],
+  ["loan_status_", "loan_status", "Status pinjaman"],
+  ["grade_", "grade", "Grade"],
+  ["term_", "term", "Tenor"],
+];
+
+/** Fitur asal satu token, atau null bila tak dikenali. */
+export function itemFeature(token: string): FeatureMeta | null {
+  const t = String(token).trim();
+  for (const [prefix, key, label] of FEATURE_PREFIX) {
+    if (t.startsWith(prefix)) return { key, label };
+  }
+  return null;
+}
+
+/** Semua fitur unik yang muncul di satu rule (antecedent + consequent). */
+export function ruleFeatures(antecedent: string, consequent: string): FeatureMeta[] {
+  const seen = new Map<string, FeatureMeta>();
+  for (const side of [antecedent, consequent]) {
+    for (const tok of splitItemset(side)) {
+      const f = itemFeature(tok);
+      if (f && !seen.has(f.key)) seen.set(f.key, f);
+    }
+  }
+  return [...seen.values()];
+}
