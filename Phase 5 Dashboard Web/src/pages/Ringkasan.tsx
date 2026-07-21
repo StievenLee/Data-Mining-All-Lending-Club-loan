@@ -21,10 +21,12 @@ import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
 import { fmt2 } from "../lib/format";
 import { REJECTED_SCOPE_TEXT, isStrongOnly, recordUnit } from "../lib/scope";
+import { REJECTED_RISK_NOTE, clustersFor } from "../lib/cluster";
 
 export default function Ringkasan({ data }: { data: DashboardData }) {
   const dataset = useDashboard((s) => s.dataset);
   const years = useDashboard((s) => s.years) ?? data.summary.year_bounds!;
+  const strongOnly = isStrongOnly(dataset);
 
   const counts = useMemo(
     () => tierCounts(data.tiers, dataset, years),
@@ -43,15 +45,17 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
   const gauge = useMemo(() => gaugeOption(strong.pct), [strong.pct]);
   const tierBar = useMemo(() => tierBarOption(counts), [counts]);
   const verdict = useMemo(() => verdictOption(verdicts), [verdicts]);
-  const clusterProfiles = useMemo(
-    () =>
-      data.clustersByYear.length
-        ? clusterProfilesForYears(data.clustersByYear, years)
-        : data.clusters,
-    [data.clustersByYear, data.clusters, years]
+  // Agregasi per tahun hanya ada untuk accepted; rejected memakai profil keseluruhan.
+  const clusterProfiles = useMemo(() => {
+    if (strongOnly) return clustersFor(data.clusters, "rejected");
+    return data.clustersByYear.length
+      ? clusterProfilesForYears(data.clustersByYear, years)
+      : clustersFor(data.clusters, "accepted");
+  }, [strongOnly, data.clustersByYear, data.clusters, years]);
+  const cluster = useMemo(
+    () => clusterOption(clusterProfiles, dataset),
+    [clusterProfiles, dataset]
   );
-  const cluster = useMemo(() => clusterOption(clusterProfiles), [clusterProfiles]);
-  const strongOnly = isStrongOnly(dataset);
 
   return (
     <>
@@ -126,8 +130,12 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
         </Card>
         <Card
           title="Segmen risiko nasabah"
-          note={`Fase 2 · ${years[0]}–${years[1]}`}
-          sub="Default rate naik dari Prime ke High-Risk, mengikuti rentang tahun."
+          note={strongOnly ? "Fase 2 · seluruh periode" : `Fase 2 · ${years[0]}–${years[1]}`}
+          sub={
+            strongOnly
+              ? REJECTED_RISK_NOTE
+              : "Default rate naik dari Prime ke High-Risk, mengikuti rentang tahun."
+          }
         >
           <EChart option={cluster} height={320} />
         </Card>

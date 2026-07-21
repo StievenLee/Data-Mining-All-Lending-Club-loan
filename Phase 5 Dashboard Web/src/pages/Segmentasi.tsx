@@ -8,25 +8,33 @@ import EChart from "../components/EChart";
 import Card from "../components/Card";
 import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
-import { fmt2 } from "../lib/format";
+import {
+  REJECTED_RISK_NOTE,
+  clustersFor,
+  riskPillLabel,
+  riskText,
+  riskValue,
+} from "../lib/cluster";
 
 export default function Segmentasi({ data }: { data: DashboardData }) {
   const dataset = useDashboard((s) => s.dataset);
   const years = useDashboard((s) => s.years) ?? data.summary.year_bounds!;
 
-  // Klasterisasi K-Means Fase 2 hanya dijalankan atas dataset accepted;
-  // hasil rejected belum diekspor -> array kosong memicu pesan "belum tersedia".
+  // Agregasi per tahun hanya tersedia untuk accepted (clusters_by_year.json dibangun
+  // dari populasi accepted). Rejected memakai profil keseluruhan, jadi filter tahun
+  // TIDAK berlaku di sana -- dinyatakan eksplisit di UI agar tak terbaca sebagai bug.
+  const isRejected = dataset === "rejected";
   const clusters = useMemo(() => {
-    if (dataset !== "accepted") return [];
+    if (isRejected) return clustersFor(data.clusters, "rejected");
     return data.clustersByYear.length
       ? clusterProfilesForYears(data.clustersByYear, years)
-      : data.clusters;
-  }, [dataset, data.clustersByYear, data.clusters, years]);
+      : clustersFor(data.clusters, "accepted");
+  }, [isRejected, data.clustersByYear, data.clusters, years]);
 
-  const option = useMemo(() => clusterOption(clusters), [clusters]);
+  const option = useMemo(() => clusterOption(clusters, dataset), [clusters, dataset]);
   const totalAnggota = clusters.reduce((s, c) => s + c.n_anggota, 0);
   const worst = clusters.length
-    ? [...clusters].sort((a, b) => b.default_rate - a.default_rate)[0]
+    ? [...clusters].sort((a, b) => riskValue(b) - riskValue(a))[0]
     : null;
 
   return (
@@ -35,43 +43,51 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
         eyebrow="Fase 2 K-Means Clustering"
         title="Segmentasi Peminjam"
         sub={
-          dataset === "accepted" ? (
+          isRejected ? (
+            <>
+              <b>{clusters.length}</b> segmen pengajuan ditolak dari{" "}
+              <b>{totalAnggota.toLocaleString("id-ID")}</b> pengajuan. Ukuran gelembung =
+              jumlah anggota, warna = DTI sebagai proksi risiko. {REJECTED_RISK_NOTE}
+            </>
+          ) : (
             <>
               <b>{clusters.length}</b> segmen peminjam dari{" "}
               <b>{totalAnggota.toLocaleString("id-ID")}</b> pinjaman ({years[0]}–{years[1]}).
               Ukuran gelembung = jumlah anggota, warna = tingkat gagal bayar.
             </>
-          ) : (
-            "Klasterisasi K-Means Fase 2 saat ini hanya dijalankan pada dataset Accepted. Hasil untuk Rejected belum diekspor."
           )
         }
-        pills={
-          dataset === "accepted"
-            ? [
-                { label: "Segmen", value: String(clusters.length) },
-                {
-                  label: "Default tertinggi",
-                  value: worst ? `${fmt2(worst.default_rate * 100)}%` : "–",
-                  kind: "accent",
-                },
-              ]
-            : undefined
-        }
+        pills={[
+          { label: "Segmen", value: String(clusters.length) },
+          {
+            label: riskPillLabel(dataset),
+            value: worst ? riskText(worst) : "–",
+            kind: "accent",
+          },
+        ]}
       />
       <YearRangeSlider bounds={data.summary.year_bounds!} recordCount={totalAnggota} />
       <div className="mb-[18px] grid min-w-0 grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] gap-[18px] max-[1080px]:grid-cols-1">
-        <Card title="Peta Segmen" note="bubble = n anggota">
+        <Card
+          title="Peta Segmen"
+          note="bubble = n anggota"
+          sub={
+            isRejected
+              ? "Profil rejected dihitung atas seluruh periode, sehingga filter tahun di atas tidak mengubah kartu ini."
+              : undefined
+          }
+        >
           <EChart option={option} height={470} />
         </Card>
         <Card title="Profil Segmen" sub="Diurutkan dari risiko terendah.">
           {clusters.length === 0 ? (
             <p className="font-mono text-[13px] leading-[1.6] text-muted">
-              Belum ada data segmen untuk Rejected.
+              Profil klaster belum tersedia untuk dataset ini.
             </p>
           ) : (
             <div className="flex flex-col gap-3.5">
               {[...clusters]
-                .sort((a, b) => a.default_rate - b.default_rate)
+                .sort((a, b) => riskValue(a) - riskValue(b))
                 .map((c, i) => (
                   <div
                     key={c.cluster}
@@ -84,8 +100,8 @@ export default function Segmentasi({ data }: { data: DashboardData }) {
                     <div className="flex-1">
                       <div className="font-display font-semibold">{c.nama_profil}</div>
                       <div className="font-mono text-[11px] text-muted">
-                        {c.n_anggota.toLocaleString("id-ID")} anggota · default{" "}
-                        {fmt2(c.default_rate * 100)}%
+                        {c.n_anggota.toLocaleString("id-ID")} anggota ·{" "}
+                        {isRejected ? "DTI" : "default"} {riskText(c)}
                       </div>
                     </div>
                   </div>

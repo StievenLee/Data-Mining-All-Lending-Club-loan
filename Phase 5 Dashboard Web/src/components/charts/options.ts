@@ -11,8 +11,9 @@ import {
   VERDICT_COLORS,
   tooltipStyle,
 } from "../../theme/colors";
-import type { ClusterProfile, SampleColumnar } from "../../types";
+import type { ClusterProfile, Dataset, SampleColumnar } from "../../types";
 import { fmt2 } from "../../lib/format";
+import { CLUSTER_AXES, RISK_LEGEND, riskText, riskValue } from "../../lib/cluster";
 
 const axisCommon = {
   axisLine: { lineStyle: { color: COLORS.line } },
@@ -173,7 +174,10 @@ export function verdictOption(
 }
 
 /** Bubble klaster: x=avg_int_rate, y=avg_fico, size=n_anggota, color=default_rate. */
-export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
+export function clusterOption(
+  clusters: ClusterProfile[],
+  dataset: Dataset = "accepted"
+): EChartsOption {
   if (clusters.length === 0) {
     return {
       graphic: {
@@ -181,15 +185,16 @@ export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
         left: "center",
         top: "middle",
         style: {
-          text: "Segmentasi K-Means hanya tersedia untuk Accepted",
+          text: "Profil klaster belum tersedia",
           fill: COLORS.muted,
           font: `12px ${FONT_MONO}`,
         },
       },
     };
   }
+  const axes = CLUSTER_AXES[dataset];
   const maxN = Math.max(...clusters.map((c) => c.n_anggota), 1);
-  const rates = clusters.map((c) => c.default_rate);
+  const rates = clusters.map(riskValue);
   return {
     grid: { left: 8, right: 70, top: 24, bottom: 44, containLabel: true },
     tooltip: {
@@ -197,9 +202,10 @@ export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
       trigger: "item",
       formatter: (p: any) => {
         const c = p.data.raw as ClusterProfile;
+        const metrik = dataset === "rejected" ? "DTI" : "default";
         return `${c.nama_profil}<br/>anggota=${c.n_anggota.toLocaleString(
           "id-ID"
-        )}<br/>default=${fmt2(c.default_rate * 100)}%`;
+        )}<br/>${metrik}=${riskText(c)}`;
       },
     },
     visualMap: {
@@ -211,13 +217,13 @@ export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
       right: 0,
       top: "center",
       itemHeight: 120,
-      text: ["default\ntinggi", "rendah"],
+      text: RISK_LEGEND[dataset],
       textStyle: { color: COLORS.muted, fontFamily: FONT_MONO, fontSize: 10 },
       inRange: { color: RISK_SCALE },
     },
     xAxis: {
       type: "value",
-      name: "rata-rata bunga (z-score)",
+      name: axes.xName,
       nameLocation: "middle",
       nameGap: 30,
       scale: true,
@@ -225,7 +231,7 @@ export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
     },
     yAxis: {
       type: "value",
-      name: "rata-rata FICO (z-score)",
+      name: axes.yName,
       nameLocation: "middle",
       nameGap: 40,
       scale: true,
@@ -236,7 +242,7 @@ export function clusterOption(clusters: ClusterProfile[]): EChartsOption {
         type: "scatter",
         symbolSize: (val: any) => (val[3] / maxN) * 60 + 22,
         data: clusters.map((c) => ({
-          value: [c.avg_int_rate, c.avg_fico, c.default_rate, c.n_anggota],
+          value: [c[axes.x] ?? 0, c[axes.y] ?? 0, riskValue(c), c.n_anggota],
           raw: c,
           itemStyle: { borderColor: COLORS.bgDeep, borderWidth: 2, opacity: 0.92 },
           label: {

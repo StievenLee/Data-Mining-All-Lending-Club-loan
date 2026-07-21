@@ -36,6 +36,7 @@ OUT_DIR = os.path.join(WEB_ROOT, "public", "data")     # JSON hasil (di-deploy s
 ANOMALY_ACC = os.path.join(DATA_IN, "anomaly_report_accepted.csv")
 ANOMALY_REJ = os.path.join(DATA_IN, "anomaly_report_rejected.csv")
 CLUSTER_CSV = os.path.join(DATA_IN, "cluster_profiles.csv")
+CLUSTER_REJ_CSV = os.path.join(DATA_IN, "cluster_profiles_rejected.csv")
 RULES_ACC_CSV = os.path.join(PROJECT_ROOT, "Phase 3 Associate Rule", "Results",
                              "results_apriori_accepted.csv")     # Fase 3 (accepted)
 RULES_REJ_CSV = os.path.join(PROJECT_ROOT, "Phase 3 Associate Rule", "Results",
@@ -214,12 +215,19 @@ def process_rejected() -> tuple[pd.DataFrame, pd.DataFrame]:
 
 
 def process_clusters() -> list[dict]:
+    """Profil klaster kedua dataset dalam satu array, dibedakan kolom `dataset`.
+
+    Skema keduanya sengaja tidak sama: accepted punya default_rate (ground truth
+    gagal bayar), rejected tidak punya label semacam itu sehingga hanya membawa
+    avg_dti/avg_employment_length/avg_amount_requested. Front-end memakai avg_dti
+    sebagai proksi risiko rejected -- selaras cluster_labels_meta_rejected.json
+    ("proksi risiko = klaster dengan median DTI tertinggi")."""
     if os.path.exists(CLUSTER_CSV):
-        df = pd.read_csv(CLUSTER_CSV)
-        log(f"cluster profiles: {len(df)} klaster dari CSV")
+        acc = pd.read_csv(CLUSTER_CSV)
+        log(f"cluster profiles accepted: {len(acc)} klaster dari CSV")
     else:
-        log("cluster profiles: DUMMY")
-        df = pd.DataFrame({
+        log("cluster profiles accepted: DUMMY")
+        acc = pd.DataFrame({
             "cluster": [0, 1, 2],
             "nama_profil": ["Prime / Low-Risk", "Moderate-Risk", "High-Risk"],
             "n_anggota": [512208, 488402, 347489],
@@ -227,7 +235,19 @@ def process_clusters() -> list[dict]:
             "avg_int_rate": [10.4, 12.9, 17.8],
             "avg_fico": [700, 683, 668],
         })
-    return df.to_dict(orient="records")
+    acc["dataset"] = "accepted"
+
+    if os.path.exists(CLUSTER_REJ_CSV):
+        rej = pd.read_csv(CLUSTER_REJ_CSV)
+        rej["dataset"] = "rejected"          # CSV memakai "Rejected" -> normalkan
+        log(f"cluster profiles rejected: {len(rej)} klaster dari CSV")
+    else:
+        log("cluster profiles rejected: CSV tak ada -> tab Segmentasi rejected kosong")
+        rej = pd.DataFrame()
+
+    out = pd.concat([acc, rej], ignore_index=True) if len(rej) else acc
+    # NaN (kolom yang hanya dimiliki salah satu dataset) -> None agar jadi null di JSON
+    return out.astype(object).where(pd.notna(out), None).to_dict(orient="records")
 
 
 def clean_itemset(val) -> str:

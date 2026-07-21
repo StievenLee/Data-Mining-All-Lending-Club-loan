@@ -5,6 +5,7 @@ import PageHead from "../components/PageHead";
 import Card from "../components/Card";
 import Callout from "../components/Callout";
 import { fmt2 } from "../lib/format";
+import { clustersFor } from "../lib/cluster";
 
 /* ============================================================================
    Insight Bisnis (Fase 1-4). Menyintesis temuan tiap fase jadi bahasa bisnis
@@ -94,9 +95,14 @@ const SEGMENT_META = [
 export default function InsightBisnis({ data }: { data: DashboardData }) {
   const kpi = data.summary.kpi;
 
-  // Segmen (Fase 2), diurut dari risiko terendah ke tertinggi.
+  // Segmen (Fase 2), diurut dari risiko terendah ke tertinggi. Halaman ini bercerita
+  // dengan tingkat gagal bayar, yang hanya dimiliki accepted -- klaster rejected
+  // (proksi DTI) sengaja tidak dicampur ke sini.
   const segments = useMemo(
-    () => [...data.clusters].sort((a, b) => a.default_rate - b.default_rate),
+    () =>
+      clustersFor(data.clusters, "accepted")
+        .map((c) => ({ ...c, default_rate: c.default_rate ?? 0 }))
+        .sort((a, b) => a.default_rate - b.default_rate),
     [data.clusters]
   );
   const totalBorrowers = useMemo(

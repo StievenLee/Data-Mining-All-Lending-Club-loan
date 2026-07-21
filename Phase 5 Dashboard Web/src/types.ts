@@ -16,13 +16,23 @@ export interface VerdictYearRow {
   count: number;
 }
 
+/** Profil klaster Fase 2. Skema kedua dataset tidak sama, jadi field khas
+ *  masing-masing bersifat opsional — pakai helper di lib/cluster.ts, jangan baca
+ *  field-nya langsung, supaya rejected (tanpa default_rate) tidak jadi NaN.
+ *  accepted : default_rate, avg_int_rate, avg_fico
+ *  rejected : avg_dti, avg_employment_length, avg_amount_requested, persentase_populasi */
 export interface ClusterProfile {
   cluster: number;
   nama_profil: string;
   n_anggota: number;
-  default_rate: number;
-  avg_int_rate: number;
-  avg_fico: number;
+  dataset?: Dataset; // absen pada data lama -> diperlakukan sebagai "accepted"
+  default_rate?: number;
+  avg_int_rate?: number;
+  avg_fico?: number;
+  avg_dti?: number;
+  avg_employment_length?: number;
+  avg_amount_requested?: number;
+  persentase_populasi?: number;
 }
 
 // Profil klaster per (tahun, klaster) — untuk kartu segmen yang responsif tahun.
