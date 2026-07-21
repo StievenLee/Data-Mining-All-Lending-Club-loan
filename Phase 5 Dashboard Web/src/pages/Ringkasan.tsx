@@ -127,7 +127,7 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
         <Card
           title="Segmen risiko nasabah"
           note={`Fase 2 · ${years[0]}–${years[1]}`}
-          sub="Default rate naik dari Prime ke Highest-Risk, mengikuti rentang tahun."
+          sub="Default rate naik dari Prime ke High-Risk, mengikuti rentang tahun."
         >
           <EChart option={cluster} height={320} />
         </Card>

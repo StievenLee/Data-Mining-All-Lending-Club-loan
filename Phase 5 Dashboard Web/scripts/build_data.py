@@ -221,7 +221,7 @@ def process_clusters() -> list[dict]:
         log("cluster profiles: DUMMY")
         df = pd.DataFrame({
             "cluster": [0, 1, 2],
-            "nama_profil": ["Prime / Low-Risk", "Moderate-Risk", "Highest-Risk"],
+            "nama_profil": ["Prime / Low-Risk", "Moderate-Risk", "High-Risk"],
             "n_anggota": [512208, 488402, 347489],
             "default_rate": [0.1165, 0.1919, 0.3337],
             "avg_int_rate": [10.4, 12.9, 17.8],
@@ -286,7 +286,7 @@ def process_clusters_by_year() -> list[dict]:
     acc["year"] = yr["issue_year"].astype(int).to_numpy()
 
     # nama profil dari peringkat default rate overall (terendah -> Prime)
-    rank_names = ["Prime / Low-Risk", "Moderate-Risk", "Highest-Risk"]
+    rank_names = ["Prime / Low-Risk", "Moderate-Risk", "High-Risk"]
     order = acc.groupby("cluster")["loan_status_binary"].mean().sort_values().index.tolist()
     name_by_cluster = {c: rank_names[i] if i < len(rank_names) else f"Cluster {c}"
                        for i, c in enumerate(order)}

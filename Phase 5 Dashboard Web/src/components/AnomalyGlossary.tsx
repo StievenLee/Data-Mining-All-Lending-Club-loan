@@ -65,7 +65,7 @@ export default function AnomalyGlossary({ dataset }: { dataset: "accepted" | "re
           </GlossItem>
           {isAcc && (
             <GlossItem swatch="sq-open" term="Kolektif">
-              Anggota klaster <b>Highest-Risk</b> (Fase 2). Individu belum tentu ekstrem,
+              Anggota klaster <b>High-Risk</b> (Fase 2). Individu belum tentu ekstrem,
               tapi kelompoknya menyimpang bersama (FICO rendah, bunga tinggi, gagal bayar
               tinggi).
             </GlossItem>
