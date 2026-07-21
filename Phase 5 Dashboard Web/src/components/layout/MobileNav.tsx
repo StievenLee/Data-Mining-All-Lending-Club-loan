@@ -9,6 +9,7 @@ const NAV: { id: TabId; label: string }[] = [
   { id: "segmentasi", label: "Segmen" },
   { id: "rules", label: "Rules" },
   { id: "anomali", label: "Anomali" },
+  { id: "insight", label: "Insight" },
 ];
 
 /** Navigasi bawah — hanya tampil <900px (saat sidebar disembunyikan). */
@@ -16,7 +17,7 @@ export default function MobileNav() {
   const tab = useDashboard((s) => s.tab);
   const setTab = useDashboard((s) => s.setTab);
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 hidden grid-cols-5 border-t border-line bg-bg-deep/90 backdrop-blur-[18px] max-[900px]:grid">
+    <nav className="fixed inset-x-0 bottom-0 z-40 hidden grid-cols-6 border-t border-line bg-bg-deep/90 backdrop-blur-[18px] max-[900px]:grid">
       {NAV.map((n) => {
         const active = tab === n.id;
         return (

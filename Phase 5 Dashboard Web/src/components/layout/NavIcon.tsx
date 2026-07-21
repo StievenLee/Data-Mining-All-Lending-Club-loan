@@ -13,6 +13,13 @@ const PATHS: Record<TabId, JSX.Element> = {
     // corong (funnel): menyaring & merapikan data mentah jadi siap pakai
     <path d="M4 5h16l-6 7v6l-4 2v-8z" />
   ),
+  insight: (
+    // bohlam: insight/rekomendasi bisnis
+    <>
+      <path d="M9 18h6M10 21h4" />
+      <path d="M12 3a6 6 0 00-3.8 10.6c.6.5.8 1 .8 1.9h6c0-.9.2-1.4.8-1.9A6 6 0 0012 3z" />
+    </>
+  ),
   segmentasi: (
     <>
       <rect x="4" y="4" width="6" height="6" rx="1" />

@@ -8,6 +8,7 @@ const NAV: { id: TabId; label: string }[] = [
   { id: "segmentasi", label: "Segmentasi" },
   { id: "rules", label: "Association Rules" },
   { id: "anomali", label: "Anomali" },
+  { id: "insight", label: "Insight Bisnis" },
 ];
 
 // Tanpa background — hanya ikon + nama. Aktif ditandai warna lime saja.

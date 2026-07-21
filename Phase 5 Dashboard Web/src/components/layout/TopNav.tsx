@@ -7,6 +7,7 @@ const TAB_LABEL: Record<string, string> = {
   segmentasi: "Segmentasi",
   rules: "Association Rules",
   anomali: "Anomali",
+  insight: "Insight Bisnis",
 };
 
 // Toggle dataset relevan di semua tab (preprocessing menampilkan report accepted/rejected)

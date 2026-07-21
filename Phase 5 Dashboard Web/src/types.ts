@@ -1,7 +1,7 @@
 // Tipe data selaras output scripts/build_data.py
 
 export type Dataset = "accepted" | "rejected";
-export type TabId = "ringkasan" | "preprocessing" | "segmentasi" | "rules" | "anomali";
+export type TabId = "ringkasan" | "preprocessing" | "segmentasi" | "rules" | "anomali" | "insight";
 
 export interface TierYearRow {
   dataset: Dataset;
