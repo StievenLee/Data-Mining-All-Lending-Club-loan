@@ -196,7 +196,12 @@ export function clusterOption(
   const maxN = Math.max(...clusters.map((c) => c.n_anggota), 1);
   const rates = clusters.map(riskValue);
   return {
-    grid: { left: 8, right: 70, top: 24, bottom: 44, containLabel: true },
+    // containLabel hanya menyediakan ruang untuk ANGKA sumbu, bukan nama sumbu:
+    // nama digambar sejauh nameGap di luar garis sumbu, jadi left/bottom harus
+    // menampungnya sendiri (left 8 + nameGap 40 = nama terpotong di tepi kanvas).
+    // Sisi kanan tetap lapang untuk visualMap; atas untuk label nama profil yang
+    // ditaruh di atas gelembung.
+    grid: { left: 46, right: 74, top: 40, bottom: 52, containLabel: true },
     tooltip: {
       ...tooltipStyle,
       trigger: "item",
