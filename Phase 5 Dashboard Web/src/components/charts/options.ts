@@ -201,7 +201,7 @@ export function clusterOption(
     // menampungnya sendiri (left 8 + nameGap 40 = nama terpotong di tepi kanvas).
     // Sisi kanan tetap lapang untuk visualMap; atas untuk label nama profil yang
     // ditaruh di atas gelembung.
-    grid: { left: 46, right: 74, top: 40, bottom: 52, containLabel: true },
+    grid: { left: 46, right: 74, top: 48, bottom: 52, containLabel: true },
     tooltip: {
       ...tooltipStyle,
       trigger: "item",
@@ -226,12 +226,18 @@ export function clusterOption(
       textStyle: { color: COLORS.muted, fontFamily: FONT_MONO, fontSize: 10 },
       inRange: { color: RISK_SCALE },
     },
+    // boundaryGap melebarkan rentang sumbu di luar nilai data, supaya gelembung
+    // tak pernah menempel tepi. Tanpa ini titik teratas (Prime: gelembung terbesar
+    // DAN FICO tertinggi) duduk persis di batas grid, lalu label di atasnya --
+    // sejauh radius gelembung, sampai ~41px -- terpotong. Sisi atas diberi jatah
+    // paling besar karena hanya di situ label digambar.
     xAxis: {
       type: "value",
       name: axes.xName,
       nameLocation: "middle",
       nameGap: 30,
       scale: true,
+      boundaryGap: ["14%", "14%"],
       ...axisCommon,
     },
     yAxis: {
@@ -240,12 +246,16 @@ export function clusterOption(
       nameLocation: "middle",
       nameGap: 40,
       scale: true,
+      boundaryGap: ["12%", "40%"],
       ...axisCommon,
     },
     series: [
       {
         type: "scatter",
-        symbolSize: (val: any) => (val[3] / maxN) * 60 + 22,
+        // Diameter maksimum ditahan di 56px (bukan 82px): label diletakkan sejauh
+        // radius gelembung, dan pada kartu Ringkasan yang cuma 320px ruang atas
+        // tidak cukup untuk radius 41px + tinggi teks. Proporsi antar gelembung tetap.
+        symbolSize: (val: any) => (val[3] / maxN) * 40 + 16,
         data: clusters.map((c) => ({
           value: [c[axes.x] ?? 0, c[axes.y] ?? 0, riskValue(c), c.n_anggota],
           raw: c,
