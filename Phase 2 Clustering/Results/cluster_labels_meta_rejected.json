@@ -1,11 +1,11 @@
 {
-  "most_extreme_cluster": 1,
+  "most_extreme_cluster": 2,
   "note_risk": "proksi risiko = klaster dengan median DTI (z-score) tertinggi; Rejected tidak punya label default seperti Accepted",
   "n_records": 27490787,
   "cluster_sizes": {
     "0": 23780149,
-    "1": 490276,
-    "2": 3220362
+    "1": 3220362,
+    "2": 490276
   },
   "year_range": [
     2007,
