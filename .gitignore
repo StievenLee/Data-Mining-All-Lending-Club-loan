@@ -23,3 +23,6 @@ node_modules/
 Phase 5 Dashboard Web/node_modules/
 Phase 5 Dashboard Web/dist/
 .DS_Store
+
+# Fase 2 - lewat batas 100MB GitHub, kirim file langsung untuk Fase 4/5 bila perlu.
+Phase 2 Clustering/Results/cluster_labels_rejected.parquet
