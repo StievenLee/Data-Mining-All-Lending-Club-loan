@@ -21,8 +21,8 @@ Deploy sebagai situs statis (Vercel/Cloudflare/Netlify) — gratis, tanpa mainte
 
 ## Cara menjalankan (lokal)
 
-Prasyarat: Node ≥ 18, Python ≥ 3.10 (dengan pandas), dan CSV asli Fase 4 di
-`../Phase 5 Dashboard/data/` (opsional — tanpa itu pipeline memakai dummy).
+Prasyarat: Node ≥ 18, Python ≥ 3.10 (dengan pandas), dan input asli Fase 1–4 di
+`data_src/` (gitignored; opsional — tanpa itu pipeline memakai dummy).
 
 ```bash
 # 1. Bangun data ringkas ke public/data/ (sekali / saat data berubah)
@@ -40,7 +40,7 @@ npm run preview        # cek hasil build
 ## Alur data
 
 ```
-Fase 1–4 (CSV/parquet, ratusan MB)
+data_src/  (input Fase 1–4: CSV/parquet/dbscan-json, ratusan MB, gitignored)
       │  scripts/build_data.py  (agregasi + sampling + kompresi)
       ▼
 public/data/*.json  (total ~0.8 MB)  ──►  di-fetch SEKALI di browser
@@ -71,5 +71,5 @@ File yang dihasilkan di `public/data/`:
 ## Catatan
 - Data mentah (accepted/rejected ~1.7 GB) **tidak pernah** dikirim ke browser.
 - Rejected (6 juta baris) diproses via chunking di `build_data.py`, lalu di-sample.
-- Rules Fase 3 saat ini memakai fallback bila CSV belum diekspor dari notebook —
-  taruh `results_apriori_cleaned.csv` di `../Phase 5 Dashboard/data/` untuk data nyata.
+- Rules Fase 3 dibaca dari `Phase 3 Associate Rule/Results/results_apriori_{accepted,rejected}.csv`
+  (accepted + rejected, data nyata — bukan `_cleaned`); memakai fallback dummy bila file tak ada.

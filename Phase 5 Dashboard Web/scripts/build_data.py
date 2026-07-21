@@ -11,13 +11,15 @@ Prinsip:
   sampai total ~6.000 baris. Rejected difilter ke tier >= "Kuat".
 - Bila file asli belum ada, fungsi memakai fallback dummy berskema sama.
 
+Input   :  data_src/ (CSV/parquet/dbscan-json Fase 1-4, gitignored, non-public)
 Jalankan:  python scripts/build_data.py
-Output  :  public/data/{summary,tiers_by_year,clusters,rules}.json
-           public/data/anomaly_sample_{accepted,rejected}.arrow
+Output  :  public/data/{summary,tiers_by_year,verdict_by_year,clusters,clusters_by_year,rules}.json
+           public/data/anomaly_sample_{accepted,rejected}.json
 """
 from __future__ import annotations
 import json
 import os
+import re
 
 import numpy as np
 import pandas as pd
@@ -28,16 +30,18 @@ import pandas as pd
 HERE = os.path.dirname(os.path.abspath(__file__))
 WEB_ROOT = os.path.dirname(HERE)                       # Phase 5 Dashboard Web/
 PROJECT_ROOT = os.path.dirname(WEB_ROOT)               # repo root
-OLD_DASH = os.path.join(PROJECT_ROOT, "Phase 5 Dashboard")
-DATA_IN = os.path.join(OLD_DASH, "data")               # CSV asli Fase 4 (gitignored)
-OUT_DIR = os.path.join(WEB_ROOT, "public", "data")
+DATA_IN = os.path.join(WEB_ROOT, "data_src")           # input Fase 1-4 (gitignored, non-public)
+OUT_DIR = os.path.join(WEB_ROOT, "public", "data")     # JSON hasil (di-deploy sbg aset statis)
 
 ANOMALY_ACC = os.path.join(DATA_IN, "anomaly_report_accepted.csv")
 ANOMALY_REJ = os.path.join(DATA_IN, "anomaly_report_rejected.csv")
 CLUSTER_CSV = os.path.join(DATA_IN, "cluster_profiles.csv")
-RULES_CSV = os.path.join(DATA_IN, "results_apriori_cleaned.csv")   # Fase 3 (opsional)
-DBSCAN_ACC_JSON = os.path.join(OLD_DASH, "dbscan_outliers_accepted.json")
-DBSCAN_REJ_JSON = os.path.join(OLD_DASH, "dbscan_outliers_rejected.json")
+RULES_ACC_CSV = os.path.join(PROJECT_ROOT, "Phase 3 Associate Rule", "Results",
+                             "results_apriori_accepted.csv")     # Fase 3 (accepted)
+RULES_REJ_CSV = os.path.join(PROJECT_ROOT, "Phase 3 Associate Rule", "Results",
+                             "results_apriori_rejected.csv")     # Fase 3 (rejected)
+DBSCAN_ACC_JSON = os.path.join(DATA_IN, "dbscan_outliers_accepted.json")
+DBSCAN_REJ_JSON = os.path.join(DATA_IN, "dbscan_outliers_rejected.json")
 
 # Sumber utk agregasi klaster PER TAHUN (populasi penuh accepted, join per posisi baris).
 CLEAN_ACC_CSV = os.path.join(PROJECT_ROOT, "Datasets", "Cleaning", "Phase 2", "clean_accepted_loans.csv")
@@ -226,24 +230,38 @@ def process_clusters() -> list[dict]:
     return df.to_dict(orient="records")
 
 
+def clean_itemset(val) -> str:
+    """Ubah 'frozenset({'A', 'B'})' (format rejected) -> 'A, B'. Accepted sudah rapi
+    (mis. 'grade_A, term_36') jadi dikembalikan apa adanya."""
+    s = str(val).strip()
+    m = re.match(r"^frozenset\(\{(.*)\}\)$", s)
+    if m:
+        s = m.group(1)
+    items = [it.strip().strip("'\"") for it in s.split(",")]
+    return ", ".join(i for i in items if i)
+
+
+def read_rules_csv(path: str, dataset: str) -> pd.DataFrame | None:
+    if not os.path.exists(path):
+        return None
+    df = pd.read_csv(path).rename(columns={"antecedents": "antecedent",
+                                           "consequents": "consequent"})
+    df["antecedent"] = df["antecedent"].map(clean_itemset)
+    df["consequent"] = df["consequent"].map(clean_itemset)
+    df["dataset"] = dataset
+    log(f"rules {dataset}: {len(df)} rule dari CSV")
+    return df[["antecedent", "consequent", "support", "confidence", "lift", "dataset"]]
+
+
 def process_rules() -> list[dict]:
-    if os.path.exists(RULES_CSV):
-        df = pd.read_csv(RULES_CSV)
-        ren = {}
-        if "antecedents" in df.columns:
-            ren["antecedents"] = "antecedent"
-        if "consequents" in df.columns:
-            ren["consequents"] = "consequent"
-        df = df.rename(columns=ren)
-        if "dataset" not in df.columns:
-            df["dataset"] = "Accepted"
-        log(f"rules: {len(df)} rule dari CSV")
-    else:
+    parts = [d for d in (read_rules_csv(RULES_ACC_CSV, "Accepted"),
+                         read_rules_csv(RULES_REJ_CSV, "Rejected")) if d is not None]
+    if not parts:
         log("rules: Fase 3 belum diekspor -> DUMMY (menyerupai hasil nyata)")
-        df = dummy_rules()
-    keep = [c for c in ["antecedent", "consequent", "support", "confidence", "lift", "dataset"]
-            if c in df.columns]
-    return df[keep].to_dict(orient="records")
+        return dummy_rules().to_dict(orient="records")
+    df = (pd.concat(parts, ignore_index=True)
+          .sort_values("lift", ascending=False).reset_index(drop=True))
+    return df.to_dict(orient="records")
 
 
 def process_clusters_by_year() -> list[dict]:
@@ -393,9 +411,10 @@ def main() -> None:
     write_sample_json("anomaly_sample_accepted.json", acc_scat.reset_index(drop=True))
     write_sample_json("anomaly_sample_rejected.json", rej_scat.reset_index(drop=True))
 
-    # --- validasi ukuran total ---
+    # --- validasi ukuran total (hanya JSON output yang di-deploy) ---
     total_mb = sum(os.path.getsize(os.path.join(OUT_DIR, f))
-                   for f in os.listdir(OUT_DIR)) / (1024 * 1024)
+                   for f in os.listdir(OUT_DIR)
+                   if f.endswith(".json")) / (1024 * 1024)
     log(f"TOTAL output: {total_mb:.2f} MB (ambang {MAX_TOTAL_MB} MB)")
     if total_mb > MAX_TOTAL_MB:
         log("PERINGATAN: output > ambang. Pertimbangkan agregasi lebih agresif.")
