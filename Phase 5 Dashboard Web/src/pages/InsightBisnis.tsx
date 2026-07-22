@@ -424,19 +424,25 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
           />
         </div>
 
-        <div className="mt-4 overflow-hidden rounded-[18px] border border-lime/30 bg-[linear-gradient(110deg,rgba(195,244,0,0.14),rgba(19,19,24,0.5)_70%)] px-5 py-5">
-          <div className="font-display text-[17px] font-semibold text-text min-[640px]:text-[19px]">
-            Ubah data menjadi keputusan.
-          </div>
-          <p className="mt-1.5 max-w-[70ch] text-[13.5px] leading-[1.6] text-muted">
-            Gunakan segmen risiko, pola keputusan, dan peringatan dini di atas sebagai dasar kebijakan
-            kredit yang lebih tajam, adil, dan cepat. Mulai dari satu segmen atau satu aturan, ukur
-            dampaknya, lalu perluas.
+        {/* Penutup halaman sebagai kutipan, bukan banner ber-CTA: tombol "Terapkan pada
+            kebijakan kredit" dulu hanya <div> berbentuk tombol yang tidak melakukan apa pun
+            — afordans palsu. Kalimatnya sendiri tetap dipertahankan sebagai ajakan. */}
+        <blockquote className="relative mt-4 overflow-hidden rounded-[18px] border border-lime/30 bg-[linear-gradient(110deg,rgba(195,244,0,0.14),rgba(19,19,24,0.5)_70%)] py-5 pl-6 pr-5 min-[640px]:pl-7">
+          <span className="absolute inset-y-0 left-0 w-[3px] bg-lime" aria-hidden="true" />
+          <span
+            className="pointer-events-none absolute right-4 top-1 select-none font-display text-[64px] leading-none text-lime/15"
+            aria-hidden="true"
+          >
+            &rdquo;
+          </span>
+          <p className="max-w-[70ch] font-display text-[16px] italic leading-[1.6] text-text min-[640px]:text-[18px]">
+            Ubah data menjadi keputusan. Gunakan segmen risiko, pola keputusan, dan peringatan
+            dini di atas sebagai dasar kebijakan kredit yang lebih tajam, adil, dan cepat.
           </p>
-          <div className="mt-3.5 inline-flex items-center gap-2 rounded-full bg-lime px-4 py-2 font-mono text-[12px] font-bold text-ink">
-            Terapkan pada kebijakan kredit →
-          </div>
-        </div>
+          <p className="mt-2 max-w-[70ch] text-[13px] leading-[1.6] text-muted">
+            Mulai dari satu segmen atau satu aturan, ukur dampaknya, lalu perluas.
+          </p>
+        </blockquote>
       </Card>
     </>
   );
