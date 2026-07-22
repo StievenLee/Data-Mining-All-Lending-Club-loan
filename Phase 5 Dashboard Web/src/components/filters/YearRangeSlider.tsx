@@ -1,4 +1,5 @@
 import { useDashboard } from "../../store/useDashboard";
+import { useRafCommit } from "../../lib/useRafCommit";
 import DualRangeSlider from "./DualRangeSlider";
 
 interface Props {
@@ -22,6 +23,10 @@ export default function YearRangeSlider({
   const [lo, hi] = bounds;
   const years = useDashboard((s) => s.years) ?? bounds;
   const setYears = useDashboard((s) => s.setYears);
+  // Menggeser thumb menembakkan onChange puluhan kali per detik; tanpa peredam
+  // ini tiap tembakan memicu satu lintasan filter penuh. Preset tetap memakai
+  // setYears langsung karena hanya sekali klik.
+  const commitYears = useRafCommit(setYears);
   const [a, b] = years;
 
   const presets: [string, number, number][] = [["Semua", lo, hi]];
@@ -55,7 +60,7 @@ export default function YearRangeSlider({
           </div>
         </div>
       </div>
-      <DualRangeSlider lo={lo} hi={hi} a={a} b={b} onChange={setYears} />
+      <DualRangeSlider lo={lo} hi={hi} a={a} b={b} onChange={commitYears} />
     </div>
   );
 }
