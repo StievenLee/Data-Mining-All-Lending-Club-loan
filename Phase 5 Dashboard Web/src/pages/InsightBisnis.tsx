@@ -261,9 +261,9 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
               Pinjaman diterima
             </div>
             <p className="mt-2 text-[13.5px] leading-[1.6] text-text">
-              Pada pinjaman <b>Grade A</b> berukuran menengah dan bertenor 36 bulan, kombinasi
-              bunga sangat rendah + status lunas muncul di <b>84 dari 100 kasus</b> —{" "}
-              {fmt2(kpi.max_lift)} kali lebih sering dibanding kalau ketiganya tidak berhubungan.
+              Pinjaman <b>bertenor 60 bulan</b> berkumpul dengan nominal besar yang berakhir gagal
+              bayar <b>2,66 kali lebih sering</b> dibanding kalau keduanya tidak berhubungan. Bunga
+              di atas 20 persen sendiri berujung gagal bayar pada <b>41 dari 100 kasus</b>.
             </p>
           </div>
           <div className="rounded-[16px] border border-line bg-glass2 px-4 py-3.5">
@@ -282,17 +282,20 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
           <Tile value={`${fmt2(kpi.max_lift)}x`} label="Kekuatan pola terkuat (lift)" accent="text-cyan" />
         </div>
         <Meaning>
-          Grade, tingkat bunga, dan status akhir pinjaman bergerak konsisten satu sama lain —
-          ketiganya jauh lebih sering muncul bersama daripada kebetulan. Sementara itu, kombinasi
-          utang tinggi, masa kerja pendek, dan pinjaman besar dapat dijadikan kriteria peninjauan
-          yang eksplisit dan konsisten.
+          Sinyal gagal bayar yang terkuat justru melekat pada <b>struktur kontrak</b>, bukan pada
+          ciri peminjam. Tenor 60 bulan menarik pinjaman berbunga tinggi, grade rendah, dan nominal
+          besar sekaligus, lalu kombinasi itu bermuara pada gagal bayar di atas ekspektasi. Tenor
+          dan plafon adalah dua hal yang justru dikendalikan sendiri oleh pemberi pinjaman.
         </Meaning>
-        {/* Dua batasan yang membuat pola di atas TIDAK boleh dibaca sebagai bukti bahwa
-            sistem grading sudah benar. Ditulis di tempat kesimpulannya ditarik, bukan
-            diselipkan di halaman lain, supaya pembaca melihatnya sekaligus. */}
+        {/* Catatan metodologis penting: pola "bunga -> grade" yang lift-nya jauh lebih tinggi
+            (5,7) sengaja DIBUANG di Fase 3 karena tautologis. Ditulis di sini, di tempat
+            kesimpulan ditarik, supaya pembaca tidak bertanya-tanya kenapa lift maksimum turun. */}
         <p className="mt-3 text-[12.5px] leading-[1.55] text-muted">
           Batasan: aturan asosiasi mengukur <b className="text-text">seberapa sering hal-hal muncul
-          bersama</b>, bukan sebab-akibat — jadi ini belum membuktikan sistem grading sudah tepat.
+          bersama</b>, bukan sebab-akibat. Perlu dicatat pula bahwa pola berkekuatan jauh lebih
+          tinggi (lift 5,7) sempat muncul dalam bentuk “bunga rendah menandai Grade A”, tetapi
+          sengaja dibuang karena tautologis: pemberi pinjaman memang menetapkan bunga{" "}
+          <i>dari</i> grade, sehingga pola itu hanya memantulkan kembali kebijakan harganya sendiri.
           Selain itu status akhir hanya tersedia untuk pinjaman yang sudah selesai; pinjaman yang
           masih berjalan (38,9 persen, lihat tab Preprocessing) dibuang, sehingga proporsi lunas di
           sini lebih tinggi daripada kalau semua pinjaman ikut dihitung.

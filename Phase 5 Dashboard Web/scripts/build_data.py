@@ -11,7 +11,9 @@ Prinsip:
   sampai total ~6.000 baris. Rejected difilter ke tier >= "Kuat".
 - Bila file asli belum ada, fungsi memakai fallback dummy berskema sama.
 
-Input   :  data_src/ (CSV/parquet/dbscan-json Fase 1-4, gitignored, non-public)
+Input   :  data_src/ (CSV/parquet/dbscan-json Fase 1-4, gitignored, non-public).
+           Termasuk rules Fase 3 (results_apriori_{accepted,rejected}.csv); bila tidak ada,
+           otomatis fallback ke "Phase 3 Associate Rule/Results/" dan dicatat di log.
 Jalankan:  python scripts/build_data.py
 Output  :  public/data/{summary,tiers_by_year,verdict_by_year,clusters,clusters_by_year,rules}.json
            public/data/anomaly_sample_{accepted,rejected}.json
@@ -37,10 +39,26 @@ ANOMALY_ACC = os.path.join(DATA_IN, "anomaly_report_accepted.csv")
 ANOMALY_REJ = os.path.join(DATA_IN, "anomaly_report_rejected.csv")
 CLUSTER_CSV = os.path.join(DATA_IN, "cluster_profiles.csv")
 CLUSTER_REJ_CSV = os.path.join(DATA_IN, "cluster_profiles_rejected.csv")
-RULES_ACC_CSV = os.path.join(PROJECT_ROOT, "Phase 3 Associate Rule", "Results",
-                             "results_apriori_accepted.csv")     # Fase 3 (accepted)
-RULES_REJ_CSV = os.path.join(PROJECT_ROOT, "Phase 3 Associate Rule", "Results",
-                             "results_apriori_rejected.csv")     # Fase 3 (rejected)
+# Rules Fase 3 dibaca dari data_src/ (bukan langsung dari folder Results Fase 3), supaya
+# SELURUH input dashboard berasal dari satu tempat yang sama. Salin hasil Fase 3 ke sini
+# setiap kali notebook dijalankan ulang: lihat catatan "Alur data" di README.
+RULES_ACC_CSV = os.path.join(DATA_IN, "results_apriori_accepted.csv")   # Fase 3 (accepted)
+RULES_REJ_CSV = os.path.join(DATA_IN, "results_apriori_rejected.csv")   # Fase 3 (rejected)
+
+# Jaring pengaman untuk kelalaian menyalin: notebook Fase 3 menulis ke folder Results,
+# lalu hasilnya HARUS disalin manual ke data_src/. Bila langkah salin itu terlewat,
+# tanpa fallback `npm run data` akan diam-diam memakai dummy_rules() dan dashboard
+# menampilkan angka palsu tanpa peringatan. Fallback ini membaca langsung dari Results
+# bila data_src kosong, dan SELALU mencatatnya di log agar tidak tersembunyi.
+#
+# Catatan: root .gitignore memuat pola "*.csv", sehingga KEDUA lokasi sama-sama tidak
+# ter-commit. Jadi fallback ini TIDAK menolong pada clone baru (di sana rules memang
+# harus dibangun ulang dari notebook Fase 3); yang tetap ter-commit dan dipakai saat
+# deploy adalah hasil jadinya, yaitu public/data/rules.json.
+RULES_ACC_FALLBACK = os.path.join(PROJECT_ROOT, "Phase 3 Associate Rule", "Results",
+                                  "results_apriori_accepted.csv")
+RULES_REJ_FALLBACK = os.path.join(PROJECT_ROOT, "Phase 3 Associate Rule", "Results",
+                                  "results_apriori_rejected.csv")
 DBSCAN_ACC_JSON = os.path.join(DATA_IN, "dbscan_outliers_accepted.json")
 DBSCAN_REJ_JSON = os.path.join(DATA_IN, "dbscan_outliers_rejected.json")
 
@@ -255,31 +273,51 @@ def process_clusters() -> list[dict]:
 
 
 def clean_itemset(val) -> str:
-    """Ubah 'frozenset({'A', 'B'})' (format rejected) -> 'A, B'. Accepted sudah rapi
-    (mis. 'grade_A, term_36') jadi dikembalikan apa adanya."""
+    """Ubah 'frozenset({'A', 'B'})' (format rejected) -> 'A, B'.
+
+    Item selalu diurutkan. CSV rejected menyimpan repr `frozenset`, dan urutan iterasi
+    frozenset Python berbeda antar-proses (hash randomization). Tanpa sorted(), tiap
+    `npm run data` menghasilkan rules.json yang beda-beda urutan itemnya walau angkanya
+    identik -- memunculkan diff git palsu dan urutan tampilan yang berubah-ubah di UI.
+    Sisi accepted memang sudah terurut (pretty_rules memakai sorted()), jadi sorted()
+    di sini sekaligus menyeragamkan kedua domain.
+    """
     s = str(val).strip()
     m = re.match(r"^frozenset\(\{(.*)\}\)$", s)
     if m:
         s = m.group(1)
     items = [it.strip().strip("'\"") for it in s.split(",")]
-    return ", ".join(i for i in items if i)
+    return ", ".join(sorted(i for i in items if i))
 
 
-def read_rules_csv(path: str, dataset: str) -> pd.DataFrame | None:
+def read_rules_csv(path: str, dataset: str, fallback: str | None = None) -> pd.DataFrame | None:
+    """Baca rule Fase 3. Sumber utama = data_src/; `fallback` hanya jaring pengaman.
+
+    Fallback dipakai HANYA bila file di data_src/ tidak ada, yaitu ketika langkah
+    "salin hasil Fase 3 ke data_src/" terlewat. Tanpa itu, pipeline akan diam-diam
+    jatuh ke dummy_rules() dan dashboard menampilkan angka palsu tanpa peringatan.
+    Sumber yang benar-benar terpakai SELALU dicatat di log.
+    """
+    used = path
     if not os.path.exists(path):
-        return None
-    df = pd.read_csv(path).rename(columns={"antecedents": "antecedent",
+        if fallback and os.path.exists(fallback):
+            used = fallback
+            log(f"rules {dataset}: TIDAK ADA di data_src -> memakai fallback {fallback}")
+        else:
+            return None
+    df = pd.read_csv(used).rename(columns={"antecedents": "antecedent",
                                            "consequents": "consequent"})
     df["antecedent"] = df["antecedent"].map(clean_itemset)
     df["consequent"] = df["consequent"].map(clean_itemset)
     df["dataset"] = dataset
-    log(f"rules {dataset}: {len(df)} rule dari CSV")
+    asal = "data_src" if used == path else "Phase 3/Results (fallback)"
+    log(f"rules {dataset}: {len(df)} rule dari {asal}")
     return df[["antecedent", "consequent", "support", "confidence", "lift", "dataset"]]
 
 
 def process_rules() -> list[dict]:
-    parts = [d for d in (read_rules_csv(RULES_ACC_CSV, "Accepted"),
-                         read_rules_csv(RULES_REJ_CSV, "Rejected")) if d is not None]
+    parts = [d for d in (read_rules_csv(RULES_ACC_CSV, "Accepted", RULES_ACC_FALLBACK),
+                         read_rules_csv(RULES_REJ_CSV, "Rejected", RULES_REJ_FALLBACK)) if d is not None]
     if not parts:
         log("rules: Fase 3 belum diekspor -> DUMMY (menyerupai hasil nyata)")
         return dummy_rules().to_dict(orient="records")
