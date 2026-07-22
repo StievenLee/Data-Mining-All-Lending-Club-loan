@@ -98,32 +98,148 @@ export function limitRows(rows: number[], limit: number | null): number[] {
   return out;
 }
 
-/** Hitung anggota tiap lapisan pada baris yang sedang tampil — untuk angka di chip. */
-export function anomalyLayerCounts(
+export type OverlayLayer = Exclude<AnomalyLayer, "main">;
+
+/** Satu seri overlay: koordinat datar [x,y,x,y,…] + indeks baris asalnya. */
+export interface OverlaySeries {
+  xy: Float64Array;
+  /** dataIndex overlay → indeks baris di sample, untuk tooltip. */
+  idx: Int32Array;
+}
+
+/** Data siap-gambar untuk peta anomali, hasil SATU lintasan atas `rows`. */
+export interface ScatterFrame {
+  /** Seri utama, datar: 3 nilai per titik (x, y, iso_score). Panjang = count*3. */
+  main: Float64Array;
+  /** dataIndex seri utama → indeks baris di sample. */
+  srcIdx: Int32Array;
+  count: number;
+  isoMin: number;
+  isoMax: number;
+  overlays: Record<OverlayLayer, OverlaySeries>;
+  /** Angka untuk chip lapisan — dihitung dari titik yang benar-benar digambar. */
+  counts: Record<AnomalyLayer, number>;
+  /** Kolom tier mentah, untuk menerjemahkan dataIndex → nama tier di tooltip. */
+  tierNames: string[] | undefined;
+}
+
+const EMPTY_OVERLAY: OverlaySeries = { xy: new Float64Array(0), idx: new Int32Array(0) };
+
+/** Siapkan seluruh seri peta anomali dalam SATU lintasan.
+ *
+ *  Sebelumnya pekerjaan ini terpecah tiga: `anomalyLayerCounts` melintasi rows
+ *  untuk angka chip, lalu pembangun opsi melintasinya lagi untuk seri utama dan
+ *  overlay. Digabung karena keduanya membaca kolom yang sama persis.
+ *
+ *  Seri utama ditulis ke Float64Array datar, bukan array objek. Bentuk lama
+ *  (`{ value: [x, y, iso], name: tier }` per titik) mengalokasikan tiga objek
+ *  per titik — sekitar 1,6 juta alokasi pada 547 rb titik — dan GC-nya yang
+ *  memakan waktu: 117 ms dari 131 ms total pada pengukuran mode "Semua".
+ *  ECharts menerima TypedArray asalkan `dimensions` dideklarasikan di seri.
+ *
+ *  Catatan: titik dengan x atau y null dilewati, sehingga `counts` di sini
+ *  menghitung titik yang BENAR-BENAR digambar. Itu memang yang dimaksud angka
+ *  di chip, dan sedikit berbeda dari perhitungan lama yang mengabaikan hal ini.
+ */
+export function prepareScatter(
   sample: SampleColumnar,
   rows: number[],
+  xKey: string,
+  yKey: string,
   tierOrder: string[] = []
-): Record<AnomalyLayer, number> {
+): ScatterFrame {
+  const cx = sample.columns[xKey] as (number | null)[] | undefined;
+  const cy = sample.columns[yKey] as (number | null)[] | undefined;
+  const iso = sample.columns["iso_score"] as number[] | undefined;
   const noise = sample.columns["is_dbscan_noise"] as number[] | undefined;
   const tier = sample.columns["anomaly_tier"] as string[] | undefined;
   const contextual = sample.columns["is_contextual_outlier"] as number[] | undefined;
   const collective = sample.columns["is_collective_outlier"] as number[] | undefined;
   const highTiers = new Set(tierOrder.slice(0, 2));
 
-  const out: Record<AnomalyLayer, number> = {
-    main: rows.length,
-    collective: 0,
-    contextual: 0,
-    highTier: 0,
-    noise: 0,
+  const cap = rows.length;
+  const main = new Float64Array(cap * 3);
+  const srcIdx = new Int32Array(cap);
+  let count = 0;
+  let isoMin = Infinity;
+  let isoMax = -Infinity;
+
+  // Overlay selalu subset kecil, jadi dikumpulkan sebagai array biasa lalu
+  // disalin sekali ke TypedArray — lebih hemat daripada pre-alokasi sebesar cap
+  // untuk empat lapisan sekaligus.
+  const ovXY: Record<OverlayLayer, number[]> = {
+    collective: [],
+    contextual: [],
+    highTier: [],
+    noise: [],
   };
-  for (const i of rows) {
-    if (collective?.[i]) out.collective++;
-    if (contextual?.[i]) out.contextual++;
-    if (noise?.[i]) out.noise++;
-    if (tier && highTiers.has(tier[i])) out.highTier++;
+  const ovIdx: Record<OverlayLayer, number[]> = {
+    collective: [],
+    contextual: [],
+    highTier: [],
+    noise: [],
+  };
+
+  if (cx && cy) {
+    for (let k = 0; k < cap; k++) {
+      const i = rows[k];
+      const x = cx[i];
+      const y = cy[i];
+      if (x == null || y == null) continue;
+      const v = iso ? iso[i] : 0.5;
+
+      const o = count * 3;
+      main[o] = x;
+      main[o + 1] = y;
+      main[o + 2] = v;
+      srcIdx[count] = i;
+      count++;
+
+      if (v < isoMin) isoMin = v;
+      if (v > isoMax) isoMax = v;
+
+      if (collective?.[i]) {
+        ovXY.collective.push(x, y);
+        ovIdx.collective.push(i);
+      }
+      if (contextual?.[i]) {
+        ovXY.contextual.push(x, y);
+        ovIdx.contextual.push(i);
+      }
+      if (noise?.[i]) {
+        ovXY.noise.push(x, y);
+        ovIdx.noise.push(i);
+      }
+      if (tier && highTiers.has(tier[i])) {
+        ovXY.highTier.push(x, y);
+        ovIdx.highTier.push(i);
+      }
+    }
   }
-  return out;
+
+  const overlays = {} as Record<OverlayLayer, OverlaySeries>;
+  for (const key of ["collective", "contextual", "highTier", "noise"] as OverlayLayer[]) {
+    overlays[key] = ovIdx[key].length
+      ? { xy: new Float64Array(ovXY[key]), idx: new Int32Array(ovIdx[key]) }
+      : EMPTY_OVERLAY;
+  }
+
+  return {
+    main: main.subarray(0, count * 3),
+    srcIdx,
+    count,
+    isoMin: Number.isFinite(isoMin) ? isoMin : 0,
+    isoMax: Number.isFinite(isoMax) ? isoMax : 1,
+    overlays,
+    counts: {
+      main: count,
+      collective: ovIdx.collective.length,
+      contextual: ovIdx.contextual.length,
+      highTier: ovIdx.highTier.length,
+      noise: ovIdx.noise.length,
+    },
+    tierNames: tier,
+  };
 }
 
 /** Metrik yang dirata-rata per dataset — kolom yang terisi memang berbeda. */

@@ -3,9 +3,9 @@ import type { ReactNode } from "react";
 import type { DashboardData } from "../types";
 import { useDashboard } from "../store/useDashboard";
 import {
-  anomalyLayerCounts,
   filterSampleRows,
   limitRows,
+  prepareScatter,
   totalRecords,
 } from "../data/filters";
 import type { AnomalyLayer } from "../data/filters";
@@ -121,15 +121,17 @@ export default function Anomali({ data }: { data: DashboardData }) {
 
   const yearRows = useMemo(() => filterSampleRows(sample, years), [sample, years]);
   const rows = useMemo(() => limitRows(yearRows, limit), [yearRows, limit]);
-  // Angka pada chip dihitung dari titik yang BENAR-BENAR digambar, agar cocok
-  // dengan yang terlihat setelah batas jumlah titik diterapkan.
-  const counts = useMemo(
-    () => anomalyLayerCounts(sample, rows, data.summary.tier_order),
-    [sample, rows, data.summary.tier_order]
+  // Satu lintasan menghasilkan seri chart DAN angka chip sekaligus. Keduanya
+  // membaca kolom yang sama, jadi memisahkannya berarti melintasi data dua kali.
+  // Angka chip karena itu selalu cocok dengan yang benar-benar digambar.
+  const frame = useMemo(
+    () => prepareScatter(sample, rows, safeX, safeY, data.summary.tier_order),
+    [sample, rows, safeX, safeY, data.summary.tier_order]
   );
+  const counts = frame.counts;
   const option = useMemo(
-    () => anomalyScatterOption(sample, rows, safeX, safeY, data.summary.tier_order, layer),
-    [sample, rows, safeX, safeY, data.summary.tier_order, layer]
+    () => anomalyScatterOption(frame, safeX, safeY, layer),
+    [frame, safeX, safeY, layer]
   );
   const total = totalRecords(data.tiers, dataset, years);
 

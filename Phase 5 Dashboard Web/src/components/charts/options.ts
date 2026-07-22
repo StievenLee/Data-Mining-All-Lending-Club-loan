@@ -11,11 +11,11 @@ import {
   VERDICT_COLORS,
   tooltipStyle,
 } from "../../theme/colors";
-import type { ClusterProfile, Dataset, Rule, SampleColumnar } from "../../types";
+import type { ClusterProfile, Dataset, Rule } from "../../types";
 import { fmt2 } from "../../lib/format";
 import { humanizeItem } from "../../lib/ruleNarrative";
 import { CLUSTER_AXES, RISK_LEGEND, riskText, riskValue } from "../../lib/cluster";
-import type { AnomalyLayer } from "../../data/filters";
+import type { AnomalyLayer, ScatterFrame } from "../../data/filters";
 
 const axisCommon = {
   axisLine: { lineStyle: { color: COLORS.line } },
@@ -262,63 +262,31 @@ export function clusterOption(
   };
 }
 
-/** Scatter anomali: x,y = fitur terpilih, warna = iso_score, overlay noise DBSCAN
- *  + jenis anomali Fase 4 (kontekstual/kolektif) + tier tinggi. Overlay hanya muncul
- *  bila kolomnya ada di sample (accepted saja — rejected tak punya kolom ini).
- *  `layer` != null → isolasi satu lapisan: lapisan itu digambar penuh, sisanya jadi
- *  titik abu redup sebagai konteks posisi (bukan dihilangkan, agar sebaran tetap terbaca). */
+/** Scatter anomali dari ScatterFrame (lihat data/filters.ts).
+ *  Fungsi ini MURNI merakit opsi: seluruh lintasan data sudah dikerjakan sekali
+ *  di prepareScatter(), jadi di sini tidak ada loop atas titik sama sekali.
+ *
+ *  `layer` != null → isolasi satu lapisan: lapisan itu digambar penuh, sisanya
+ *  jadi titik abu redup sebagai konteks posisi (bukan dihilangkan, agar sebaran
+ *  tetap terbaca).
+ */
 export function anomalyScatterOption(
-  sample: SampleColumnar,
-  rows: number[],
+  frame: ScatterFrame,
   xKey: string,
   yKey: string,
-  tierOrder: string[] = [],
   layer: AnomalyLayer | null = null
 ): EChartsOption {
-  const cx = sample.columns[xKey] as number[] | undefined;
-  const cy = sample.columns[yKey] as number[] | undefined;
-  const iso = sample.columns["iso_score"] as number[] | undefined;
-  const noise = sample.columns["is_dbscan_noise"] as number[] | undefined;
-  const tier = sample.columns["anomaly_tier"] as string[] | undefined;
-  const contextual = sample.columns["is_contextual_outlier"] as number[] | undefined;
-  const collective = sample.columns["is_collective_outlier"] as number[] | undefined;
-  const highTiers = new Set(tierOrder.slice(0, 2));
+  const { overlays, tierNames, srcIdx } = frame;
 
-  const main: any[] = [];
-  const noisePts: any[] = [];
-  const collectivePts: any[] = [];
-  const contextualPts: any[] = [];
-  const highTierPts: any[] = [];
-  if (cx && cy) {
-    for (const i of rows) {
-      const x = cx[i];
-      const y = cy[i];
-      if (x == null || y == null) continue;
-      const isoV = iso ? iso[i] : 0.5;
-      const t = tier ? tier[i] : "";
-      main.push({ value: [x, y, isoV], name: t });
-      if (noise && noise[i]) noisePts.push([x, y]);
-      if (collective && collective[i]) collectivePts.push([x, y]);
-      if (contextual && contextual[i]) contextualPts.push([x, y]);
-      if (t && highTiers.has(t)) highTierPts.push({ value: [x, y], name: t });
-    }
-  }
-  // Loop manual, BUKAN Math.min(...isoVals): spread ke apply() meledakkan call
-  // stack begitu titik > ~100rb (scatter sekarang tanpa sampling, bisa ratusan ribu).
-  let isoMin = Infinity;
-  let isoMax = -Infinity;
-  for (const m of main) {
-    const v = m.value[2];
-    if (v < isoMin) isoMin = v;
-    if (v > isoMax) isoMax = v;
-  }
-  if (!Number.isFinite(isoMin)) isoMin = 0;
-  if (!Number.isFinite(isoMax)) isoMax = 1;
-
-  // Isolasi lapisan overlay (kolektif/kontekstual/tier/noise): titik dasar tetap
-  // digambar, tapi netral & tidak diwarnai iso_score supaya lapisan aktif menonjol.
+  // Isolasi lapisan overlay: titik dasar tetap digambar, tapi netral & tidak
+  // diwarnai iso_score supaya lapisan aktif menonjol.
   const dimBase = layer != null && layer !== "main";
   const shows = (l: AnomalyLayer) => layer == null || layer === l;
+
+  // dimensions WAJIB ada saat data berupa TypedArray — ECharts memakainya untuk
+  // menentukan langkah per titik pada array datar (assert eksplisit di Source.js).
+  const XY = ["x", "y"];
+  const XYZ = ["x", "y", "iso"];
 
   const series: any[] = [
     {
@@ -326,18 +294,46 @@ export function anomalyScatterOption(
       name: dimBase ? "Titik lain (konteks)" : "Anomali",
       large: true,
       largeThreshold: 2000,
+      dimensions: XYZ,
       symbolSize: dimBase ? 5 : 7,
-      itemStyle: dimBase
-        ? { color: COLORS.muted, opacity: 0.16 }
-        : { opacity: 0.72 },
+      itemStyle: dimBase ? { color: COLORS.muted, opacity: 0.16 } : { opacity: 0.72 },
       silent: dimBase,
-      data: main,
+      data: frame.main,
     },
   ];
-  if (collectivePts.length && shows("collective")) {
+
+  const pushOverlay = (
+    key: Exclude<AnomalyLayer, "main">,
+    name: string,
+    style: Record<string, any>,
+    tooltipText: string
+  ) => {
+    const ov = overlays[key];
+    if (!ov.idx.length || !shows(key)) return;
     series.push({
       type: "scatter",
-      name: "Kolektif",
+      name,
+      // large juga di overlay: sebelumnya hanya seri utama yang punya, padahal
+      // noise DBSCAN bisa mencapai puluhan ribu titik.
+      large: true,
+      largeThreshold: 2000,
+      dimensions: XY,
+      data: ov.xy,
+      ...style,
+      tooltip: {
+        formatter: (p: any) => {
+          const i = ov.idx[p.dataIndex];
+          const t = tierNames?.[i];
+          return t ? `${tooltipText}<br/>${t}` : tooltipText;
+        },
+      },
+    });
+  };
+
+  pushOverlay(
+    "collective",
+    "Kolektif",
+    {
       symbol: "rect",
       symbolSize: layer ? 9 : 7,
       itemStyle: {
@@ -346,45 +342,51 @@ export function anomalyScatterOption(
         borderWidth: layer ? 1.6 : 1.1,
         opacity: layer ? 0.95 : 0.5,
       },
-      data: collectivePts,
-      tooltip: { formatter: "Kolektif" },
-    });
-  }
-  if (contextualPts.length && shows("contextual")) {
-    series.push({
-      type: "scatter",
-      name: "Kontekstual",
+    },
+    "Kolektif"
+  );
+  pushOverlay(
+    "contextual",
+    "Kontekstual",
+    {
       symbol: "diamond",
       symbolSize: layer ? 11 : 9,
-      itemStyle: { color: "transparent", borderColor: COLORS.amber, borderWidth: 1.4, opacity: 0.9 },
-      data: contextualPts,
-      tooltip: { formatter: "Kontekstual" },
-    });
-  }
-  if (highTierPts.length && shows("highTier")) {
-    series.push({
-      type: "scatter",
-      name: "Tier tinggi (Kritis / Sangat Kuat)",
+      itemStyle: {
+        color: "transparent",
+        borderColor: COLORS.amber,
+        borderWidth: 1.4,
+        opacity: 0.9,
+      },
+    },
+    "Kontekstual"
+  );
+  pushOverlay(
+    "highTier",
+    "Tier tinggi (Kritis / Sangat Kuat)",
+    {
       symbolSize: layer ? 14 : 12,
-      itemStyle: { color: COLORS.lime, opacity: 0.95, borderColor: COLORS.bgDeep, borderWidth: 1.2 },
-      data: highTierPts,
-      tooltip: { formatter: (p: any) => p.name || "Tier tinggi" },
-    });
-  }
-  if (shows("noise")) {
-    series.push({
-      type: "scatter",
-      name: "Noise DBSCAN (Fase 2)",
+      itemStyle: {
+        color: COLORS.lime,
+        opacity: 0.95,
+        borderColor: COLORS.bgDeep,
+        borderWidth: 1.2,
+      },
+    },
+    "Tier tinggi"
+  );
+  pushOverlay(
+    "noise",
+    "Noise DBSCAN (Fase 2)",
+    {
       symbolSize: 15,
       itemStyle: {
         color: "rgba(0,0,0,0)",
         borderColor: COLORS.cyan,
         borderWidth: 1.6,
       },
-      data: noisePts,
-      tooltip: { formatter: "Noise DBSCAN" },
-    });
-  }
+    },
+    "Noise DBSCAN"
+  );
 
   return {
     grid: { left: 8, right: 66, top: 44, bottom: 44, containLabel: true },
@@ -399,16 +401,25 @@ export function anomalyScatterOption(
     tooltip: {
       ...tooltipStyle,
       trigger: "item",
-      formatter: (p: any) =>
-        `${xKey}=${fmt2(+p.value[0])}<br/>${yKey}=${fmt2(+p.value[1])}<br/>${p.name || ""}`,
+      formatter: (p: any) => {
+        const head = `${xKey}=${fmt2(+p.value[0])}<br/>${yKey}=${fmt2(+p.value[1])}`;
+        // Seri utama: nama tier diambil lewat dataIndex, bukan disimpan per titik
+        // sebagai string (itu satu alokasi per titik yang sekarang dihilangkan).
+        if (p.seriesIndex === 0 && !dimBase) {
+          const t = tierNames?.[srcIdx[p.dataIndex]];
+          return t ? `${head}<br/>${t}` : head;
+        }
+        return head;
+      },
     },
-    // visualMap mewarnai seri 0 dari iso_score. Saat lapisan diisolasi seri 0 sengaja
-    // diredupkan jadi konteks, jadi skalanya dibuang agar tidak menimpa warna itu.
+    // visualMap mewarnai seri 0 dari iso_score (dimensi ke-3). Saat lapisan
+    // diisolasi seri 0 sengaja diredupkan jadi konteks, jadi skalanya dibuang
+    // agar tidak menimpa warna itu.
     visualMap: dimBase
       ? undefined
       : {
-          min: isoMin,
-          max: isoMax,
+          min: frame.isoMin,
+          max: frame.isoMax,
           dimension: 2,
           seriesIndex: 0,
           calculable: false,

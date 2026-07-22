@@ -104,6 +104,25 @@ Warna badge: hijau <100 ms, amber <300 ms, merah di atasnya. Aksi terberat yang 
 adalah **mengubah jumlah titik ke "Semua"** di tab Anomali — itu batas atas beban nyata
 dashboard ini.
 
+#### Biaya jalur filter (JS saja, tanpa ECharts & paint)
+
+Diukur dengan Node 22 di desktop atas data asli `public/data/anomaly_sample_*.json`. Kolom
+"sebelum" adalah implementasi lama yang mengalokasikan objek per titik; "sesudah" adalah
+`prepareScatter()` satu-lintasan yang sekarang.
+
+| Dataset | Titik | Sebelum | Sesudah |
+|---|---|---|---|
+| Accepted (177 rb) | 10.000 | 2,6 ms | 2,2 ms |
+| Accepted | 50.000 | 9,1 ms | 3,5 ms |
+| Accepted | Semua | 53,8 ms | **11,9 ms** |
+| Rejected (547 rb) | 10.000 | 1,5 ms | 0,5 ms |
+| Rejected | 50.000 | 8,7 ms | 2,3 ms |
+| Rejected | Semua | 182,3 ms | **47,2 ms** |
+
+Tambahkan ±3 ms (accepted) / ±10 ms (rejected) untuk `filterSampleRows`, yang selalu
+memindai seluruh baris tanpa memandang batas titik. Angka ini **batas bawah**: internal
+ECharts dan waktu paint belum termasuk, dan itulah yang diukur badge LATENSI.
+
 **Yang masih belum diukur:** First Contentful Paint.
 
 **Keterbatasan yang diketahui:**
