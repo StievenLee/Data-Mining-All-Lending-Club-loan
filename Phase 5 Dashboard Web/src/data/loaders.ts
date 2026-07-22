@@ -1,5 +1,10 @@
-// loaders.ts — unduh SEMUA data ringkas SEKALI (total ~0.8 MB), cache di memori.
-// Setelah ini tak ada request server lagi; semua filter jalan di browser.
+// loaders.ts — unduh SEMUA data SEKALI, cache di memori. Setelah ini tak ada
+// request server lagi; semua filter jalan di browser.
+//
+// UKURAN NYATA: 43,8 MB mentah / ±4,1 MB gzip, 99,6% berasal dari dua file scatter
+// (177.070 + 547.100 titik, tanpa sampling). Parse-nya ±310 ms di Node desktop dan
+// menahan ±106 MB heap, dan ini diblokir di depan SEMUA tab -- termasuk Preprocessing
+// yang tak memakai data apa pun. Lazy-load per tab adalah perbaikan yang belum dikerjakan.
 
 import type {
   DashboardData,

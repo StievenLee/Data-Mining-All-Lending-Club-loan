@@ -1,5 +1,6 @@
 // filters.ts — logika filter MURNI atas data in-memory. Semua < beberapa ms.
-// Tidak menyentuh jaringan; inilah kunci target <100ms per interaksi.
+// Tidak menyentuh jaringan: filter = operasi array in-memory. (Target <100ms per
+// interaksi dari PLAN.md belum pernah diukur — lihat README §Performa.)
 
 import { TIER_ORDER } from "../theme/colors";
 import type {

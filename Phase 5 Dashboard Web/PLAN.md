@@ -1,5 +1,12 @@
 # Rencana Migrasi Dashboard — Versi Web Statis (Client-Side)
 
+> ⚠️ **Dokumen ini adalah RENCANA pra-implementasi, bukan deskripsi keadaan sekarang.**
+> Sengaja tidak disunting agar tetap jadi catatan keputusan awal. Beberapa target di
+> dalamnya **tidak tercapai** dan beberapa keputusan berubah di tengah jalan — semuanya
+> dicatat apa adanya di **[§13 Realisasi vs Rencana](#13-realisasi-vs-rencana)**.
+> **Baca §13 dulu sebelum mengutip angka mana pun dari dokumen ini.**
+> Untuk keadaan terkini, lihat [`README.md`](./README.md).
+
 > Tujuan: dashboard KDD Lending Club yang **lebih cepat (<100ms per filter)**, **elegan**,
 > **gratis di-deploy**, tanpa server Python yang harus nyala 24 jam.
 >
@@ -237,16 +244,21 @@ Logika:
 
 ## 9. Anggaran Performa (acceptance criteria)
 
-| Metrik | Target | Cara ukur |
-|---|---|---|
-| Latensi 1 filter (p95) | **< 100 ms** | `performance.now()` sebelum/sesudah render |
-| Total transfer data | **< 3 MB** | Network tab / laporan build |
-| First Contentful Paint | < 1.5 s (4G) | Lighthouse |
-| Bundle JS (gzip) | < 500 KB (di luar data) | `vite build` report |
-| Ukuran `summary.json` | < 300 KB | validasi di `build_data.py` |
+| Metrik | Target | Cara ukur | **Hasil aktual** |
+|---|---|---|---|
+| Latensi 1 filter (p95) | **< 100 ms** | `performance.now()` sebelum/sesudah render | ❓ **tidak pernah diukur** |
+| Total transfer data | **< 3 MB** | Network tab / laporan build | ❌ **±4,1 MB gzip** (43,8 MB mentah) |
+| First Contentful Paint | < 1.5 s (4G) | Lighthouse | ❓ tidak pernah diukur |
+| Bundle JS (gzip) | < 500 KB (di luar data) | `vite build` report | ✅ ±268 KB |
+| Ukuran `summary.json` | < 300 KB | validasi di `build_data.py` | ✅ 2,6 KB |
 
 Kalau salah satu target meleset → optimasi (agregasi lebih agresif / kurangi sample /
 lazy-load) sebelum lanjut.
+
+> **Yang benar-benar terjadi:** dua target meleset dan dua tidak pernah diuji, tapi
+> aturan "optimasi sebelum lanjut" di atas **tidak dijalankan**. Ambang validasi di
+> `build_data.py` justru dinaikkan dari 3 MB ke `MAX_TOTAL_MB = 50.0` agar build lolos.
+> Rinciannya di §13.
 
 ---
 
@@ -283,5 +295,67 @@ Data `public/data/*` ikut ter-deploy sebagai file statis — di-serve dari CDN y
 1. ✅ Setujui plan ini.
 2. Mulai **Fase 0** (scaffold Vite+React+Tailwind + shell bertema).
 3. Paralel: konfirmasi lokasi file output real Fase 3 & 4 untuk `build_data.py`.
+
+---
+
+## 13. Realisasi vs Rencana
+
+*(Ditambahkan 22 Juli 2026, setelah audit. Bagian §1–§12 di atas dibiarkan seperti aslinya
+sebagai catatan keputusan awal; bagian ini yang menyatakan keadaan sebenarnya.)*
+
+### Ringkasan penyimpangan
+
+| Rencana (§) | Isi rencana | Realisasi |
+|---|---|---|
+| §3, §7.2 | Scatter di-sample ke **±6.000 baris** | ❌ **Sampling dicabut.** Seluruh titik terfilter dikirim: **177.070** (accepted) + **547.100** (rejected). Keputusan sadar, atas permintaan eksplisit, agar selaras dashboard Dash lama. |
+| §3, §9 | Total data ke browser **1–3 MB** | ❌ **43,8 MB mentah / ±4,1 MB gzip.** Konsekuensi langsung dari poin di atas. |
+| §7.5 | Build **gagal** kalau output > 3 MB | ❌ Ambang dinaikkan ke `MAX_TOTAL_MB = 50.0`. Pagar mutunya dilonggarkan, bukan masalahnya diperbaiki. |
+| §2, §9 | Latensi filter **< 100 ms**, "diukur, bukan asumsi" | ❓ **Tidak pernah diukur.** Prop `onRenderMs` ada di `EChart.tsx` tapi tidak punya pemanggil. Klaim <100 ms di seluruh dokumen ini **tanpa dasar empiris**. |
+| §8 Fase 2 | Unit test filter (Vitest), < 5 ms per panggilan | ❌ **Tidak ada test sama sekali**; Vitest tidak terpasang. |
+| §8 Fase 5 | Lazy-load chart per tab | ❌ Belum. `loadAll()` menarik semua data sebelum tab mana pun tampil, termasuk tab Preprocessing yang tak butuh data. |
+| §3, §4 | Data in-memory pakai **Apache Arrow** | 🔄 Diganti **JSON columnar** (`{n, columns:{...}}`). Lebih sederhana, gzip-nya efisien; Arrow tak jadi dipakai. |
+| §4 | Chart ECharts, Vite, React+TS, Zustand, Tailwind | ✅ Sesuai rencana. |
+| §2 | Paritas fitur + data asli Fase 1–4 | ✅ Tercapai, malah lebih: tab Preprocessing & Insight Bisnis tidak ada di rencana awal. |
+| §7 | Sumber DBSCAN dari folder `Phase 5 Dashboard/` | 🔄 Folder Dash lama sudah **dihapus** (22 Juli 2026). Semua input kini dari `data_src/` + folder Fase 1–4. |
+
+### Kompensasi yang sudah dikerjakan
+
+Karena sampling dicabut, beban dipindah ke sisi klien sebagai **kontrol yang bisa dipilih
+user**, bukan sebagai batas tersembunyi:
+
+- Scatter anomali punya pembatas jumlah titik **5.000 / 10.000 / 50.000 / Semua**, default
+  10.000, memakai stride merata (`limitRows` di `src/data/filters.ts`) supaya sebaran tahun
+  dan nilai tetap representatif. Mode "Semua" tetap tersedia satu klik.
+- Chip isolasi lapisan (Anomali / Kolektif / Kontekstual / Tier tinggi / Noise) agar user
+  bisa fokus ke satu jenis anomali tanpa harus menggambar semuanya sekaligus.
+
+### Utang teknis yang masih terbuka
+
+Urut dari dampak terbesar:
+
+1. **Lazy-load sample per dataset** saat tab Anomali dibuka — menghapus ±4 MB dari jalur
+   loading awal untuk 5 dari 6 tab.
+2. **Pasang `onRenderMs`** ke minimal satu chart, tampilkan p95-nya, supaya klaim performa
+   punya dasar. Selama ini belum ada, jangan kutip angka <100 ms.
+3. **Test untuk `filters.ts`** — fungsinya murni dan sepele diuji (`strongPct`,
+   `clusterProfilesForYears`, `limitRows`).
+4. **`public/data/*.json` di-commit** — tiap regenerasi menambah ±4 MB ke riwayat git
+   (repo terkompresi kini 18,5 MiB). Pertimbangkan build-time generation di Vercel.
+
+### Catatan kejujuran isi (bukan teknis)
+
+Dua kalimat di UI melampaui apa yang datanya bisa buktikan, dan belum dibetulkan:
+
+- `src/pages/Anomali.tsx` — *"Pola loan-stacking seperti ini paling sering berakhir gagal
+  bayar"*: tidak ada perhitungan default-rate per pola di data mana pun yang dikirim.
+- `src/pages/InsightBisnis.tsx` — *"Sistem penilaian grade … sudah selaras dengan hasil
+  nyata"*: aturan asosiasi menunjukkan ko-okurensi, bukan validasi. Selain itu 38,9%
+  pinjaman berstatus *Current* dibuang di Fase 1 (disebut di tab Preprocessing), sehingga
+  proporsi *Fully Paid* naik — survivorship bias ini tidak disebut di tempat kesimpulannya
+  ditarik.
+
+Sebaliknya, angka-angka keras yang dicek ulang **cocok dengan sumbernya**: 1.348.099 baris
+accepted (parquet Fase 2), confidence 84% & lift 5,772 (rules Fase 3), serta ketiga z-score
+kartu kasus di tab Anomali (`anomaly_report_accepted.csv`).
 
 > Setelah disetujui, aku bisa langsung eksekusi Fase 0 & 1 di folder ini.
