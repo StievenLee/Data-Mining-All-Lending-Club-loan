@@ -42,12 +42,17 @@ npm run preview        # cek hasil build
 ## Alur data
 
 ```
-data_src/  (input Fase 1–4: CSV/parquet/dbscan-json, ratusan MB, gitignored)
+data_src/  (SATU-SATUNYA sumber input Fase 1–4: CSV/parquet/dbscan-json, ratusan MB, gitignored)
+      │      └─ rules Fase 3 juga dibaca dari sini; fallback ke Phase 3/Results bila kosong
       │  scripts/build_data.py  (agregasi; scatter TIDAK di-sample)
       ▼
 public/data/*.json  (43,8 MB mentah / ±4,1 MB gzip)  ──►  di-fetch SEKALI di browser
                                                        └─► semua filter in-memory
 ```
+
+> Dua file berat Fase 1–2 (`clean_{accepted,rejected}_loans.csv` dan parquet label klaster)
+> tetap dibaca langsung dari folder aslinya, bukan disalin ke `data_src/`, karena ukurannya
+> mencapai 2,7 GB. Yang dipusatkan di `data_src/` adalah seluruh input berukuran wajar.
 
 File yang dihasilkan di `public/data/` (ukuran hasil build 21 Juli 2026):
 
@@ -56,7 +61,7 @@ File yang dihasilkan di `public/data/` (ukuran hasil build 21 Juli 2026):
 | `anomaly_sample_rejected.json` | **547.100** titik scatter (columnar) | 27,95 MB | 2,44 MB |
 | `anomaly_sample_accepted.json` | **177.070** titik scatter (columnar) | 15,83 MB | 1,63 MB |
 | `clusters_by_year.json` | profil segmen Fase 2 per (dataset, tahun) | 12 KB | ~3 KB |
-| `rules.json` | 99 association rules Fase 3 (95 accepted + 4 rejected) | 17 KB | ~4 KB |
+| `rules.json` | 29 association rules Fase 3 (25 accepted + 4 rejected) | ~6 KB | ~2 KB |
 | `tiers_by_year.json` | jumlah anomali per (dataset, tahun, tier) | 6 KB | ~1 KB |
 | `summary.json` | KPI, rentang tahun, meta DBSCAN, daftar fitur | 2,6 KB | ~1 KB |
 | `verdict_by_year.json` | tipologi verdict per tahun (accepted) | 1,8 KB | <1 KB |
@@ -74,7 +79,7 @@ dicatat di bagian [Performa](#performa-angka-terukur) di bawah.
 |---|---|---|
 | Transfer data (gzip) | ±4,1 MB | `gzip -6` atas `public/data/*` |
 | Transfer data (mentah) | 43,82 MB | ukuran file |
-| Bundle JS (gzip) | ±268 KB | laporan `vite build` (echarts 194 + react 45 + app 28) |
+| Bundle JS (gzip) | ±298 KB | laporan `vite build` (echarts 212 + react 45 + app 40) |
 | `JSON.parse` kedua sample | ±310 ms | Node 20, desktop — **bukan** kelas HP |
 | Heap setelah parse | ±106 MB | `process.memoryUsage()` |
 
@@ -107,8 +112,25 @@ pengukuran**. Jangan kutip angka itu sebelum instrumentasinya dipasang.
 ## Catatan
 - Data mentah (accepted/rejected ~1.7 GB) **tidak pernah** dikirim ke browser — yang dikirim
   hanya kolom terpakai dari baris yang sudah ditandai anomali.
+- Tab **Laporan KDD** (`src/pages/Laporan.tsx`) adalah versi layar dari
+  `LAPORAN_KNOWLEDGE_DISCOVERY.md` di root repo. Angkanya sengaja **statis dan tidak ikut
+  filter**: laporan adalah dokumen yang ditandatangani pada satu titik waktu, jadi isinya harus
+  tetap sama walau rentang tahun digeser di tab lain. Bila laporan `.md` diperbarui, halaman ini
+  harus diperbarui manual — keduanya tidak terhubung otomatis. Tab **Insight Bisnis** adalah
+  kebalikannya: angkanya dihitung dari data dashboard.
+- Chart di tab **Preprocessing** (`src/components/charts/phase1Options.ts`) juga statis, disalin
+  dari output notebook Fase 1. Sumber tiap angka ditulis sebagai komentar di atas konstantanya.
 - Rejected diproses via chunking di `build_data.py`, lalu **difilter ke tier "Kuat" ke atas**
   (`REJECTED_MIN_TIER_RANK = 2`) — bukan di-sample. Tier Sedang & Lemah rejected tidak ikut,
   jadi angka rejected di dashboard bukan total anomali rejected (ini juga dinyatakan di UI).
-- Rules Fase 3 dibaca dari `Phase 3 Associate Rule/Results/results_apriori_{accepted,rejected}.csv`
-  (accepted + rejected, data nyata — bukan `_cleaned`); memakai fallback dummy bila file tak ada.
+- Rules Fase 3 dibaca dari **`data_src/results_apriori_{accepted,rejected}.csv`** (data nyata —
+  bukan `_cleaned`, yang hanya berisi 14 rule pilihan untuk narasi). Setiap kali notebook Fase 3
+  dijalankan ulang, **salin ulang kedua CSV itu dari `Phase 3 Associate Rule/Results/` ke
+  `data_src/`**, lalu jalankan `npm run data`.
+- Bila langkah salin itu terlewat, `build_data.py` **otomatis fallback ke
+  `Phase 3 Associate Rule/Results/`** — bukan diam-diam memakai dummy. Sumber yang benar-benar
+  terpakai selalu tercetak di log build, contoh:
+  `[build_data] rules Accepted: 25 rule dari data_src`.
+- Perlu diketahui: root `.gitignore` memuat pola `*.csv`, sehingga **kedua lokasi sama-sama
+  tidak ter-commit**. Pada clone baru, rules harus dibangun ulang dengan menjalankan notebook
+  Fase 3. Yang ter-commit dan dipakai saat deploy adalah hasil jadinya, `public/data/rules.json`.

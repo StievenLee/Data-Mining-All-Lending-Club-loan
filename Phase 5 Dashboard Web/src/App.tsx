@@ -11,6 +11,7 @@ import Segmentasi from "./pages/Segmentasi";
 import Rules from "./pages/Rules";
 import Anomali from "./pages/Anomali";
 import InsightBisnis from "./pages/InsightBisnis";
+import Laporan from "./pages/Laporan";
 
 export default function App() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -51,6 +52,7 @@ export default function App() {
             {tab === "rules" && <Rules data={data} />}
             {tab === "anomali" && <Anomali data={data} />}
             {tab === "insight" && <InsightBisnis data={data} />}
+            {tab === "laporan" && <Laporan />}
           </>
         )}
       </main>

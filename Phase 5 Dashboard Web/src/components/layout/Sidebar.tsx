@@ -9,6 +9,7 @@ const NAV: { id: TabId; label: string }[] = [
   { id: "rules", label: "Association Rules" },
   { id: "anomali", label: "Anomali" },
   { id: "insight", label: "Insight Bisnis" },
+  { id: "laporan", label: "Laporan KDD" },
 ];
 
 // Tanpa background — hanya ikon + nama. Aktif ditandai warna lime saja.

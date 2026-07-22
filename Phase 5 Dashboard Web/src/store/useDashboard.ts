@@ -17,7 +17,15 @@ interface DashboardState {
   initYears: (bounds: [number, number]) => void;
 }
 
-const VALID_TABS: TabId[] = ["ringkasan", "preprocessing", "segmentasi", "rules", "anomali", "insight"];
+const VALID_TABS: TabId[] = [
+  "ringkasan",
+  "preprocessing",
+  "segmentasi",
+  "rules",
+  "anomali",
+  "insight",
+  "laporan",
+];
 
 function readURL(): Partial<DashboardState> {
   const p = new URLSearchParams(window.location.search);

@@ -11,8 +11,9 @@ import {
   VERDICT_COLORS,
   tooltipStyle,
 } from "../../theme/colors";
-import type { ClusterProfile, Dataset, SampleColumnar } from "../../types";
+import type { ClusterProfile, Dataset, Rule, SampleColumnar } from "../../types";
 import { fmt2 } from "../../lib/format";
+import { humanizeItem } from "../../lib/ruleNarrative";
 import { CLUSTER_AXES, RISK_LEGEND, riskText, riskValue } from "../../lib/cluster";
 import type { AnomalyLayer } from "../../data/filters";
 
@@ -22,6 +23,18 @@ const axisCommon = {
   splitLine: { lineStyle: { color: COLORS.line } },
   nameTextStyle: { color: COLORS.muted, fontFamily: FONT_MONO, fontSize: 11 },
 };
+
+/** Placeholder seragam saat sebuah chart tak punya data untuk digambar. */
+function emptyOption(text: string): EChartsOption {
+  return {
+    graphic: {
+      type: "text",
+      left: "center",
+      top: "middle",
+      style: { text, fill: COLORS.muted, font: `12px ${FONT_MONO}` },
+    },
+  };
+}
 
 /** Gauge persen anomali kuat. */
 export function gaugeOption(pct: number): EChartsOption {
@@ -122,20 +135,7 @@ export function tierBarOption(
 export function verdictOption(
   counts: { verdict: string; count: number }[]
 ): EChartsOption {
-  if (counts.length === 0) {
-    return {
-      graphic: {
-        type: "text",
-        left: "center",
-        top: "middle",
-        style: {
-          text: "Tipologi hanya tersedia untuk Accepted",
-          fill: COLORS.muted,
-          font: `12px ${FONT_MONO}`,
-        },
-      },
-    };
-  }
+  if (counts.length === 0) return emptyOption("Tipologi hanya tersedia untuk Accepted");
   return {
     tooltip: {
       ...tooltipStyle,
@@ -179,20 +179,7 @@ export function clusterOption(
   clusters: ClusterProfile[],
   dataset: Dataset = "accepted"
 ): EChartsOption {
-  if (clusters.length === 0) {
-    return {
-      graphic: {
-        type: "text",
-        left: "center",
-        top: "middle",
-        style: {
-          text: "Profil klaster belum tersedia",
-          fill: COLORS.muted,
-          font: `12px ${FONT_MONO}`,
-        },
-      },
-    };
-  }
+  if (clusters.length === 0) return emptyOption("Profil klaster belum tersedia");
   const axes = CLUSTER_AXES[dataset];
   const maxN = Math.max(...clusters.map((c) => c.n_anggota), 1);
   const rates = clusters.map(riskValue);
@@ -436,5 +423,174 @@ export function anomalyScatterOption(
     xAxis: { type: "value", name: xKey, nameLocation: "middle", nameGap: 30, scale: true, ...axisCommon },
     yAxis: { type: "value", name: yKey, nameLocation: "middle", nameGap: 40, scale: true, ...axisCommon },
     series,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Rule network (Fase 3) — graf berarah: item -> item.
+// ---------------------------------------------------------------------------
+
+/** Interpolasi 2 warna hex (#rrggbb) pada t di [0,1]. Dipakai untuk mewarnai
+ *  edge menurut lift, sehingga kekuatan pola terbaca tanpa membaca angka. */
+function lerpHex(a: string, b: string, t: number): string {
+  const k = Math.max(0, Math.min(1, t));
+  const pa = [1, 3, 5].map((i) => parseInt(a.slice(i, i + 2), 16));
+  const pb = [1, 3, 5].map((i) => parseInt(b.slice(i, i + 2), 16));
+  const mix = pa.map((v, i) => Math.round(v + (pb[i] - v) * k));
+  return "#" + mix.map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+
+/** Pecah satu sisi itemset jadi token mentah (format CSV Fase 3: dipisah koma;
+ *  fallback dummy: dipisah " + "). Sama dengan splitItemset di ruleNarrative,
+ *  tetapi di sana tidak diekspor. */
+function splitSide(itemset: string): string[] {
+  return String(itemset)
+    .split(/\s*[+,]\s*/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+const NET_CATEGORIES = [
+  { name: "Sisi JIKA (sebab)", color: COLORS.cyan },
+  { name: "Sisi MAKA (akibat)", color: COLORS.lime },
+  { name: "Muncul di kedua sisi", color: COLORS.violet },
+];
+
+/** Jaringan aturan asosiasi: tiap lingkaran = satu ciri pinjaman, tiap panah =
+ *  satu aturan "JIKA ciri A MAKA ciri B". Ukuran lingkaran = berapa banyak aturan
+ *  yang menyentuh ciri itu, sehingga "simpul penghubung" (mis. tenor 60 bulan)
+ *  langsung terlihat besar. Tebal & warna panah = lift.
+ *
+ *  Catatan: satu aturan bersisi jamak dipecah jadi beberapa panah (tiap item
+ *  antecedent -> tiap item consequent). Itu disengaja: yang ingin diperlihatkan
+ *  adalah ciri mana yang saling bertaut, bukan menghitung ulang jumlah aturan. */
+export function ruleNetworkOption(rules: Rule[]): EChartsOption {
+  if (rules.length === 0) return emptyOption("Tidak ada rule pada filter ini");
+
+  interface Node {
+    token: string;
+    label: string;
+    deg: number;
+    inAnte: boolean;
+    inCons: boolean;
+  }
+  const nodes = new Map<string, Node>();
+  const touch = (token: string, side: "a" | "c") => {
+    const n = nodes.get(token) ?? {
+      token,
+      label: humanizeItem(token),
+      deg: 0,
+      inAnte: false,
+      inCons: false,
+    };
+    n.deg += 1;
+    if (side === "a") n.inAnte = true;
+    else n.inCons = true;
+    nodes.set(token, n);
+  };
+
+  const lifts = rules.map((r) => r.lift);
+  const minLift = Math.min(...lifts);
+  const maxLift = Math.max(...lifts);
+  const span = maxLift - minLift || 1;
+
+  const links: any[] = [];
+  for (const r of rules) {
+    const as = splitSide(r.antecedent);
+    const cs = splitSide(r.consequent);
+    for (const a of as) touch(a, "a");
+    for (const c of cs) touch(c, "c");
+    const t = (r.lift - minLift) / span;
+    const color = lerpHex(COLORS.cyan, COLORS.lime, t);
+    for (const a of as) {
+      for (const c of cs) {
+        links.push({
+          source: a,
+          target: c,
+          value: r.lift,
+          // Disimpan agar tooltip bisa menceritakan aturan utuhnya, bukan hanya
+          // pasangan item yang kebetulan jadi ujung panah ini.
+          rule: r,
+          lineStyle: {
+            width: 1 + t * 3.4,
+            color,
+            opacity: 0.55 + t * 0.35,
+            curveness: 0.14,
+          },
+        });
+      }
+    }
+  }
+
+  const maxDeg = Math.max(...[...nodes.values()].map((n) => n.deg), 1);
+  const data = [...nodes.values()].map((n) => {
+    const cat = n.inAnte && n.inCons ? 2 : n.inCons ? 1 : 0;
+    return {
+      id: n.token,
+      name: n.token,
+      label2: n.label,
+      deg: n.deg,
+      category: cat,
+      symbolSize: 16 + (n.deg / maxDeg) * 30,
+      label: {
+        show: true,
+        position: "right" as const,
+        formatter: () => n.label,
+        color: COLORS.text,
+        fontFamily: FONT_MONO,
+        fontSize: 10.5,
+      },
+    };
+  });
+
+  return {
+    tooltip: {
+      ...tooltipStyle,
+      confine: true,
+      formatter: (p: any) => {
+        if (p.dataType === "edge") {
+          const r: Rule = p.data.rule;
+          return [
+            `<b>JIKA</b> ${splitSide(r.antecedent).map(humanizeItem).join(" + ")}`,
+            `<b>MAKA</b> ${splitSide(r.consequent).map(humanizeItem).join(" + ")}`,
+            `support ${fmt2(r.support * 100)}% · confidence ${fmt2(
+              r.confidence * 100
+            )}% · lift ${fmt2(r.lift)}×`,
+          ].join("<br/>");
+        }
+        return `${p.data.label2}<br/>disentuh ${p.data.deg} aturan`;
+      },
+    },
+    legend: [
+      {
+        data: NET_CATEGORIES.map((c) => c.name),
+        top: 0,
+        icon: "circle",
+        itemWidth: 9,
+        itemHeight: 9,
+        textStyle: { color: COLORS.muted, fontFamily: FONT_MONO, fontSize: 10.5 },
+        inactiveColor: COLORS.line,
+      },
+    ],
+    series: [
+      {
+        type: "graph",
+        layout: "force",
+        roam: true,
+        draggable: true,
+        top: 34,
+        force: { repulsion: 340, edgeLength: [70, 190], gravity: 0.06, friction: 0.16 },
+        categories: NET_CATEGORIES.map((c) => ({
+          name: c.name,
+          itemStyle: { color: c.color, borderColor: COLORS.bgDeep, borderWidth: 2 },
+        })),
+        edgeSymbol: ["none", "arrow"],
+        edgeSymbolSize: 7,
+        emphasis: { focus: "adjacency", lineStyle: { opacity: 1 } },
+        labelLayout: { hideOverlap: true },
+        data,
+        links,
+      },
+    ],
   };
 }

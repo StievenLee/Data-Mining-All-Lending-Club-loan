@@ -1,8 +1,17 @@
+import { useMemo } from "react";
 import type { ReactNode } from "react";
 import { useDashboard } from "../store/useDashboard";
 import PageHead from "../components/PageHead";
 import Card from "../components/Card";
 import Callout from "../components/Callout";
+import EChart from "../components/EChart";
+import {
+  columnFunnelOption,
+  featureScoreOption,
+  rejectedMissingOption,
+  sparseDensityOption,
+  statusDonutOption,
+} from "../components/charts/phase1Options";
 
 /* ============================================================================
    Fase 1 · Preprocessing — halaman report naratif.
@@ -111,6 +120,12 @@ const STEPS: { no: number; name: string; desc: string }[] = [
 
 /** Report dataset ACCEPTED (pipeline penuh). */
 function AcceptedReport() {
+  // Opsi chart bersifat konstan (angka Fase 1 statis), tetapi tetap di-memo agar
+  // EChart tidak menerima objek baru tiap render dan menggambar ulang percuma.
+  const statusDonut = useMemo(() => statusDonutOption(), []);
+  const columnFunnel = useMemo(() => columnFunnelOption(), []);
+  const featureScore = useMemo(() => featureScoreOption(), []);
+
   return (
     <>
       <PageHead
@@ -177,10 +192,13 @@ function AcceptedReport() {
           (sebagian &gt;80%), outlier ekstrem (mis. pendapatan tahunan yang panjang ekornya), dan
           label hasil pinjaman yang belum final. Temuan ini menentukan keputusan di langkah cleaning.
         </p>
-        <div className="mt-3.5 grid grid-cols-3 gap-2.5">
-          <Stat value="47,60%" label="Fully Paid (lunas)" accent="text-lime" />
-          <Stat value="11,90%" label="Charged Off (gagal bayar)" accent="text-error" />
-          <Stat value="38,90%" label="Current / berjalan, dibuang (belum final)" accent="text-amber" />
+        <div className="mt-3.5 grid grid-cols-1 items-center gap-3 min-[820px]:grid-cols-[1fr_320px]">
+          <div className="grid grid-cols-3 gap-2.5 min-[820px]:grid-cols-1">
+            <Stat value="47,63%" label="Fully Paid (lunas)" accent="text-lime" />
+            <Stat value="11,88%" label="Charged Off (gagal bayar)" accent="text-error" />
+            <Stat value="38,85%" label="Current / berjalan, dibuang (belum final)" accent="text-amber" />
+          </div>
+          <EChart option={statusDonut} height={300} />
         </div>
         <p className="mt-3 text-[13px] leading-[1.55] text-muted">
           Status yang belum selesai (Current, Late, In Grace Period) <b className="text-text">dikeluarkan</b>{" "}
@@ -193,19 +211,31 @@ function AcceptedReport() {
       {/* 2 Cleaning */}
       <Card title={<span className="inline-flex items-center gap-2.5"><SectionNo n={2} /> Bersihkan Data (Cleaning)</span>}
         sub="Setiap keputusan pembersihan punya alasan yang jelas.">
-        <div className="divide-y divide-line">
-          <DoRow color="#ffb4ab" title="Buang kolom yang mayoritas kosong (>50%)"
-            detail="Kolom yang lebih dari separuh nilainya hilang tidak bisa diisi ulang secara andal tanpa menimbulkan bias." />
-          <DoRow color="#ffb4ab" title="Buang kolom identitas & tak informatif"
-            detail={<>Seperti <span className="font-mono text-[12px]">id, url, emp_title, zip_code, title</span>, yang unik atau terlalu beragam sehingga tidak stabil sebagai fitur.</>} />
-          <DoRow color="#d0bcff" title={<>Buang kolom &ldquo;bocor&rdquo; (data leakage)</>}
-            detail={<>Kolom yang nilainya baru ada <b className="text-text">setelah</b> pinjaman berjalan (mis. <span className="font-mono text-[12px]">total_pymnt, last_fico_range</span>). Memakainya sama dengan &ldquo;mengintip masa depan&rdquo; sehingga hasil jadi tidak sah. FICO <b className="text-text">saat pengajuan</b> tetap dipertahankan karena sah.</>} />
-          <DoRow color="#7df4ff" title="Rapikan tipe & format yang tidak konsisten"
-            detail={<>Contoh: <span className="font-mono text-[12px]">&ldquo; 36 months&rdquo;</span> → angka 36; <span className="font-mono text-[12px]">&ldquo;10+ years&rdquo;</span> → 10; tanggal <span className="font-mono text-[12px]">&ldquo;Jan-2015&rdquo;</span> → tahun & bulan.</>} />
-          <DoRow color="#c3f400" title="Tangani outlier tanpa membuang baris"
-            detail="Nilai ekstrem dipangkas ke batas wajar (IQR capping / winsorization). Pendapatan tahunan ditangani khusus: dipangkas P1–P99 lalu di-log agar distribusinya lebih normal." />
-          <DoRow color="#c4c9ac" title="Isi sisa nilai kosong & hapus duplikat"
-            detail="Angka diisi median (tahan terhadap outlier), kategori diisi modus. Baris yang benar-benar kembar dihapus." />
+        <div className="grid grid-cols-1 gap-3 min-[900px]:grid-cols-[300px_1fr]">
+          <div className="min-w-0">
+            <div className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+              Penyusutan kolom
+            </div>
+            <EChart option={columnFunnel} height={250} />
+            <p className="mt-1 text-[12px] leading-[1.5] text-muted">
+              Dari 151 kolom, tersisa 87 setelah pembersihan. Jumlah ini sempat naik lagi saat
+              encoding, lalu diseleksi di langkah 4.
+            </p>
+          </div>
+          <div className="min-w-0 divide-y divide-line">
+            <DoRow color="#ffb4ab" title="Buang kolom yang mayoritas kosong (>50%)"
+              detail="Kolom yang lebih dari separuh nilainya hilang tidak bisa diisi ulang secara andal tanpa menimbulkan bias." />
+            <DoRow color="#ffb4ab" title="Buang kolom identitas & tak informatif"
+              detail={<>Seperti <span className="font-mono text-[12px]">id, url, emp_title, zip_code, title</span>, yang unik atau terlalu beragam sehingga tidak stabil sebagai fitur.</>} />
+            <DoRow color="#d0bcff" title={<>Buang kolom &ldquo;bocor&rdquo; (data leakage)</>}
+              detail={<>Kolom yang nilainya baru ada <b className="text-text">setelah</b> pinjaman berjalan (mis. <span className="font-mono text-[12px]">total_pymnt, last_fico_range</span>). Memakainya sama dengan &ldquo;mengintip masa depan&rdquo; sehingga hasil jadi tidak sah. FICO <b className="text-text">saat pengajuan</b> tetap dipertahankan karena sah.</>} />
+            <DoRow color="#7df4ff" title="Rapikan tipe & format yang tidak konsisten"
+              detail={<>Contoh: <span className="font-mono text-[12px]">&ldquo; 36 months&rdquo;</span> → angka 36; <span className="font-mono text-[12px]">&ldquo;10+ years&rdquo;</span> → 10; tanggal <span className="font-mono text-[12px]">&ldquo;Jan-2015&rdquo;</span> → tahun & bulan.</>} />
+            <DoRow color="#c3f400" title="Tangani outlier tanpa membuang baris"
+              detail="Nilai ekstrem dipangkas ke batas wajar (IQR capping / winsorization). Pendapatan tahunan ditangani khusus: dipangkas P1–P99 lalu di-log agar distribusinya lebih normal." />
+            <DoRow color="#c4c9ac" title="Isi sisa nilai kosong & hapus duplikat"
+              detail="Angka diisi median (tahan terhadap outlier), kategori diisi modus. Baris yang benar-benar kembar dihapus." />
+          </div>
         </div>
       </Card>
 
@@ -243,7 +273,20 @@ function AcceptedReport() {
           {" "}(top-16). Terakhir, dari pasangan fitur yang terlalu mirip (korelasi &gt;0,90) salah satunya
           dibuang, sehingga menyisakan <b className="text-text">14 fitur final</b> untuk segmentasi.
         </p>
-        <div className="mt-3.5 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+        <div className="mt-4 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+          16 fitur teratas & sumbangan tiap metode
+        </div>
+        <EChart option={featureScore} height={470} />
+        <p className="mt-1 text-[12.5px] leading-[1.55] text-muted">
+          Panjang tiap batang adalah <b className="text-text">Combined Score</b>, yaitu rata-rata dua
+          skor yang sudah disamakan skalanya. Bagian biru menunjukkan sumbangan korelasi, bagian ungu
+          sumbangan mutual information. Perhatikan bahwa keduanya sering tidak sejalan: &ldquo;status
+          listing awal&rdquo; hampir tidak berkorelasi (0,01) tetapi mutual information-nya tertinggi
+          &mdash; hubungan yang non-linear seperti ini akan terlewat kalau hanya memakai korelasi.
+          Dua batang redup adalah fitur yang akhirnya dibuang karena hampir kembar dengan fitur lain.
+        </p>
+
+        <div className="mt-4 mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
           14 fitur final + target
         </div>
         <div className="flex flex-wrap gap-1.5">
@@ -321,6 +364,9 @@ const REJECTED_STEPS: { no: number; name: string; desc: string }[] = [
 
 /** Report dataset REJECTED (pipeline lebih sederhana, tanpa target/feature selection). */
 function RejectedReport() {
+  const missing = useMemo(() => rejectedMissingOption(), []);
+  const density = useMemo(() => sparseDensityOption(), []);
+
   return (
     <>
       <PageHead
@@ -379,6 +425,15 @@ function RejectedReport() {
       {/* Langkah pembersihan */}
       <Card title={<span className="inline-flex items-center gap-2.5"><SectionNo n={2} /> Bersihkan &amp; Rapikan</span>}
         sub="Sedikit langkah, tetapi tetap ada alasan di tiap keputusan.">
+        <div className="mb-1 font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-muted">
+          Nilai kosong per kolom
+        </div>
+        <EChart option={missing} height={230} />
+        <p className="mb-4 mt-1 text-[12.5px] leading-[1.55] text-muted">
+          Hanya <b className="text-text">Risk_Score</b> yang melewati ambang 50 persen, sehingga
+          hanya kolom itu yang dibuang. Lima kolom lain nyaris penuh dan cukup diisi dengan median
+          atau modus, tanpa kehilangan informasi berarti.
+        </p>
         <div className="divide-y divide-line">
           <DoRow color="#c4c9ac" title="Hapus baris duplikat"
             detail="Baris identik hanya redundansi dan tidak menambah informasi." />
@@ -432,11 +487,14 @@ function RejectedReport() {
           yaitu format yang hanya menyimpan nilai 1 dan mengabaikan nilai 0, sehingga hemat 10 sampai 50
           kali lipat.
         </p>
-        <div className="mt-3.5 grid grid-cols-2 gap-2.5 min-[560px]:grid-cols-4">
-          <Stat value="27,49 jt" label="Baris (seluruh data ditolak)" accent="text-violet" />
-          <Stat value="12" label="Kolom biner (item Apriori)" accent="text-lime" />
-          <Stat value="25%" label="Kepadatan nilai 1 (density)" />
-          <Stat value="66 MB" label="Ukuran file sparse (.npz)" accent="text-cyan" />
+        <div className="mt-3.5 grid grid-cols-1 items-center gap-3 min-[820px]:grid-cols-[1fr_300px]">
+          <div className="grid grid-cols-2 gap-2.5">
+            <Stat value="27,49 jt" label="Baris (seluruh data ditolak)" accent="text-violet" />
+            <Stat value="12" label="Kolom biner (item Apriori)" accent="text-lime" />
+            <Stat value="25%" label="Kepadatan nilai 1 (density)" />
+            <Stat value="66 MB" label="Ukuran file sparse (.npz)" accent="text-cyan" />
+          </div>
+          <EChart option={density} height={280} />
         </div>
       </Card>
 

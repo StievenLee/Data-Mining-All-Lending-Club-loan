@@ -7,6 +7,8 @@ import {
   PieChart,
   ScatterChart,
   GaugeChart,
+  GraphChart,
+  FunnelChart,
 } from "echarts/charts";
 import {
   GridComponent,
@@ -14,6 +16,7 @@ import {
   LegendComponent,
   VisualMapComponent,
   GraphicComponent,
+  MarkLineComponent,
 } from "echarts/components";
 import { CanvasRenderer } from "echarts/renderers";
 
@@ -22,11 +25,14 @@ echarts.use([
   PieChart,
   ScatterChart,
   GaugeChart,
+  GraphChart,
+  FunnelChart,
   GridComponent,
   TooltipComponent,
   LegendComponent,
   VisualMapComponent,
   GraphicComponent,
+  MarkLineComponent,
   CanvasRenderer,
 ]);
 

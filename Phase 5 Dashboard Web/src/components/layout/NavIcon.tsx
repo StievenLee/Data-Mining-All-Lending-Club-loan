@@ -43,6 +43,15 @@ const PATHS: Record<TabId, JSX.Element> = {
       <line x1="11" y1="8.5" x2="11" y2="11.5" />
     </>
   ),
+  laporan: (
+    // dokumen berlipat: laporan knowledge discovery
+    <>
+      <path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8z" />
+      <path d="M14 3v5h5" />
+      <line x1="9" y1="13" x2="15" y2="13" />
+      <line x1="9" y1="17" x2="13" y2="17" />
+    </>
+  ),
 };
 
 export default function NavIcon({ tab, className }: { tab: TabId; className?: string }) {

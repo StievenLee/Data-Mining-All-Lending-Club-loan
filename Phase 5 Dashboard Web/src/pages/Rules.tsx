@@ -5,6 +5,8 @@ import { ruleFeatures } from "../lib/ruleNarrative";
 import { fmt2 } from "../lib/format";
 import RuleCard from "../components/RuleCard";
 import Card from "../components/Card";
+import EChart from "../components/EChart";
+import { ruleNetworkOption } from "../components/charts/options";
 import Callout from "../components/Callout";
 import PageHead from "../components/PageHead";
 import LiftSlider from "../components/filters/LiftSlider";
@@ -62,6 +64,11 @@ export default function Rules({ data }: { data: DashboardData }) {
   );
   const shown = matched.slice(0, TOP_N);
 
+  // Jaringan memakai SELURUH rule yang lolos filter (bukan cuma TOP_N yang
+  // ditampilkan sebagai kartu): justru simpul penghubung yang baru terlihat
+  // ketika semua rule ikut digambar.
+  const networkOption = useMemo(() => ruleNetworkOption(matched), [matched]);
+
   const toggle = (key: string) =>
     setSelected((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
 
@@ -106,6 +113,25 @@ export default function Rules({ data }: { data: DashboardData }) {
       <div className="mb-3.5 flex justify-end">
         <LiftSlider max={maxLift} />
       </div>
+      <Card
+        title="Jaringan aturan (rule network)"
+        sub={
+          <>
+            Tiap lingkaran adalah satu ciri pinjaman, tiap panah adalah satu aturan{" "}
+            <b className="text-text">JIKA → MAKA</b>. Lingkaran makin besar berarti ciri itu
+            disentuh makin banyak aturan, jadi <b className="text-text">simpul penghubung</b>{" "}
+            langsung terlihat. Panah makin tebal dan makin hijau berarti kaitannya makin kuat
+            (lift). Arahkan kursor untuk membaca aturannya, seret untuk menata, gulir untuk
+            memperbesar.
+          </>
+        }
+        note={`${matched.length} rule digambar`}
+      >
+        <EChart option={networkOption} height={480} />
+      </Card>
+
+      <div className="h-[18px]" />
+
       <Card
         title="Association rules berperingkat"
         sub={
