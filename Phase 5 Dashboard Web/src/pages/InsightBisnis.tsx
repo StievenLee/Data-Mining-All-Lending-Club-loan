@@ -261,9 +261,9 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
               Pinjaman diterima
             </div>
             <p className="mt-2 text-[13.5px] leading-[1.6] text-text">
-              Peminjam <b>Grade A</b> dengan pinjaman menengah dan tenor 36 bulan hampir selalu
-              mendapat bunga sangat rendah dan berakhir lunas (keyakinan 84 persen, {fmt2(kpi.max_lift)} kali
-              lebih sering dari kebetulan).
+              Pada pinjaman <b>Grade A</b> berukuran menengah dan bertenor 36 bulan, kombinasi
+              bunga sangat rendah + status lunas muncul di <b>84 dari 100 kasus</b> —{" "}
+              {fmt2(kpi.max_lift)} kali lebih sering dibanding kalau ketiganya tidak berhubungan.
             </p>
           </div>
           <div className="rounded-[16px] border border-line bg-glass2 px-4 py-3.5">
@@ -282,10 +282,21 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
           <Tile value={`${fmt2(kpi.max_lift)}x`} label="Kekuatan pola terkuat (lift)" accent="text-cyan" />
         </div>
         <Meaning>
-          Sistem penilaian grade dan penetapan bunga sudah selaras dengan hasil nyata: peminjam
-          berkualitas baik memang cenderung lunas. Sementara itu, kombinasi utang tinggi, masa kerja
-          pendek, dan pinjaman besar dapat dijadikan kriteria peninjauan yang eksplisit dan konsisten.
+          Grade, tingkat bunga, dan status akhir pinjaman bergerak konsisten satu sama lain —
+          ketiganya jauh lebih sering muncul bersama daripada kebetulan. Sementara itu, kombinasi
+          utang tinggi, masa kerja pendek, dan pinjaman besar dapat dijadikan kriteria peninjauan
+          yang eksplisit dan konsisten.
         </Meaning>
+        {/* Dua batasan yang membuat pola di atas TIDAK boleh dibaca sebagai bukti bahwa
+            sistem grading sudah benar. Ditulis di tempat kesimpulannya ditarik, bukan
+            diselipkan di halaman lain, supaya pembaca melihatnya sekaligus. */}
+        <p className="mt-3 text-[12.5px] leading-[1.55] text-muted">
+          Batasan: aturan asosiasi mengukur <b className="text-text">seberapa sering hal-hal muncul
+          bersama</b>, bukan sebab-akibat — jadi ini belum membuktikan sistem grading sudah tepat.
+          Selain itu status akhir hanya tersedia untuk pinjaman yang sudah selesai; pinjaman yang
+          masih berjalan (38,9 persen, lihat tab Preprocessing) dibuang, sehingga proporsi lunas di
+          sini lebih tinggi daripada kalau semua pinjaman ikut dihitung.
+        </p>
       </Card>
 
       <div className="h-[18px]" />

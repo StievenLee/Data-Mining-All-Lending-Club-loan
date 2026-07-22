@@ -39,8 +39,10 @@ const CASES: CaseCard[] = [
       </>
     ),
     action: {
+      // Sengaja TIDAK menyebut peluang gagal bayar: Fase 4 tidak menghitung outcome
+      // per pola, jadi yang bisa dinyatakan hanya kekuatan buktinya (tier Kritis).
       label: "Eskalasi",
-      text: "Teruskan ke tim risiko dan tahan pencairan sampai ditinjau manual. Pola loan-stacking seperti ini paling sering berakhir gagal bayar.",
+      text: "Teruskan ke tim risiko dan tahan pencairan sampai ditinjau manual. Dasarnya kekuatan bukti, bukan ramalan hasil: DBSCAN dan tiga metode statistik sama-sama menandai record ini (tier Kritis), dengan nilai ekstrem di beberapa fitur sekaligus.",
     },
   },
   {

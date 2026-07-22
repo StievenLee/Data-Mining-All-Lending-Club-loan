@@ -344,15 +344,25 @@ Urut dari dampak terbesar:
 
 ### Catatan kejujuran isi (bukan teknis)
 
-Dua kalimat di UI melampaui apa yang datanya bisa buktikan, dan belum dibetulkan:
+Dua kalimat di UI melampaui apa yang datanya bisa buktikan. **Keduanya sudah diperbaiki
+22 Juli 2026**; dicatat di sini sebagai riwayat, karena pola kesalahannya gampang berulang
+saat menulis narasi baru.
 
-- `src/pages/Anomali.tsx` — *"Pola loan-stacking seperti ini paling sering berakhir gagal
-  bayar"*: tidak ada perhitungan default-rate per pola di data mana pun yang dikirim.
-- `src/pages/InsightBisnis.tsx` — *"Sistem penilaian grade … sudah selaras dengan hasil
-  nyata"*: aturan asosiasi menunjukkan ko-okurensi, bukan validasi. Selain itu 38,9%
-  pinjaman berstatus *Current* dibuang di Fase 1 (disebut di tab Preprocessing), sehingga
-  proporsi *Fully Paid* naik — survivorship bias ini tidak disebut di tempat kesimpulannya
-  ditarik.
+- `src/pages/Anomali.tsx` — dulu: *"Pola loan-stacking seperti ini paling sering berakhir
+  gagal bayar."* Masalahnya: Fase 4 tidak menghitung default-rate per pola, jadi itu
+  ramalan hasil tanpa dasar. Sekarang kartu itu menyatakan **kekuatan buktinya** (tier
+  Kritis: DBSCAN + 3 metode sepakat) dan berhenti di situ.
+- `src/pages/InsightBisnis.tsx` — dulu: *"Sistem penilaian grade dan penetapan bunga sudah
+  selaras dengan hasil nyata."* Masalahnya: (a) aturan asosiasi mengukur ko-okurensi, bukan
+  validasi sistem; (b) 38,9% pinjaman berstatus *Current* dibuang di Fase 1, sehingga
+  proporsi *Fully Paid* naik (survivorship bias) dan itu tidak disebut di tempat
+  kesimpulannya ditarik. Sekarang kalimatnya hanya menyatakan konsistensi antar-variabel,
+  ditambah paragraf "Batasan" yang menyebut kedua hal itu **di kartu yang sama**. Kalimat
+  "hampir selalu" untuk confidence 84% juga diganti "84 dari 100 kasus".
+
+**Aturan yang dipakai ke depan:** kalau sebuah kalimat menyatakan *outcome* (gagal bayar,
+lunas, benar/salahnya sebuah sistem), harus ada kolom di `public/data/` yang menghitungnya.
+Kalau tidak ada, tulis kekuatan bukti atau ko-okurensinya saja.
 
 Sebaliknya, angka-angka keras yang dicek ulang **cocok dengan sumbernya**: 1.348.099 baris
 accepted (parquet Fase 2), confidence 84% & lift 5,772 (rules Fase 3), serta ketiga z-score
