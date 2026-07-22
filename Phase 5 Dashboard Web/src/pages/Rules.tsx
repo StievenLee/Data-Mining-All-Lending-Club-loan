@@ -11,6 +11,7 @@ import Callout from "../components/Callout";
 import PageHead from "../components/PageHead";
 import LiftSlider from "../components/filters/LiftSlider";
 import FeatureFilter from "../components/filters/FeatureFilter";
+import { markFilter } from "../lib/perf";
 
 const TOP_N = 10;
 
@@ -69,8 +70,14 @@ export default function Rules({ data }: { data: DashboardData }) {
   // ketika semua rule ikut digambar.
   const networkOption = useMemo(() => ruleNetworkOption(matched), [matched]);
 
-  const toggle = (key: string) =>
+  const toggle = (key: string) => {
+    markFilter("pilih fitur rule");
     setSelected((s) => (s.includes(key) ? s.filter((k) => k !== key) : [...s, key]));
+  };
+  const clear = () => {
+    markFilter("hapus filter fitur");
+    setSelected([]);
+  };
 
   const selectedLabels = options
     .filter((o) => selected.includes(o.key))
@@ -107,7 +114,7 @@ export default function Rules({ data }: { data: DashboardData }) {
           options={options}
           selected={selected}
           onToggle={toggle}
-          onClear={() => setSelected([])}
+          onClear={clear}
         />
       </div>
       <div className="mb-3.5 flex justify-end">

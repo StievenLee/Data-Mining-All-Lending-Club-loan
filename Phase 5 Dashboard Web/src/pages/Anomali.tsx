@@ -18,6 +18,7 @@ import YearRangeSlider from "../components/filters/YearRangeSlider";
 import AnomalyGlossary from "../components/AnomalyGlossary";
 import AnomalyControls from "../components/filters/AnomalyControls";
 import { recordPhrase, recordUnit } from "../lib/scope";
+import { markFilter } from "../lib/perf";
 
 type CaseCard = {
   tag: string;
@@ -168,12 +169,24 @@ export default function Anomali({ data }: { data: DashboardData }) {
         feats={feats}
         xKey={safeX}
         yKey={safeY}
-        onX={setXKey}
-        onY={setYKey}
+        onX={(v) => {
+          markFilter("ganti sumbu X");
+          setXKey(v);
+        }}
+        onY={(v) => {
+          markFilter("ganti sumbu Y");
+          setYKey(v);
+        }}
         limit={limit}
-        onLimit={setLimit}
+        onLimit={(v) => {
+          markFilter("ubah jumlah titik");
+          setLimit(v);
+        }}
         layer={layer}
-        onLayer={setLayer}
+        onLayer={(v) => {
+          markFilter("isolasi lapisan");
+          setLayer(v);
+        }}
         counts={counts}
         available={yearRows.length}
         drawn={rows.length}

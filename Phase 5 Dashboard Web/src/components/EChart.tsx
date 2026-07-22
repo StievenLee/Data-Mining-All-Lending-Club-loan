@@ -1,17 +1,22 @@
 // EChart.tsx — wrapper tipis ECharts (canvas). Re-render saat `option` berubah,
-// resize otomatis, dan (opsional) lapor latensi render ke callback perf.
+// resize otomatis, dan selalu melaporkan latensi ke lib/perf.
+//
+// Pelaporan sengaja dilakukan DI SINI, bukan lewat prop opsional di tiap call
+// site: instrumentasi yang harus diingat untuk dipasang manual akan terlewat,
+// dan sebelumnya memang begitu — prop `onRenderMs` ada tetapi tidak pernah
+// dipanggil siapa pun, sehingga klaim latensi tidak punya dasar ukur sama sekali.
 
 import { useEffect, useRef } from "react";
 import echarts from "../lib/echarts";
 import type { EChartsOption } from "../lib/echarts";
+import { reportRender } from "../lib/perf";
 
 interface Props {
   option: EChartsOption;
   height?: number | string;
-  onRenderMs?: (ms: number) => void;
 }
 
-export default function EChart({ option, height = 340, onRenderMs }: Props) {
+export default function EChart({ option, height = 340 }: Props) {
   const hostRef = useRef<HTMLDivElement | null>(null);
   const chartRef = useRef<echarts.ECharts | null>(null);
 
@@ -37,9 +42,8 @@ export default function EChart({ option, height = 340, onRenderMs }: Props) {
     if (!chart) return;
     const t0 = performance.now();
     chart.setOption(option, { notMerge: true, lazyUpdate: false });
-    const ms = performance.now() - t0;
-    if (onRenderMs) onRenderMs(ms);
-  }, [option, onRenderMs]);
+    reportRender(performance.now() - t0);
+  }, [option]);
 
   return (
     <div

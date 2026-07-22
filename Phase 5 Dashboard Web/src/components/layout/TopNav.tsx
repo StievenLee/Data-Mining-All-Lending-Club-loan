@@ -1,13 +1,19 @@
 import { useDashboard } from "../../store/useDashboard";
+import type { TabId } from "../../types";
 import DatasetToggle from "../filters/DatasetToggle";
+import PerfBadge from "./PerfBadge";
 
-const TAB_LABEL: Record<string, string> = {
+// Record<TabId, string> (bukan Record<string, string>) supaya menambah tab baru
+// tanpa menambah labelnya di sini langsung ditolak compiler — sebelumnya tab
+// "laporan" sempat lolos dan breadcrumb-nya tampil kosong.
+const TAB_LABEL: Record<TabId, string> = {
   ringkasan: "Ringkasan",
   preprocessing: "Preprocessing",
   segmentasi: "Segmentasi",
   rules: "Association Rules",
   anomali: "Anomali",
   insight: "Insight Bisnis",
+  laporan: "Laporan KDD",
 };
 
 // Toggle dataset relevan di semua tab (preprocessing menampilkan report accepted/rejected)
@@ -28,6 +34,7 @@ export default function TopNav() {
         </nav>
       </div>
       <div className="ml-auto flex flex-none items-center gap-2 min-[640px]:gap-3.5">
+        <PerfBadge />
         {DATASET_TABS.has(tab) && <DatasetToggle />}
       </div>
     </header>

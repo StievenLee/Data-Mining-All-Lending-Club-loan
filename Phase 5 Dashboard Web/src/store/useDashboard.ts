@@ -4,6 +4,7 @@
 import { create } from "zustand";
 import type { Dataset, TabId } from "../types";
 import type { YearRange } from "../data/filters";
+import { markFilter } from "../lib/perf";
 
 interface DashboardState {
   tab: TabId;
@@ -64,22 +65,31 @@ export const useDashboard = create<DashboardState>((set, get) => {
     dataset: initial.dataset ?? "accepted",
     years: initial.years ?? null,
     minLift: initial.minLift ?? 1.0,
+    // markFilter() dipanggil SEBELUM set(), supaya stopwatch menyala sejak
+    // aksi user, bukan sejak React sempat memproses perubahan state.
     setTab: (tab) => {
+      markFilter("pindah tab");
       set({ tab });
       sync();
     },
     setDataset: (dataset) => {
+      markFilter("ganti dataset");
       set({ dataset });
       sync();
     },
     setYears: (years) => {
+      markFilter("geser rentang tahun");
       set({ years });
       sync();
     },
     setMinLift: (minLift) => {
+      markFilter("geser ambang lift");
       set({ minLift });
       sync();
     },
+    // initYears sengaja TIDAK ditandai: itu inisialisasi dari data saat halaman
+    // pertama dimuat, bukan aksi filter. Menandainya akan mencampurkan waktu
+    // fetch + parse ke dalam angka latensi filter.
     initYears: (bounds) => {
       if (!get().years) {
         set({ years: bounds });

@@ -83,10 +83,28 @@ dicatat di bagian [Performa](#performa-angka-terukur) di bawah.
 | `JSON.parse` kedua sample | ±310 ms | Node 20, desktop — **bukan** kelas HP |
 | Heap setelah parse | ±106 MB | `process.memoryUsage()` |
 
-**Yang belum diukur:** latensi per-filter di browser dan First Contentful Paint. Prop
-`onRenderMs` di `src/components/EChart.tsx` disiapkan untuk itu tapi **belum ada satu pun
-pemanggil**, jadi klaim "<100 ms per filter" di `PLAN.md` sampai sekarang **tidak berdasar
-pengukuran**. Jangan kutip angka itu sebelum instrumentasinya dipasang.
+### Latensi filter — diukur langsung di browser
+
+Sejak `src/lib/perf.ts` dipasang, latensi filter **diukur saat dashboard dipakai** dan
+angkanya tampil di badge **LATENSI** pada bar atas (arahkan kursor untuk rinciannya).
+Klaim "<100 ms per filter" di `PLAN.md` karena itu tidak lagi tanpa dasar — tetapi
+**verifikasi sendiri di perangkat yang dipakai saat demo**, jangan kutip dari sini.
+
+Yang diukur adalah **jarak dari aksi user sampai chart terakhir selesai digambar**, bukan
+hanya durasi `chart.setOption()`. Bagian yang berpotensi lambat justru di hulu (memfilter
+ratusan ribu baris di memori lalu menyusun ulang opsi chart); mengukur `setOption` saja
+akan menghasilkan angka bagus yang tidak menjawab apa pun. Porsi menggambar tetap dicatat
+terpisah supaya terlihat berapa bagian yang murni ECharts.
+
+Yang **tidak** masuk hitungan: waktu muat awal (fetch + `JSON.parse`). Itu bukan latensi
+filter, dan mencampurnya membuat sampel pertama selalu buruk — karena itu pengukuran baru
+dimulai setelah aksi filter pertama, dan sebelum itu badge menampilkan `–`, bukan `0 ms`.
+
+Warna badge: hijau <100 ms, amber <300 ms, merah di atasnya. Aksi terberat yang layak diuji
+adalah **mengubah jumlah titik ke "Semua"** di tab Anomali — itu batas atas beban nyata
+dashboard ini.
+
+**Yang masih belum diukur:** First Contentful Paint.
 
 **Keterbatasan yang diketahui:**
 - `loadAll()` menarik **kedua** sample sekaligus sebelum tab mana pun tampil — termasuk tab
