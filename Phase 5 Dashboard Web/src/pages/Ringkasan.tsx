@@ -89,8 +89,8 @@ export default function Ringkasan({ data }: { data: DashboardData }) {
       <Callout eyebrow="Pertanyaan sentral KDD">
         Apa yang tidak terlihat dari data mentah? Anomali paling penting bukan satu nilai yang
         ekstrem, melainkan <b>record yang disepakati banyak metode sekaligus</b> dan terisolasi dari
-        seluruh klaster. Di titik itulah bukti statistik dan struktural bertemu, dan di sanalah sinyal
-        risiko sejati berada.
+        seluruh klaster. Di titik itulah bukti statistik dan struktural bertemu, dan di sanalah
+        kandidat risiko terkuat untuk ditinjau lebih dulu.
       </Callout>
       <YearRangeSlider
         bounds={data.summary.year_bounds!}

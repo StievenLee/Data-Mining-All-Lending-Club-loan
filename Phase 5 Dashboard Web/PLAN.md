@@ -344,7 +344,7 @@ Urut dari dampak terbesar:
 
 ### Catatan kejujuran isi (bukan teknis)
 
-Dua kalimat di UI melampaui apa yang datanya bisa buktikan. **Keduanya sudah diperbaiki
+Tiga kalimat di UI melampaui apa yang datanya bisa buktikan. **Ketiganya sudah diperbaiki
 22 Juli 2026**; dicatat di sini sebagai riwayat, karena pola kesalahannya gampang berulang
 saat menulis narasi baru.
 
@@ -359,6 +359,11 @@ saat menulis narasi baru.
   kesimpulannya ditarik. Sekarang kalimatnya hanya menyatakan konsistensi antar-variabel,
   ditambah paragraf "Batasan" yang menyebut kedua hal itu **di kartu yang sama**. Kalimat
   "hampir selalu" untuk confidence 84% juga diganti "84 dari 100 kasus".
+- `src/pages/Ringkasan.tsx` — dulu: *"di sanalah sinyal risiko **sejati** berada."*
+  Kesepakatan antar-metode unsupervised menunjukkan konsistensi deteksi, bukan kebenaran
+  risiko — tidak ada label ground-truth yang memvalidasinya di Fase 4. Sekarang:
+  *"kandidat risiko terkuat untuk ditinjau lebih dulu"* — menyatakan prioritas antrean
+  peninjauan, yang memang itulah gunanya tier.
 
 **Aturan yang dipakai ke depan:** kalau sebuah kalimat menyatakan *outcome* (gagal bayar,
 lunas, benar/salahnya sebuah sistem), harus ada kolom di `public/data/` yang menghitungnya.
