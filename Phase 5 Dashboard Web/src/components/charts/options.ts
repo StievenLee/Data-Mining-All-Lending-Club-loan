@@ -14,6 +14,7 @@ import {
 import type { ClusterProfile, Dataset, SampleColumnar } from "../../types";
 import { fmt2 } from "../../lib/format";
 import { CLUSTER_AXES, RISK_LEGEND, riskText, riskValue } from "../../lib/cluster";
+import type { AnomalyLayer } from "../../data/filters";
 
 const axisCommon = {
   axisLine: { lineStyle: { color: COLORS.line } },
@@ -276,13 +277,16 @@ export function clusterOption(
 
 /** Scatter anomali: x,y = fitur terpilih, warna = iso_score, overlay noise DBSCAN
  *  + jenis anomali Fase 4 (kontekstual/kolektif) + tier tinggi. Overlay hanya muncul
- *  bila kolomnya ada di sample (accepted saja — rejected tak punya kolom ini). */
+ *  bila kolomnya ada di sample (accepted saja — rejected tak punya kolom ini).
+ *  `layer` != null → isolasi satu lapisan: lapisan itu digambar penuh, sisanya jadi
+ *  titik abu redup sebagai konteks posisi (bukan dihilangkan, agar sebaran tetap terbaca). */
 export function anomalyScatterOption(
   sample: SampleColumnar,
   rows: number[],
   xKey: string,
   yKey: string,
-  tierOrder: string[] = []
+  tierOrder: string[] = [],
+  layer: AnomalyLayer | null = null
 ): EChartsOption {
   const cx = sample.columns[xKey] as number[] | undefined;
   const cy = sample.columns[yKey] as number[] | undefined;
@@ -324,61 +328,76 @@ export function anomalyScatterOption(
   if (!Number.isFinite(isoMin)) isoMin = 0;
   if (!Number.isFinite(isoMax)) isoMax = 1;
 
+  // Isolasi lapisan overlay (kolektif/kontekstual/tier/noise): titik dasar tetap
+  // digambar, tapi netral & tidak diwarnai iso_score supaya lapisan aktif menonjol.
+  const dimBase = layer != null && layer !== "main";
+  const shows = (l: AnomalyLayer) => layer == null || layer === l;
+
   const series: any[] = [
     {
       type: "scatter",
-      name: "Anomali",
+      name: dimBase ? "Titik lain (konteks)" : "Anomali",
       large: true,
       largeThreshold: 2000,
-      symbolSize: 7,
-      itemStyle: { opacity: 0.72 },
+      symbolSize: dimBase ? 5 : 7,
+      itemStyle: dimBase
+        ? { color: COLORS.muted, opacity: 0.16 }
+        : { opacity: 0.72 },
+      silent: dimBase,
       data: main,
     },
   ];
-  if (collectivePts.length) {
+  if (collectivePts.length && shows("collective")) {
     series.push({
       type: "scatter",
       name: "Kolektif",
       symbol: "rect",
-      symbolSize: 7,
-      itemStyle: { color: "transparent", borderColor: COLORS.violet, borderWidth: 1.1, opacity: 0.5 },
+      symbolSize: layer ? 9 : 7,
+      itemStyle: {
+        color: "transparent",
+        borderColor: COLORS.violet,
+        borderWidth: layer ? 1.6 : 1.1,
+        opacity: layer ? 0.95 : 0.5,
+      },
       data: collectivePts,
       tooltip: { formatter: "Kolektif" },
     });
   }
-  if (contextualPts.length) {
+  if (contextualPts.length && shows("contextual")) {
     series.push({
       type: "scatter",
       name: "Kontekstual",
       symbol: "diamond",
-      symbolSize: 9,
+      symbolSize: layer ? 11 : 9,
       itemStyle: { color: "transparent", borderColor: COLORS.amber, borderWidth: 1.4, opacity: 0.9 },
       data: contextualPts,
       tooltip: { formatter: "Kontekstual" },
     });
   }
-  if (highTierPts.length) {
+  if (highTierPts.length && shows("highTier")) {
     series.push({
       type: "scatter",
       name: "Tier tinggi (Kritis / Sangat Kuat)",
-      symbolSize: 12,
+      symbolSize: layer ? 14 : 12,
       itemStyle: { color: COLORS.lime, opacity: 0.95, borderColor: COLORS.bgDeep, borderWidth: 1.2 },
       data: highTierPts,
       tooltip: { formatter: (p: any) => p.name || "Tier tinggi" },
     });
   }
-  series.push({
-    type: "scatter",
-    name: "Noise DBSCAN (Fase 2)",
-    symbolSize: 15,
-    itemStyle: {
-      color: "rgba(0,0,0,0)",
-      borderColor: COLORS.cyan,
-      borderWidth: 1.6,
-    },
-    data: noisePts,
-    tooltip: { formatter: "Noise DBSCAN" },
-  });
+  if (shows("noise")) {
+    series.push({
+      type: "scatter",
+      name: "Noise DBSCAN (Fase 2)",
+      symbolSize: 15,
+      itemStyle: {
+        color: "rgba(0,0,0,0)",
+        borderColor: COLORS.cyan,
+        borderWidth: 1.6,
+      },
+      data: noisePts,
+      tooltip: { formatter: "Noise DBSCAN" },
+    });
+  }
 
   return {
     grid: { left: 8, right: 66, top: 44, bottom: 44, containLabel: true },
@@ -396,20 +415,24 @@ export function anomalyScatterOption(
       formatter: (p: any) =>
         `${xKey}=${fmt2(+p.value[0])}<br/>${yKey}=${fmt2(+p.value[1])}<br/>${p.name || ""}`,
     },
-    visualMap: {
-      min: isoMin,
-      max: isoMax,
-      dimension: 2,
-      seriesIndex: 0,
-      calculable: false,
-      show: true,
-      right: 0,
-      top: "center",
-      itemHeight: 130,
-      text: ["iso\ntinggi", "rendah"],
-      textStyle: { color: COLORS.muted, fontFamily: FONT_MONO, fontSize: 10 },
-      inRange: { color: ISO_SCALE },
-    },
+    // visualMap mewarnai seri 0 dari iso_score. Saat lapisan diisolasi seri 0 sengaja
+    // diredupkan jadi konteks, jadi skalanya dibuang agar tidak menimpa warna itu.
+    visualMap: dimBase
+      ? undefined
+      : {
+          min: isoMin,
+          max: isoMax,
+          dimension: 2,
+          seriesIndex: 0,
+          calculable: false,
+          show: true,
+          right: 0,
+          top: "center",
+          itemHeight: 130,
+          text: ["iso\ntinggi", "rendah"],
+          textStyle: { color: COLORS.muted, fontFamily: FONT_MONO, fontSize: 10 },
+          inRange: { color: ISO_SCALE },
+        },
     xAxis: { type: "value", name: xKey, nameLocation: "middle", nameGap: 30, scale: true, ...axisCommon },
     yAxis: { type: "value", name: yKey, nameLocation: "middle", nameGap: 40, scale: true, ...axisCommon },
     series,

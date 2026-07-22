@@ -83,6 +83,48 @@ export function filterSampleRows(
   return idx;
 }
 
+/** Lapisan sinyal pada peta anomali — dipakai chip "tampilkan hanya…". */
+export type AnomalyLayer = "main" | "collective" | "contextual" | "highTier" | "noise";
+
+/** Ambil maksimal `limit` baris dengan langkah merata (stride), bukan potong
+    `slice(0, limit)`. Stride mempertahankan sebaran tahun/nilai sample asli,
+    sedangkan slice hanya memperlihatkan bagian awal file. `limit` null = semua. */
+export function limitRows(rows: number[], limit: number | null): number[] {
+  if (limit == null || rows.length <= limit) return rows;
+  const step = rows.length / limit;
+  const out: number[] = new Array(limit);
+  for (let k = 0; k < limit; k++) out[k] = rows[Math.floor(k * step)];
+  return out;
+}
+
+/** Hitung anggota tiap lapisan pada baris yang sedang tampil — untuk angka di chip. */
+export function anomalyLayerCounts(
+  sample: SampleColumnar,
+  rows: number[],
+  tierOrder: string[] = []
+): Record<AnomalyLayer, number> {
+  const noise = sample.columns["is_dbscan_noise"] as number[] | undefined;
+  const tier = sample.columns["anomaly_tier"] as string[] | undefined;
+  const contextual = sample.columns["is_contextual_outlier"] as number[] | undefined;
+  const collective = sample.columns["is_collective_outlier"] as number[] | undefined;
+  const highTiers = new Set(tierOrder.slice(0, 2));
+
+  const out: Record<AnomalyLayer, number> = {
+    main: rows.length,
+    collective: 0,
+    contextual: 0,
+    highTier: 0,
+    noise: 0,
+  };
+  for (const i of rows) {
+    if (collective?.[i]) out.collective++;
+    if (contextual?.[i]) out.contextual++;
+    if (noise?.[i]) out.noise++;
+    if (tier && highTiers.has(tier[i])) out.highTier++;
+  }
+  return out;
+}
+
 /** Metrik yang dirata-rata per dataset — kolom yang terisi memang berbeda. */
 const WEIGHTED_METRICS = [
   "default_rate",

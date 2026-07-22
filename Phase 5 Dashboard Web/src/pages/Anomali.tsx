@@ -2,7 +2,13 @@ import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import type { DashboardData } from "../types";
 import { useDashboard } from "../store/useDashboard";
-import { filterSampleRows, totalRecords } from "../data/filters";
+import {
+  anomalyLayerCounts,
+  filterSampleRows,
+  limitRows,
+  totalRecords,
+} from "../data/filters";
+import type { AnomalyLayer } from "../data/filters";
 import { anomalyScatterOption } from "../components/charts/options";
 import { COLORS } from "../theme/colors";
 import EChart from "../components/EChart";
@@ -10,6 +16,7 @@ import Card from "../components/Card";
 import PageHead from "../components/PageHead";
 import YearRangeSlider from "../components/filters/YearRangeSlider";
 import AnomalyGlossary from "../components/AnomalyGlossary";
+import AnomalyControls from "../components/filters/AnomalyControls";
 import { recordPhrase, recordUnit } from "../lib/scope";
 
 type CaseCard = {
@@ -101,19 +108,34 @@ export default function Anomali({ data }: { data: DashboardData }) {
 
   const [xKey, setXKey] = useState(feats[0]);
   const [yKey, setYKey] = useState(feats[1] ?? feats[0]);
+  // Default 10.000 titik: menggambar ratusan ribu titik sekaligus bikin canvas lag,
+  // jadi tampilan awal dibuat ringan dan "Semua" tetap tersedia satu klik.
+  const [limit, setLimit] = useState<number | null>(10000);
+  const [layer, setLayer] = useState<AnomalyLayer | null>(null);
   // pastikan sumbu valid saat ganti dataset
   const safeX = feats.includes(xKey) ? xKey : feats[0];
   const safeY = feats.includes(yKey) ? yKey : feats[1] ?? feats[0];
 
-  const rows = useMemo(() => filterSampleRows(sample, years), [sample, years]);
+  const yearRows = useMemo(() => filterSampleRows(sample, years), [sample, years]);
+  const rows = useMemo(() => limitRows(yearRows, limit), [yearRows, limit]);
+  // Angka pada chip dihitung dari titik yang BENAR-BENAR digambar, agar cocok
+  // dengan yang terlihat setelah batas jumlah titik diterapkan.
+  const counts = useMemo(
+    () => anomalyLayerCounts(sample, rows, data.summary.tier_order),
+    [sample, rows, data.summary.tier_order]
+  );
   const option = useMemo(
-    () => anomalyScatterOption(sample, rows, safeX, safeY, data.summary.tier_order),
-    [sample, rows, safeX, safeY, data.summary.tier_order]
+    () => anomalyScatterOption(sample, rows, safeX, safeY, data.summary.tier_order, layer),
+    [sample, rows, safeX, safeY, data.summary.tier_order, layer]
   );
   const total = totalRecords(data.tiers, dataset, years);
 
-  const selCls =
-    "cursor-pointer rounded-lg border border-line bg-bg-deep px-2.5 py-1.5 font-mono text-xs text-text";
+  const activeLabel =
+    layer && layer !== "main"
+      ? { collective: "Kolektif", contextual: "Kontekstual", highTier: "Tier tinggi", noise: "Noise DBSCAN" }[layer]
+      : layer === "main"
+        ? "Anomali"
+        : null;
 
   return (
     <>
@@ -122,11 +144,12 @@ export default function Anomali({ data }: { data: DashboardData }) {
         title="Peta Anomali"
         sub={
           <>
-            Sample <b>{rows.length.toLocaleString("id-ID")}</b> titik dari{" "}
+            Menampilkan <b>{rows.length.toLocaleString("id-ID")}</b> titik dari{" "}
             {total.toLocaleString("id-ID")} {recordPhrase(dataset)}. Warna = iso_score. Titik
             lime besar = tier tinggi; lingkaran cyan = noise DBSCAN (Fase 2); belah
-            ketupat amber = anomali kontekstual; kotak violet = anomali kolektif. Klik
-            legenda untuk toggle jenis.
+            ketupat amber = anomali kontekstual; kotak violet = anomali kolektif. Atur
+            jumlah titik dan klik satu chip lapisan di panel bawah untuk fokus ke satu
+            jenis anomali.
           </>
         }
         pills={[
@@ -134,28 +157,38 @@ export default function Anomali({ data }: { data: DashboardData }) {
           { label: "Dataset", value: dataset, kind: "ai" },
         ]}
       />
-      <div className="flex flex-wrap items-center justify-end gap-3 mb-3.5">
-        <select className={selCls} value={safeX} onChange={(e) => setXKey(e.target.value)}>
-          {feats.map((f) => (
-            <option key={f} value={f}>
-              X: {f}
-            </option>
-          ))}
-        </select>
-        <select className={selCls} value={safeY} onChange={(e) => setYKey(e.target.value)}>
-          {feats.map((f) => (
-            <option key={f} value={f}>
-              Y: {f}
-            </option>
-          ))}
-        </select>
-      </div>
       <YearRangeSlider
         bounds={data.summary.year_bounds!}
         recordCount={total}
         recordUnit={recordUnit(dataset)}
       />
-      <Card title="Scatter Anomali" note={`${safeX} × ${safeY}`}>
+      <AnomalyControls
+        feats={feats}
+        xKey={safeX}
+        yKey={safeY}
+        onX={setXKey}
+        onY={setYKey}
+        limit={limit}
+        onLimit={setLimit}
+        layer={layer}
+        onLayer={setLayer}
+        counts={counts}
+        available={yearRows.length}
+        drawn={rows.length}
+      />
+      <Card
+        title="Scatter Anomali"
+        note={`${safeX} × ${safeY}`}
+        sub={
+          activeLabel ? (
+            <>
+              Menampilkan hanya <b className="text-text">{activeLabel}</b> (
+              {counts[layer!].toLocaleString("id-ID")} titik); sisanya diredupkan sebagai
+              konteks. Klik chip yang sama lagi atau “Semua lapisan” untuk kembali.
+            </>
+          ) : undefined
+        }
+      >
         <EChart option={option} height={480} />
       </Card>
       <div className="h-[18px]" />
