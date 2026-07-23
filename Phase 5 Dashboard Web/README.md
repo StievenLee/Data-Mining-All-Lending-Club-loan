@@ -121,9 +121,39 @@ Diukur dengan Node 22 di desktop atas data asli `public/data/anomaly_sample_*.js
 
 Tambahkan ±3 ms (accepted) / ±10 ms (rejected) untuk `filterSampleRows`, yang selalu
 memindai seluruh baris tanpa memandang batas titik. Angka ini **batas bawah**: internal
-ECharts dan waktu paint belum termasuk, dan itulah yang diukur badge LATENSI.
+ECharts dan waktu paint belum termasuk.
 
-**Yang masih belum diukur:** First Contentful Paint.
+#### Paint ECharts — diukur di browser nyata (headless Edge, CDP)
+
+Bagian yang sebelumnya "belum termasuk" kini diukur langsung: `chart.setOption()` sampai
+frame benar-benar ke layar (2× `requestAnimationFrame`), 12 iterasi per skenario, atas data
+asli dan opsi `large: true` yang sama persis dengan dashboard. Angka ini sudah termasuk
+tunggu ≤2 frame vsync (~33 ms lantai), jadi merupakan **waktu-sampai-tergambar**, bukan hanya
+durasi `setOption`.
+
+| Dataset · titik | GPU (median / p95) | Software render (median / p95) |
+|---|---|---|
+| Accepted · 10.000 (default) | 34 / 73 ms | 34 / 59 ms |
+| Accepted · Semua (177 rb) | 40 / 48 ms | 49 / 66 ms |
+| Rejected · 10.000 (default) | 33 / 42 ms | 44 / 52 ms |
+| Rejected · 50.000 | 40 / 48 ms | 65 / 87 ms |
+| Rejected · Semua (547 rb) | **45 / 50 ms** | **83 / 145 ms** |
+
+**Kesimpulan — total per interaksi = jalur JS (tabel di atas, ≤12 ms) + paint:**
+
+- **Setiap interaksi default (10 rb titik): ~37–47 ms.** Aman di semua mesin.
+- **Setiap interaksi di mesin ber-GPU (semua laptop modern): ≤52 ms**, termasuk mode "Semua"
+  pada 547 rb titik. Aman.
+- **Satu-satunya yang bisa melampaui 100 ms:** mode "Semua" (547 rb, dataset rejected)
+  **saat GPU tidak aktif** — ~89 ms median, ~150 ms p95. Ini opt-in manual, bukan jalur
+  default, dan sudah ditandai di atas sebagai batas atas beban dashboard.
+
+Catatan: `progressive` rendering sempat diuji dan **ditolak** — ia memecah gambar ke banyak
+frame sehingga waktu-sampai-tergambar penuh justru melonjak (547 rb → ~740 ms software).
+Cocok untuk menjaga responsivitas per-frame, tapi bertentangan dengan target "tergambar penuh
+< 100 ms". `large: true` tanpa `progressive` terbukti optimal untuk target ini.
+
+**Yang masih belum diukur:** First Contentful Paint (muat awal, bukan latensi filter).
 
 **Keterbatasan yang diketahui:**
 - `loadAll()` menarik **kedua** sample sekaligus sebelum tab mana pun tampil — termasuk tab
