@@ -17,8 +17,6 @@ function toneOf(ms: number): { text: string; dot: string } {
 export default function PerfBadge() {
   const totalMs = usePerf((s) => s.totalMs);
   const paintMs = usePerf((s) => s.paintMs);
-  const worstMs = usePerf((s) => s.worstMs);
-  const samples = usePerf((s) => s.samples);
   const label = usePerf((s) => s.label);
 
   if (totalMs == null) {
@@ -40,7 +38,6 @@ export default function PerfBadge() {
     `Aksi terakhir: ${label ?? "-"}`,
     `Total (aksi → chart selesai): ${totalMs.toFixed(1)} ms`,
     `Porsi menggambar (setOption): ${(paintMs ?? 0).toFixed(1)} ms`,
-    `Terburuk sesi ini: ${(worstMs ?? 0).toFixed(1)} ms dari ${samples} pengukuran`,
   ].join("\n");
 
   return (
@@ -55,11 +52,6 @@ export default function PerfBadge() {
       <span className={`font-mono text-[12px] font-bold ${tone.text}`}>
         {Math.round(totalMs)} ms
       </span>
-      {worstMs != null && worstMs > totalMs && (
-        <span className="font-mono text-[10px] text-muted">
-          maks {Math.round(worstMs)}
-        </span>
-      )}
     </div>
   );
 }

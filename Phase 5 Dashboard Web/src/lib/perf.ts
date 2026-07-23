@@ -23,8 +23,6 @@ export interface PerfState {
   paintMs: number | null;
   /** Aksi apa yang barusan diukur, mis. "geser tahun". */
   label: string | null;
-  /** Terburuk sepanjang sesi — lebih jujur daripada hanya menampilkan yang terakhir. */
-  worstMs: number | null;
   /** Berapa kali filter diubah sejak halaman dibuka. */
   samples: number;
   cycle: number;
@@ -34,7 +32,6 @@ export const usePerf = create<PerfState>(() => ({
   totalMs: null,
   paintMs: null,
   label: null,
-  worstMs: null,
   samples: 0,
   cycle: 0,
 }));
@@ -67,7 +64,6 @@ export function reportRender(paint: number): void {
     label: pendingLabel,
     totalMs: total,
     paintMs: paint,
-    worstMs: Math.max(total, s.worstMs ?? 0),
     samples: sameCycle ? s.samples : s.samples + 1,
   });
 }

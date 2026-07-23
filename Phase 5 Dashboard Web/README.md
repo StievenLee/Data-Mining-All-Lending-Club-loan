@@ -125,33 +125,42 @@ ECharts dan waktu paint belum termasuk.
 
 #### Paint ECharts — diukur di browser nyata (headless Edge, CDP)
 
-Bagian yang sebelumnya "belum termasuk" kini diukur langsung: `chart.setOption()` sampai
-frame benar-benar ke layar (2× `requestAnimationFrame`), 12 iterasi per skenario, atas data
-asli dan opsi `large: true` yang sama persis dengan dashboard. Angka ini sudah termasuk
-tunggu ≤2 frame vsync (~33 ms lantai), jadi merupakan **waktu-sampai-tergambar**, bukan hanya
-durasi `setOption`.
+Diukur langsung: `chart.setOption()` sampai frame benar-benar ke layar (2× `requestAnimationFrame`,
+4 iterasi warmup dibuang), atas data asli dan **opsi lengkap yang sama persis dengan dashboard
+(seri dasar + semua overlay)**, bukan hanya seri dasar. Ini penting: pengukuran awal saya keliru
+karena hanya menggambar seri dasar dan melewatkan overlay — padahal overlay-lah biaya
+sebenarnya (lihat di bawah).
 
-| Dataset · titik | GPU (median / p95) | Software render (median / p95) |
-|---|---|---|
-| Accepted · 10.000 (default) | 34 / 73 ms | 34 / 59 ms |
-| Accepted · Semua (177 rb) | 40 / 48 ms | 49 / 66 ms |
-| Rejected · 10.000 (default) | 33 / 42 ms | 44 / 52 ms |
-| Rejected · 50.000 | 40 / 48 ms | 65 / 87 ms |
-| Rejected · Semua (547 rb) | **45 / 50 ms** | **83 / 145 ms** |
+**Temuan: yang mahal adalah penanda overlay berongga, bukan titik dasarnya.**
 
-**Kesimpulan — total per interaksi = jalur JS (tabel di atas, ≤12 ms) + paint:**
+| Yang digambar | Median |
+|---|---|
+| Titik dasar saja, accepted "Semua" (177 rb) | **~40 ms** |
+| Titik dasar saja, rejected "Semua" (547 rb) + ~340 overlay | ~40–65 ms |
+| accepted "Semua" + overlay LAMA (91 rb kolektif + 13 rb kontekstual, berongga) | **~250 ms** ✗ |
+| accepted "Semua" + overlay setelah cap 800/lapisan | **~55 ms** ✓ |
 
-- **Setiap interaksi default (10 rb titik): ~37–47 ms.** Aman di semua mesin.
-- **Setiap interaksi di mesin ber-GPU (semua laptop modern): ≤52 ms**, termasuk mode "Semua"
-  pada 547 rb titik. Aman.
-- **Satu-satunya yang bisa melampaui 100 ms:** mode "Semua" (547 rb, dataset rejected)
-  **saat GPU tidak aktif** — ~89 ms median, ~150 ms p95. Ini opt-in manual, bukan jalur
-  default, dan sudah ditandai di atas sebagai batas atas beban dashboard.
+Titik dasar murah di semua ukuran (547 rb pun ~40–65 ms lewat `large: true`). Yang meledak
+adalah penanda overlay **berongga ber-border** (kotak kolektif, belah-ketupat kontekstual):
+`large: true` tidak mempercepatnya, dan pada accepted jumlahnya mencapai 91 rb (52% populasi),
+membuat "Semua" tembus ~250 ms. Perbaikannya: `OVERLAY_DRAW_CAP = 800` per lapisan di
+`prepareScatter()` — penanda di-stride-sampel ke maksimal 800 (titik dasar TETAP digambar
+seluruhnya; angka chip tetap total sebenarnya). Render penuh turun ke ~55 ms median.
 
-Catatan: `progressive` rendering sempat diuji dan **ditolak** — ia memecah gambar ke banyak
-frame sehingga waktu-sampai-tergambar penuh justru melonjak (547 rb → ~740 ms software).
-Cocok untuk menjaga responsivitas per-frame, tapi bertentangan dengan target "tergambar penuh
-< 100 ms". `large: true` tanpa `progressive` terbukti optimal untuk target ini.
+**Kesimpulan — total per interaksi = jalur JS (≤12 ms) + paint:**
+
+- **Setiap interaksi default (10 rb titik): ~40–55 ms.** Aman di semua mesin.
+- **Mode "Semua" kedua dataset (177 rb / 547 rb): ~55–65 ms** setelah cap overlay. Aman.
+
+Catatan pengukuran: lingkungan headless yang dipakai punya variasi besar antar-run (thermal /
+proses latar), jadi angka absolut di atas adalah orientasi, bukan jaminan per-mesin. Yang
+**robust** lintas semua run: titik dasar murah, dan overlay berongga ribuan penanda adalah satu-
+satunya sumber >100 ms — itulah yang dipangkas. Verifikasi tetap tersedia lewat badge
+**LATENSI** di dashboard saat dipakai di mesin nyata.
+
+`progressive` rendering sempat diuji dan **ditolak** — ia memecah gambar ke banyak frame
+sehingga waktu-sampai-tergambar penuh justru melonjak (547 rb → ~740 ms). Cocok untuk
+responsivitas per-frame, tapi bertentangan dengan target "tergambar penuh < 100 ms".
 
 **Yang masih belum diukur:** First Contentful Paint (muat awal, bukan latensi filter).
 

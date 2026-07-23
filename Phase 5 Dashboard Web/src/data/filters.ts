@@ -125,6 +125,47 @@ export interface ScatterFrame {
 
 const EMPTY_OVERLAY: OverlaySeries = { xy: new Float64Array(0), idx: new Int32Array(0) };
 
+/** Batas jumlah MARKER overlay yang benar-benar digambar per lapisan.
+ *
+ *  Overlay (kolektif, kontekstual, dst) hanyalah penanda di ATAS scatter dasar:
+ *  tiap titiknya sudah tergambar sebagai dot berwarna di seri utama, jadi menipiskan
+ *  penanda tidak menyembunyikan data apa pun. Pada dataset accepted, lapisan kolektif
+ *  mencakup ~91 rb titik (52% populasi) yang digambar sebagai kotak berongga ber-border,
+ *  jauh lebih mahal per titik daripada dot penuh. Menggambar semuanya membuat mode
+ *  "Semua" tembus 250 ms; padahal 91 rb penanda hanya jadi gumpalan padat yang tak
+ *  terbaca. Cap ini menjaga sebaran spasial (stride, bukan potong awal) sambil memangkas
+ *  biaya gambar. Angka chip TETAP memakai total sebenarnya, bukan jumlah yang digambar.
+ *
+ *  Nilai 800 dipilih dari pengukuran di browser nyata (headless Edge via CDP, data asli):
+ *  penanda overlay memakai simbol BERONGGA ber-border (kotak/belah-ketupat), dan
+ *  `large: true` TIDAK mempercepatnya — tiap penanda butuh stroke tersendiri, jauh lebih
+ *  mahal daripada dot penuh. Buktinya: dataset rejected menggambar 547 rb titik dasar +
+ *  hanya ~340 penanda berongga dengan stabil ~40-65 ms, sedangkan accepted dulu lambat
+ *  BUKAN karena titik dasarnya (177 rb dasar = ~40 ms) melainkan karena ribuan penanda
+ *  kolektif/kontekstual berongga (dulu ~91 rb → 250 ms). Dengan cap 800 per lapisan,
+ *  render penuh accepted "Semua" turun ke ~55 ms median, memberi margin lebar di bawah
+ *  target 100 ms. Scatter dasar tetap menggambar SELURUH titik (tiap record tetap
+ *  terlihat), jadi cap ini hanya menipiskan penanda sorot, bukan data. */
+const OVERLAY_DRAW_CAP = 800;
+
+/** Stride-sampel pasangan xy (2 angka/titik) + idx sejajar ke maksimal `cap` titik,
+    mempertahankan sebaran (langkah merata), bukan memotong bagian awal. */
+function capOverlay(xy: number[], idx: number[], cap: number): OverlaySeries {
+  const n = idx.length;
+  if (n === 0) return EMPTY_OVERLAY;
+  if (n <= cap) return { xy: new Float64Array(xy), idx: new Int32Array(idx) };
+  const outXY = new Float64Array(cap * 2);
+  const outIdx = new Int32Array(cap);
+  const step = n / cap;
+  for (let k = 0; k < cap; k++) {
+    const j = Math.floor(k * step);
+    outXY[k * 2] = xy[j * 2];
+    outXY[k * 2 + 1] = xy[j * 2 + 1];
+    outIdx[k] = idx[j];
+  }
+  return { xy: outXY, idx: outIdx };
+}
+
 /** Siapkan seluruh seri peta anomali dalam SATU lintasan.
  *
  *  Sebelumnya pekerjaan ini terpecah tiga: `anomalyLayerCounts` melintasi rows
@@ -217,11 +258,11 @@ export function prepareScatter(
     }
   }
 
+  // Overlay di-cap saat DIGAMBAR (stride), tetapi `counts` di bawah tetap memakai
+  // total sebenarnya (ovIdx[key].length) supaya chip melaporkan angka yang benar.
   const overlays = {} as Record<OverlayLayer, OverlaySeries>;
   for (const key of ["collective", "contextual", "highTier", "noise"] as OverlayLayer[]) {
-    overlays[key] = ovIdx[key].length
-      ? { xy: new Float64Array(ovXY[key]), idx: new Int32Array(ovIdx[key]) }
-      : EMPTY_OVERLAY;
+    overlays[key] = capOverlay(ovXY[key], ovIdx[key], OVERLAY_DRAW_CAP);
   }
 
   return {
