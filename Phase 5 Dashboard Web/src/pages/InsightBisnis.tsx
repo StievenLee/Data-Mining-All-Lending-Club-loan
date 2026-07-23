@@ -1,16 +1,21 @@
 import { useMemo } from "react";
 import type { ReactNode } from "react";
 import type { DashboardData } from "../types";
+import { useDashboard } from "../store/useDashboard";
 import PageHead from "../components/PageHead";
 import Card from "../components/Card";
 import Callout from "../components/Callout";
+import YearRangeSlider from "../components/filters/YearRangeSlider";
 import { fmt2 } from "../lib/format";
-import { clustersFor } from "../lib/cluster";
+import { clusterProfilesForYears, strongPct, tierCounts, verdictCounts } from "../data/filters";
 
 /* ============================================================================
-   Insight Bisnis (Fase 1-4). Menyintesis temuan tiap fase jadi bahasa bisnis
-   yang mudah dipahami, memakai angka NYATA dari data dashboard. Gaya penulisan
-   sengaja tanpa tanda pisah panjang agar ramah untuk semua pembaca.
+   Insight Bisnis — versi HIDUP dari temuan. Berbeda dari tab "Laporan KDD"
+   (dokumen tetap yang ditandatangani pada satu titik waktu), di sini setiap
+   angka BERGERAK mengikuti rentang tahun: gunanya untuk menjelajah "bagaimana
+   cerita bisnis berubah antar-periode", lalu bertindak. Metodologi lengkap,
+   lima temuan utuh, dan keterbatasan sengaja TIDAK diulang di sini — semua itu
+   milik tab Laporan KDD. Halaman ini fokus: angka per tahun + tindakan.
    ========================================================================== */
 
 // -- helper presentasional -------------------------------------------------
@@ -18,7 +23,6 @@ import { clustersFor } from "../lib/cluster";
 function idNum(n: number): string {
   return n.toLocaleString("id-ID");
 }
-// dp dipertahankan agar call site lama tetap kompilasi, tetapi kini selalu 2 desimal (fmt2).
 function idPct(x: number, _dp?: number): string {
   return fmt2(x) + "%";
 }
@@ -93,115 +97,98 @@ const SEGMENT_META = [
 ];
 
 export default function InsightBisnis({ data }: { data: DashboardData }) {
-  const kpi = data.summary.kpi;
+  const years = useDashboard((s) => s.years) ?? data.summary.year_bounds!;
 
-  // Segmen (Fase 2), diurut dari risiko terendah ke tertinggi. Halaman ini bercerita
-  // dengan tingkat gagal bayar, yang hanya dimiliki accepted -- klaster rejected
-  // (proksi DTI) sengaja tidak dicampur ke sini.
+  // Segmen (Fase 2) untuk rentang tahun terpilih, diurut risiko terendah -> tertinggi.
+  // Halaman bercerita dengan tingkat gagal bayar, yang hanya dimiliki accepted.
   const segments = useMemo(
     () =>
-      clustersFor(data.clusters, "accepted")
+      clusterProfilesForYears(data.clustersByYear, years, "accepted")
         .map((c) => ({ ...c, default_rate: c.default_rate ?? 0 }))
         .sort((a, b) => a.default_rate - b.default_rate),
-    [data.clusters]
+    [data.clustersByYear, years]
   );
   const totalBorrowers = useMemo(
     () => segments.reduce((s, c) => s + c.n_anggota, 0),
     [segments]
   );
 
-  // Verdict anomali (Fase 4), total per jenis.
+  // Anomali (Fase 4) untuk rentang tahun terpilih.
   const verdicts = useMemo(() => {
     const agg = new Map<string, number>();
-    for (const v of data.verdicts) agg.set(v.auto_verdict, (agg.get(v.auto_verdict) ?? 0) + v.count);
+    for (const v of verdictCounts(data.verdicts, years)) agg.set(v.verdict, v.count);
     return agg;
-  }, [data.verdicts]);
-
-  // Total anomali bukti-kuat pada dataset ditolak (Fase 4).
-  const rejectedFlagged = useMemo(
-    () => data.tiers.filter((t) => t.dataset === "rejected").reduce((s, t) => s + t.count, 0),
-    [data.tiers]
+  }, [data.verdicts, years]);
+  const kritisAcc = useMemo(
+    () => strongPct(tierCounts(data.tiers, "accepted", years)).kritis,
+    [data.tiers, years]
   );
-  // Jumlah pola aturan per dataset (Fase 3).
+  const kritisRej = useMemo(
+    () => strongPct(tierCounts(data.tiers, "rejected", years)).kritis,
+    [data.tiers, years]
+  );
+  const rejectedFlagged = useMemo(
+    () => tierCounts(data.tiers, "rejected", years).reduce((s, t) => s + t.count, 0),
+    [data.tiers, years]
+  );
+
+  // Pola aturan (Fase 3) TIDAK berlabel tahun -> tetap keseluruhan, ditandai jelas.
   const rulesAcc = useMemo(() => data.rules.filter((r) => r.dataset === "Accepted").length, [data.rules]);
   const rulesRej = useMemo(() => data.rules.filter((r) => r.dataset === "Rejected").length, [data.rules]);
 
   const vLangka = verdicts.get("Kasus Langka (Sah)") ?? 0;
   const vRisiko = verdicts.get("Sinyal Risiko") ?? 0;
   const vError = verdicts.get("Kesalahan Data") ?? 0;
-  const totalAnomali = kpi.total_anomali_acc || vLangka + vRisiko + vError;
+  const totalAnomali = vLangka + vRisiko + vError;
 
   const prime = segments[0];
   const highest = segments[segments.length - 1];
-  const riskGap = prime && highest ? highest.default_rate / prime.default_rate : 0;
+  const riskGap = prime && highest && prime.default_rate ? highest.default_rate / prime.default_rate : 0;
   const anomaliPct = totalBorrowers ? (totalAnomali / totalBorrowers) * 100 : 0;
 
   return (
     <>
       <PageHead
-        eyebrow="Insight Bisnis · Rangkuman Fase 1-4"
-        title="Apa Artinya Semua Ini untuk Bisnis?"
+        eyebrow="Insight Bisnis · Interaktif per Tahun"
+        title="Apa Artinya untuk Bisnis?"
         sub={
           <>
-            Halaman ini merangkum temuan dari seluruh proses, mulai penyiapan data sampai deteksi
-            anomali, ke dalam bahasa yang mudah dipahami siapa saja. Intinya: siapa yang aman,
-            siapa yang berisiko, dan di mana bank perlu bertindak.
+            Versi <b>hidup</b> dari temuan: setiap angka di bawah bergerak mengikuti rentang
+            tahun yang dipilih, supaya bisa dilihat bagaimana cerita bisnis berubah antar-periode.
+            Untuk laporan lengkap yang <b>tetap</b> (lima temuan utuh, metodologi, dan
+            keterbatasan), buka tab Laporan KDD.
           </>
         }
         pills={[
-          { label: "Pinjaman diterima", value: idNum(totalBorrowers) },
-          { label: "Sumber data", value: "2 dataset", kind: "accent" },
+          { label: "Rentang", value: years[0] === years[1] ? String(years[0]) : `${years[0]}–${years[1]}` },
+          { label: "Pinjaman diterima", value: idNum(totalBorrowers), kind: "accent" },
+          { label: "Anomali kritis", value: idNum(kritisAcc), kind: "ai" },
         ]}
       />
 
-      <Callout eyebrow="Ringkasan eksekutif">
-        Rangkuman ini menggabungkan dua sisi cerita: pinjaman yang <b>diterima</b> dan pengajuan yang{" "}
-        <b>ditolak</b>. Dari <b>{idNum(totalBorrowers)}</b> pinjaman diterima, analisis memisahkan
-        peminjam ke <b>{segments.length} tingkat risiko</b>, menemukan <b>{kpi.n_rules} pola</b>{" "}
-        keputusan kredit (mencakup pola penerimaan maupun penolakan), lalu menandai kasus tidak biasa
-        di <b>kedua dataset</b> untuk ditinjau. Semuanya bermuara pada satu tujuan: keputusan kredit
-        yang lebih tajam, adil, dan cepat.
+      <Callout eyebrow="Cara membaca halaman ini">
+        Geser rentang tahun di bawah, lalu perhatikan tiga hal yang ikut berubah: <b>komposisi
+        segmen risiko</b>, <b>berapa kasus perlu ditinjau</b>, dan <b>seberapa lebar jurang</b>{" "}
+        antara peminjam paling aman dan paling berisiko. Tiap bagian diakhiri langkah yang bisa
+        langsung dijalankan bank.
       </Callout>
 
-      {/* FASE 1 */}
-      <Card
-        title={
-          <span className="inline-flex items-center gap-2.5">
-            <PhaseTag color="#7df4ff">Fase 1</PhaseTag> Data yang Bisa Dipercaya
-          </span>
-        }
-        sub="Fondasi: sebelum ada kesimpulan, datanya dibereskan lebih dulu."
-      >
-        <p className="text-[13.5px] leading-[1.6] text-muted">
-          Kedua dataset dibereskan lebih dulu. Pinjaman <b className="text-text">diterima</b> melewati
-          pipeline penuh: pembersihan, pembuangan kolom yang &ldquo;membocorkan masa depan&rdquo;
-          (informasi yang baru ada setelah pinjaman berjalan), lalu pemilihan 14 fitur inti. Pengajuan{" "}
-          <b className="text-text">ditolak</b> dirapikan dengan pipeline lebih sederhana menjadi 8 kolom,
-          karena tidak memiliki label hasil pinjaman.
-        </p>
-        <div className="mt-3.5 grid grid-cols-2 gap-2.5 min-[560px]:grid-cols-4">
-          <Tile value={idNum(totalBorrowers)} label="Pinjaman diterima, siap dianalisis" accent="text-cyan" />
-          <Tile value="8 kolom" label="Pengajuan ditolak, siap dianalisis" accent="text-violet" />
-          <Tile value="80 : 20" label="Lunas dibanding gagal bayar (diterima)" accent="text-amber" />
-          <Tile value="0 bocor" label="Tanpa informasi masa depan" accent="text-lime" />
-        </div>
-        <Meaning>
-          Angka-angka yang muncul di seluruh dashboard sah dipakai pada saat pengajuan kredit, bukan
-          hasil &ldquo;mengintip&rdquo; masa depan. Jadi setiap keputusan yang diambil dari sini bisa
-          dipertanggungjawabkan.
-        </Meaning>
-      </Card>
+      <YearRangeSlider
+        bounds={data.summary.year_bounds!}
+        recordCount={totalBorrowers}
+        recordUnit="pinjaman diterima"
+      />
 
-      <div className="h-[18px]" />
-
-      {/* FASE 2 */}
+      {/* FASE 2 — segmen risiko (reaktif tahun) */}
       <Card
         title={
           <span className="inline-flex items-center gap-2.5">
             <PhaseTag color="#c3f400">Fase 2</PhaseTag> Tiga Segmen Peminjam
           </span>
         }
-        sub="Peminjam dikelompokkan berdasarkan tingkat risiko gagal bayar."
+        sub={`Komposisi & tingkat gagal bayar untuk ${
+          years[0] === years[1] ? years[0] : `${years[0]}–${years[1]}`
+        }.`}
       >
         <div className="grid grid-cols-1 gap-2.5 min-[720px]:grid-cols-3">
           {segments.map((s, i) => {
@@ -230,94 +217,30 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
             );
           })}
         </div>
-        <Meaning>
-          Risiko kelompok tertinggi kira-kira <b>{fmt2(riskGap)} kali lipat</b> kelompok paling
-          aman ({idPct(highest.default_rate * 100)} berbanding {idPct(prime.default_rate * 100)}). Bank
-          bisa menyesuaikan bunga, limit, dan penawaran per segmen, bukan memperlakukan semua peminjam
-          dengan aturan yang sama.
-        </Meaning>
-        <p className="mt-3 text-[12.5px] leading-[1.55] text-muted">
-          Catatan: segmentasi risiko ini berlaku untuk pinjaman <b className="text-text">diterima</b>,
-          karena hanya di sana tersedia hasil akhir (lunas atau gagal bayar). Sisi{" "}
-          <b className="text-text">ditolak</b> tetap tercakup di dashboard, yaitu lewat pola penolakan
-          (Fase 3) dan deteksi anomali (Fase 4) di bawah.
-        </p>
+        {prime && highest && (
+          <Meaning>
+            Pada rentang ini, risiko kelompok tertinggi kira-kira <b>{fmt2(riskGap)} kali lipat</b>{" "}
+            kelompok paling aman ({idPct(highest.default_rate * 100)} berbanding{" "}
+            {idPct(prime.default_rate * 100)}). Makin lebar jurangnya, makin besar peluang bank
+            menyesuaikan bunga dan limit per segmen alih-alih menyamaratakan semua peminjam.
+          </Meaning>
+        )}
       </Card>
 
       <div className="h-[18px]" />
 
-      {/* FASE 3 */}
+      {/* FASE 4 — sistem peringatan dini (reaktif tahun) */}
       <Card
         title={
           <span className="inline-flex items-center gap-2.5">
-            <PhaseTag color="#d0bcff">Fase 3</PhaseTag> Pola di Balik Keputusan Kredit
+            <PhaseTag color="#ffd479">Fase 4</PhaseTag> Berapa yang Perlu Ditinjau
           </span>
         }
-        sub="Aturan asosiasi memperlihatkan kombinasi ciri yang sering muncul bersama."
+        sub={`Kasus tidak biasa yang tersaring pada ${
+          years[0] === years[1] ? years[0] : `${years[0]}–${years[1]}`
+        }, dipilah menurut tindakan.`}
       >
         <div className="grid grid-cols-1 gap-2.5 min-[720px]:grid-cols-2">
-          <div className="rounded-[16px] border border-line bg-glass2 px-4 py-3.5">
-            <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-lime">
-              Pinjaman diterima
-            </div>
-            <p className="mt-2 text-[13.5px] leading-[1.6] text-text">
-              Pinjaman <b>bertenor 60 bulan</b> berkumpul dengan nominal besar yang berakhir gagal
-              bayar <b>2,66 kali lebih sering</b> dibanding kalau keduanya tidak berhubungan. Bunga
-              di atas 20 persen sendiri berujung gagal bayar pada <b>41 dari 100 kasus</b>.
-            </p>
-          </div>
-          <div className="rounded-[16px] border border-line bg-glass2 px-4 py-3.5">
-            <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-violet">
-              Pengajuan ditolak
-            </div>
-            <p className="mt-2 text-[13.5px] leading-[1.6] text-text">
-              Penolakan berkumpul pada rasio utang sangat tinggi (di atas 40 persen), sering digabung
-              masa kerja yang masih baru (di bawah 1 tahun) dan permintaan pinjaman berukuran besar.
-            </p>
-          </div>
-        </div>
-        <div className="mt-2.5 grid grid-cols-3 gap-2.5">
-          <Tile value={idNum(rulesAcc)} label="Pola pada pinjaman diterima" accent="text-lime" />
-          <Tile value={idNum(rulesRej)} label="Pola pada pengajuan ditolak" accent="text-violet" />
-          <Tile value={`${fmt2(kpi.max_lift)}x`} label="Kekuatan pola terkuat (lift)" accent="text-cyan" />
-        </div>
-        <Meaning>
-          Sinyal gagal bayar yang terkuat justru melekat pada <b>struktur kontrak</b>, bukan pada
-          ciri peminjam. Tenor 60 bulan menarik pinjaman berbunga tinggi, grade rendah, dan nominal
-          besar sekaligus, lalu kombinasi itu bermuara pada gagal bayar di atas ekspektasi. Tenor
-          dan plafon adalah dua hal yang justru dikendalikan sendiri oleh pemberi pinjaman.
-        </Meaning>
-        {/* Catatan metodologis penting: pola "bunga -> grade" yang lift-nya jauh lebih tinggi
-            (5,7) sengaja DIBUANG di Fase 3 karena tautologis. Ditulis di sini, di tempat
-            kesimpulan ditarik, supaya pembaca tidak bertanya-tanya kenapa lift maksimum turun. */}
-        <p className="mt-3 text-[12.5px] leading-[1.55] text-muted">
-          Batasan: aturan asosiasi mengukur <b className="text-text">seberapa sering hal-hal muncul
-          bersama</b>, bukan sebab-akibat. Perlu dicatat pula bahwa pola berkekuatan jauh lebih
-          tinggi (lift 5,7) sempat muncul dalam bentuk “bunga rendah menandai Grade A”, tetapi
-          sengaja dibuang karena tautologis: pemberi pinjaman memang menetapkan bunga{" "}
-          <i>dari</i> grade, sehingga pola itu hanya memantulkan kembali kebijakan harganya sendiri.
-          Selain itu status akhir hanya tersedia untuk pinjaman yang sudah selesai; pinjaman yang
-          masih berjalan (38,9 persen, lihat tab Preprocessing) dibuang, sehingga proporsi lunas di
-          sini lebih tinggi daripada kalau semua pinjaman ikut dihitung.
-        </p>
-      </Card>
-
-      <div className="h-[18px]" />
-
-      {/* FASE 4 */}
-      <Card
-        title={
-          <span className="inline-flex items-center gap-2.5">
-            <PhaseTag color="#ffd479">Fase 4</PhaseTag> Sistem Peringatan Dini
-          </span>
-        }
-        sub="Deteksi anomali menyaring kasus tidak biasa dan memilahnya menurut tindakan."
-      >
-        <p className="text-[13.5px] leading-[1.6] text-muted">
-          Deteksi anomali dijalankan pada <b className="text-text">kedua dataset</b>. Tujuannya menyaring
-          kasus tidak biasa lebih dulu, agar tim tidak perlu memeriksa jutaan pinjaman satu per satu.
-        </p>
-        <div className="mt-3.5 grid grid-cols-1 gap-2.5 min-[720px]:grid-cols-2">
           <div className="rounded-[16px] border border-line bg-glass2 px-4 py-3.5">
             <div className="font-mono text-[10px] font-semibold uppercase tracking-[0.14em] text-lime">
               Pinjaman diterima
@@ -330,7 +253,7 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
                 <div className="mt-1 text-[11px] text-muted">kasus tidak biasa (~{idPct(anomaliPct, 0)})</div>
               </div>
               <div className="text-right">
-                <div className="font-mono text-[15px] font-semibold text-error">{idNum(kpi.kritis_acc)}</div>
+                <div className="font-mono text-[15px] font-semibold text-error">{idNum(kritisAcc)}</div>
                 <div className="text-[11px] text-muted">kasus kritis</div>
               </div>
             </div>
@@ -347,7 +270,7 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
                 <div className="mt-1 text-[11px] text-muted">anomali bukti kuat</div>
               </div>
               <div className="text-right">
-                <div className="font-mono text-[15px] font-semibold text-error">{idNum(kpi.kritis_rej)}</div>
+                <div className="font-mono text-[15px] font-semibold text-error">{idNum(kritisRej)}</div>
                 <div className="text-[11px] text-muted">kasus kritis</div>
               </div>
             </div>
@@ -362,10 +285,34 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
           <Tile value={idNum(vError)} label="Kesalahan Data (perlu diverifikasi)" accent="text-error" />
         </div>
         <Meaning>
-          Alih-alih memeriksa semua pinjaman satu per satu, tim cukup fokus pada yang benar-benar
-          penting: {idNum(kpi.kritis_acc)} kasus kritis pada pinjaman diterima dan {idNum(kpi.kritis_rej)}{" "}
-          pada pengajuan ditolak, ditambah {idNum(vRisiko)} sinyal risiko. Sementara itu {idNum(vError)}{" "}
-          kasus kesalahan data menandai titik yang perlu dibenahi pada mutu input.
+          Alih-alih memeriksa semua pinjaman satu per satu, tim cukup fokus pada yang penting:{" "}
+          {idNum(kritisAcc)} kasus kritis (diterima) dan {idNum(kritisRej)} (ditolak), ditambah{" "}
+          {idNum(vRisiko)} sinyal risiko. Sementara {idNum(vError)} dugaan kesalahan data menandai
+          titik yang perlu dibenahi pada mutu input.
+        </Meaning>
+      </Card>
+
+      <div className="h-[18px]" />
+
+      {/* FASE 3 — pola keputusan (keseluruhan, tak difilter tahun) */}
+      <Card
+        title={
+          <span className="inline-flex items-center gap-2.5">
+            <PhaseTag color="#d0bcff">Fase 3</PhaseTag> Pola di Balik Keputusan Kredit
+          </span>
+        }
+        note="keseluruhan periode"
+        sub="Pola aturan asosiasi dihitung atas seluruh periode (bukan per tahun), jadi angka di sini tetap saat slider digeser."
+      >
+        <div className="grid grid-cols-3 gap-2.5">
+          <Tile value={idNum(rulesAcc)} label="Pola pada pinjaman diterima" accent="text-lime" />
+          <Tile value={idNum(rulesRej)} label="Pola pada pengajuan ditolak" accent="text-violet" />
+          <Tile value={`${fmt2(data.summary.kpi.max_lift)}x`} label="Kekuatan pola terkuat (lift)" accent="text-cyan" />
+        </div>
+        <Meaning>
+          Sinyal gagal bayar terkuat melekat pada <b>struktur kontrak</b>, bukan ciri peminjam:
+          tenor 60 bulan menarik bunga tinggi, grade rendah, dan nominal besar sekaligus. Tenor dan
+          plafon justru dikendalikan sendiri oleh pemberi pinjaman, jadi bisa langsung diatur.
         </Meaning>
       </Card>
 
@@ -374,7 +321,7 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
       {/* CTA */}
       <Card
         title="Rekomendasi untuk Bank dan Pemberi Pinjaman"
-        sub="Empat langkah nyata yang bisa langsung dijalankan dari temuan di atas."
+        sub="Empat langkah nyata yang bisa langsung dijalankan dari angka di atas."
       >
         <div className="grid grid-cols-1 gap-3 min-[820px]:grid-cols-2">
           <ActionCard
@@ -382,11 +329,15 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
             accent="#c3f400"
             title="Rawat segmen paling aman"
             body={
-              <>
-                Segmen Prime mencakup {idPct((prime.n_anggota / totalBorrowers) * 100, 0)} peminjam
-                dengan risiko terendah. Tawarkan limit lebih tinggi atau bunga kompetitif agar mereka
-                tetap loyal dan tidak pindah ke pesaing.
-              </>
+              prime ? (
+                <>
+                  Segmen {prime.nama_profil} mencakup {idPct((prime.n_anggota / totalBorrowers) * 100, 0)}{" "}
+                  peminjam dengan risiko terendah. Tawarkan limit lebih tinggi atau bunga kompetitif
+                  agar mereka tetap loyal dan tidak pindah ke pesaing.
+                </>
+              ) : (
+                "Pilih rentang tahun yang memuat data untuk melihat segmen."
+              )
             }
           />
           <ActionCard
@@ -394,11 +345,15 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
             accent="#ffb4ab"
             title="Sesuaikan harga, jangan menolak semua"
             body={
-              <>
-                Segmen risiko tertinggi memiliki gagal bayar {idPct(highest.default_rate * 100)}. Naikkan
-                bunga sesuai risiko atau perketat limit, sehingga kelompok ini tetap bisa dilayani tanpa
-                merugikan bank.
-              </>
+              highest ? (
+                <>
+                  Segmen risiko tertinggi memiliki gagal bayar {idPct(highest.default_rate * 100)}.
+                  Naikkan bunga sesuai risiko atau perketat limit, sehingga kelompok ini tetap bisa
+                  dilayani tanpa merugikan bank.
+                </>
+              ) : (
+                "Pilih rentang tahun yang memuat data untuk melihat segmen."
+              )
             }
           />
           <ActionCard
@@ -419,33 +374,19 @@ export default function InsightBisnis({ data }: { data: DashboardData }) {
             title="Jalankan peringatan dini"
             body={
               <>
-                Prioritaskan {idNum(kpi.kritis_acc)} kasus kritis dan {idNum(vRisiko)} sinyal risiko
-                untuk ditinjau tim, lalu audit {idNum(vError)} kesalahan data untuk menjaga mutu input
-                di masa depan.
+                Prioritaskan {idNum(kritisAcc)} kasus kritis dan {idNum(vRisiko)} sinyal risiko untuk
+                ditinjau tim, lalu audit {idNum(vError)} kesalahan data untuk menjaga mutu input di
+                masa depan.
               </>
             }
           />
         </div>
 
-        {/* Penutup halaman sebagai kutipan, bukan banner ber-CTA: tombol "Terapkan pada
-            kebijakan kredit" dulu hanya <div> berbentuk tombol yang tidak melakukan apa pun
-            — afordans palsu. Kalimatnya sendiri tetap dipertahankan sebagai ajakan. */}
-        <blockquote className="relative mt-4 overflow-hidden rounded-[18px] border border-lime/30 bg-[linear-gradient(110deg,rgba(195,244,0,0.14),rgba(19,19,24,0.5)_70%)] py-5 pl-6 pr-5 min-[640px]:pl-7">
-          <span className="absolute inset-y-0 left-0 w-[3px] bg-lime" aria-hidden="true" />
-          <span
-            className="pointer-events-none absolute right-4 top-1 select-none font-display text-[64px] leading-none text-lime/15"
-            aria-hidden="true"
-          >
-            &rdquo;
-          </span>
-          <p className="max-w-[70ch] font-display text-[16px] italic leading-[1.6] text-text min-[640px]:text-[18px]">
-            Ubah data menjadi keputusan. Gunakan segmen risiko, pola keputusan, dan peringatan
-            dini di atas sebagai dasar kebijakan kredit yang lebih tajam, adil, dan cepat.
-          </p>
-          <p className="mt-2 max-w-[70ch] text-[13px] leading-[1.6] text-muted">
-            Mulai dari satu segmen atau satu aturan, ukur dampaknya, lalu perluas.
-          </p>
-        </blockquote>
+        <p className="mt-4 text-[12.5px] leading-[1.6] text-muted">
+          Catatan: angka di halaman ini adalah potret untuk rentang tahun yang sedang dipilih dan
+          ikut berubah saat slider digeser. Versi final yang tetap — lengkap dengan lima temuan,
+          jawaban pertanyaan sentral, batasan, dan lampiran — ada di tab <b className="text-text">Laporan KDD</b>.
+        </p>
       </Card>
     </>
   );

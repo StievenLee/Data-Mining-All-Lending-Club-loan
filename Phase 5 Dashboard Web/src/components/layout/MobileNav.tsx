@@ -4,7 +4,7 @@ import NavIcon from "./NavIcon";
 
 // Label pendek agar muat di bar bawah mobile.
 const NAV: { id: TabId; label: string }[] = [
-  { id: "ringkasan", label: "Ringkasan" },
+  { id: "ringkasan", label: "Home" },
   { id: "preprocessing", label: "Praproses" },
   { id: "segmentasi", label: "Segmen" },
   { id: "rules", label: "Rules" },

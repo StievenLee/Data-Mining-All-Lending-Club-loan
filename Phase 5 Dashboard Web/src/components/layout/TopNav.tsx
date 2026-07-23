@@ -7,7 +7,7 @@ import PerfBadge from "./PerfBadge";
 // tanpa menambah labelnya di sini langsung ditolak compiler — sebelumnya tab
 // "laporan" sempat lolos dan breadcrumb-nya tampil kosong.
 const TAB_LABEL: Record<TabId, string> = {
-  ringkasan: "Ringkasan",
+  ringkasan: "Home",
   preprocessing: "Preprocessing",
   segmentasi: "Segmentasi",
   rules: "Association Rules",

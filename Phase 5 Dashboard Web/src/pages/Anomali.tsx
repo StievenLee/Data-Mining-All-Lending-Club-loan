@@ -7,9 +7,10 @@ import {
   limitRows,
   prepareScatter,
   totalRecords,
+  verdictCounts,
 } from "../data/filters";
 import type { AnomalyLayer } from "../data/filters";
-import { anomalyScatterOption } from "../components/charts/options";
+import { anomalyScatterOption, verdictOption } from "../components/charts/options";
 import { COLORS } from "../theme/colors";
 import EChart from "../components/EChart";
 import Card from "../components/Card";
@@ -135,6 +136,13 @@ export default function Anomali({ data }: { data: DashboardData }) {
   );
   const total = totalRecords(data.tiers, dataset, years);
 
+  // Tipologi auto-verdict (Fase 4) — hanya dihitung untuk accepted, ikut tahun.
+  const verdicts = useMemo(
+    () => (dataset === "accepted" ? verdictCounts(data.verdicts, years) : []),
+    [data.verdicts, dataset, years]
+  );
+  const verdictOpt = useMemo(() => verdictOption(verdicts), [verdicts]);
+
   const activeLabel =
     layer && layer !== "main"
       ? { collective: "Kolektif", contextual: "Kontekstual", highTier: "Tier tinggi", noise: "Noise DBSCAN" }[layer]
@@ -208,6 +216,18 @@ export default function Anomali({ data }: { data: DashboardData }) {
       >
         <EChart option={option} height={480} />
       </Card>
+      {dataset === "accepted" && (
+        <>
+          <div className="h-[18px]" />
+          <Card
+            title="Komposisi tipologi anomali"
+            note="auto-verdict"
+            sub="Tiap anomali diklasifikasi ke tiga tipologi bisnis: kasus langka yang sah, sinyal risiko, atau dugaan kesalahan data. Ikut rentang tahun."
+          >
+            <EChart option={verdictOpt} height={320} />
+          </Card>
+        </>
+      )}
       <div className="h-[18px]" />
       <AnomalyGlossary dataset={dataset} />
       <div className="h-[18px]" />

@@ -3,7 +3,7 @@ import type { TabId } from "../../types";
 import NavIcon from "./NavIcon";
 
 const NAV: { id: TabId; label: string }[] = [
-  { id: "ringkasan", label: "Ringkasan" },
+  { id: "ringkasan", label: "Home" },
   { id: "preprocessing", label: "Preprocessing" },
   { id: "segmentasi", label: "Segmentasi" },
   { id: "rules", label: "Association Rules" },

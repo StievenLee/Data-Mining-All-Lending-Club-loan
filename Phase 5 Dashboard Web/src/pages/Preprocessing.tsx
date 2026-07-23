@@ -135,7 +135,7 @@ function AcceptedReport() {
           <>
             Laporan singkat perjalanan data: dari <b>2,26 juta</b> baris mentah dengan 151 kolom
             campur-aduk, menjadi tabel bersih dan rapi yang siap dipakai untuk Segmentasi dan
-            Association Rules. Ditulis ringkas agar mudah dipahami tanpa latar teknis.
+            Association Rules.
           </>
         }
         pills={[
