@@ -132,9 +132,6 @@ export default function Landing({ onEnter }: Props) {
           <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.14em] text-muted">
             Alur analisis
           </div>
-          <h2 className="mb-8 font-display text-2xl font-semibold tracking-[-0.01em] text-text">
-            Enam halaman, satu alur cerita
-          </h2>
           <div className="grid grid-cols-1 gap-4 min-[640px]:grid-cols-2 min-[900px]:grid-cols-3">
             {PHASES.map((p) => (
               <button
@@ -163,10 +160,6 @@ export default function Landing({ onEnter }: Props) {
           </div>
         </div>
       </main>
-
-      <footer className="border-t border-line px-4 py-6 text-center font-mono text-[11px] text-muted min-[640px]:px-[34px]">
-        Dibangun dengan React + ECharts · data diproses offline, disajikan statis
-      </footer>
     </div>
   );
 }
