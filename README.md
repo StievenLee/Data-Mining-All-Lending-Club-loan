@@ -62,8 +62,8 @@ sebagai temuan tersendiri, bukan disembunyikan.
 | Anda ingin… | Mulai dari |
 |---|---|
 | Membaca hasilnya saja | [Dashboard live](https://picat.my.id) — laporan naratif lengkapnya ada di tab **[Laporan KDD](https://picat.my.id/?tab=laporan)** |
-| Memahami metodenya | [§8 Rincian Tiap Fase](#8-rincian-tiap-fase) |
-| Menjalankan ulang seluruh pipeline | [§6 Instalasi](#6-instalasi) → [§7 Cara Menjalankan](#7-cara-menjalankan) |
+| Memahami metodenya | [Bagian 8 — Rincian Tiap Fase](#8-rincian-tiap-fase) |
+| Menjalankan ulang seluruh pipeline | [Bagian 6 — Instalasi](#6-instalasi) lalu [Bagian 7 — Cara Menjalankan](#7-cara-menjalankan) |
 | Mengembangkan dashboard-nya | [`Phase 5 Dashboard Web/README.md`](Phase%205%20Dashboard%20Web/README.md) |
 
 ---
@@ -128,7 +128,7 @@ flowchart TD
 ```
 Data-Mining-All-Lending-Club-loan/
 │
-├── Datasets/                              # ⛔ gitignored (±6 GB) — lihat §5
+├── Datasets/                              # ⛔ gitignored (±6 GB) — lihat Bagian 5
 │   ├── Raw/                               #    dataset asli dari Kaggle
 │   └── Cleaning/
 │       ├── Phase 2/                       #    output Fase 1 untuk clustering & anomali
@@ -168,7 +168,7 @@ Data-Mining-All-Lending-Club-loan/
 > **Catatan soal ukuran file.** Root `.gitignore` memuat pola `*.csv`, dan
 > `Phase 2 Clustering/Results/cluster_labels_rejected.parquet` (117 MB) juga dikecualikan karena
 > melewati batas 100 MB GitHub. Artinya pada *clone* baru, sebagian besar artefak harus
-> **dibangun ulang** dengan menjalankan notebook — lihat [§7](#7-cara-menjalankan).
+> **dibangun ulang** dengan menjalankan notebook — lihat [Bagian 7](#7-cara-menjalankan).
 > Satu-satunya hasil analisis yang ikut ter-*commit* adalah `Phase 5 Dashboard Web/public/data/*.json`,
 > yaitu bentuk ringkas yang dipakai dashboard.
 
@@ -577,7 +577,7 @@ Proyek ini dikerjakan untuk keperluan **akademik** (tugas mata kuliah Data Minin
 Club tunduk pada [ketentuan lisensinya di Kaggle](https://www.kaggle.com/datasets/wordsforthewise/lending-club).
 
 Temuan dalam repositori ini bersifat **analitis, bukan nasihat finansial**. Sebagaimana ditegaskan
-pada [§2](#2-temuan-utama) dan [§10](#10-keterbatasan-yang-diketahui), tidak satu pun pola di sini
+pada [Bagian 2](#2-temuan-utama) dan [Bagian 10](#10-keterbatasan-yang-diketahui), tidak satu pun pola di sini
 layak dipakai untuk menolak pengajuan pinjaman perorangan.
 
 ---

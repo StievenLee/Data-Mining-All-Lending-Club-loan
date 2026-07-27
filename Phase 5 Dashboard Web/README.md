@@ -5,7 +5,7 @@ Semua filter dikerjakan **di browser** tanpa server Python: data ringkas di-fetc
 sisanya operasi array in-memory. Deploy sebagai situs statis (Vercel/Cloudflare/Netlify).
 
 > Ringkasan arsitektur & keputusan ada di [`PLAN.md`](./PLAN.md) — itu dokumen **rencana
-> pra-implementasi**; beberapa targetnya tidak tercapai dan dicatat apa adanya di §13
+> pra-implementasi**; beberapa targetnya tidak tercapai dan dicatat apa adanya di bagian 13
 > dokumen tersebut. Angka di README ini adalah angka **hasil ukur**, bukan target.
 
 ## Stack
