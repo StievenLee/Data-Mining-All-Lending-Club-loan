@@ -14,6 +14,7 @@ const TAB_LABEL: Record<TabId, string> = {
   anomali: "Anomali",
   insight: "Insight Bisnis",
   laporan: "Laporan KDD",
+  about: "About",
 };
 
 // Toggle dataset relevan di semua tab (preprocessing menampilkan report accepted/rejected)

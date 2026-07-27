@@ -26,13 +26,19 @@ const VALID_TABS: TabId[] = [
   "anomali",
   "insight",
   "laporan",
+  "about",
 ];
 
 function readURL(): Partial<DashboardState> {
   const p = new URLSearchParams(window.location.search);
   const out: Partial<DashboardState> = {};
   const tab = p.get("tab") as TabId | null;
-  if (tab && VALID_TABS.includes(tab)) out.tab = tab;
+  const pathName = window.location.pathname.replace(/^\/+|\/+$/g, "");
+  if (tab && VALID_TABS.includes(tab)) {
+    out.tab = tab;
+  } else if (VALID_TABS.includes(pathName as TabId)) {
+    out.tab = pathName as TabId;
+  }
   const ds = p.get("dataset");
   if (ds === "accepted" || ds === "rejected") out.dataset = ds;
   const y0 = p.get("y0");

@@ -8,7 +8,8 @@ export type TabId =
   | "rules"
   | "anomali"
   | "insight"
-  | "laporan";
+  | "laporan"
+  | "about";
 
 export interface TierYearRow {
   dataset: Dataset;

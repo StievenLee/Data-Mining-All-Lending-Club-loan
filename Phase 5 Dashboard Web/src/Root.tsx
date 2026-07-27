@@ -11,7 +11,8 @@ import Landing from "./pages/Landing";
 const ENTERED_KEY = "lc-entered";
 
 function hasDashboardQuery() {
-  return new URLSearchParams(window.location.search).has("tab");
+  const path = window.location.pathname.replace(/^\/+|\/+$/g, "");
+  return new URLSearchParams(window.location.search).has("tab") || path === "about";
 }
 
 export default function Root() {
