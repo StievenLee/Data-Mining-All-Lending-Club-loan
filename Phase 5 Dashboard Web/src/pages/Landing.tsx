@@ -84,7 +84,7 @@ export default function Landing({ onEnter }: Props) {
       <main className="mx-auto max-w-[1080px] px-4 pb-24 pt-16 min-[640px]:px-[34px] min-[640px]:pt-24">
         {/* Hero */}
         <div className="max-w-[720px]">
-          <h1 className="font-display text-4xl font-bold leading-[1.1] tracking-[-0.02em] text-text min-[640px]:text-5xl">
+          <h1 className="break-words font-display text-[32px] font-bold leading-[1.15] tracking-[-0.02em] text-text min-[400px]:text-4xl min-[640px]:text-5xl">
             Dari data pinjaman mentah menjadi{" "}
             <span className="text-lime">keputusan yang bisa dipertanggungjawabkan</span>.
           </h1>
