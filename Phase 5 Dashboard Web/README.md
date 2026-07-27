@@ -188,12 +188,11 @@ responsivitas per-frame, tapi bertentangan dengan target "tergambar penuh < 100 
 ## Catatan
 - Data mentah (accepted/rejected ~1.7 GB) **tidak pernah** dikirim ke browser — yang dikirim
   hanya kolom terpakai dari baris yang sudah ditandai anomali.
-- Tab **Laporan KDD** (`src/pages/Laporan.tsx`) adalah versi layar dari
-  `LAPORAN_KNOWLEDGE_DISCOVERY.md` di root repo. Angkanya sengaja **statis dan tidak ikut
-  filter**: laporan adalah dokumen yang ditandatangani pada satu titik waktu, jadi isinya harus
-  tetap sama walau rentang tahun digeser di tab lain. Bila laporan `.md` diperbarui, halaman ini
-  harus diperbarui manual — keduanya tidak terhubung otomatis. Tab **Insight Bisnis** adalah
-  kebalikannya: angkanya dihitung dari data dashboard.
+- Tab **Laporan KDD** (`src/pages/Laporan.tsx`) adalah **satu-satunya rumah** laporan naratif
+  proyek ini — tidak ada salinan `.md` di root repo yang perlu dijaga tetap sinkron. Angkanya
+  sengaja **statis dan tidak ikut filter**: laporan adalah dokumen yang ditandatangani pada satu
+  titik waktu, jadi isinya harus tetap sama walau rentang tahun digeser di tab lain. Tab
+  **Insight Bisnis** adalah kebalikannya: angkanya dihitung dari data dashboard.
 - Chart di tab **Preprocessing** (`src/components/charts/phase1Options.ts`) juga statis, disalin
   dari output notebook Fase 1. Sumber tiap angka ditulis sebagai komentar di atas konstantanya.
 - Rejected diproses via chunking di `build_data.py`, lalu **difilter ke tier "Kuat" ke atas**

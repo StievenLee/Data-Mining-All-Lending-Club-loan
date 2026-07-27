@@ -4,13 +4,15 @@ import Card from "../components/Card";
 import Callout from "../components/Callout";
 
 /* ============================================================================
-   Fase 5 · Laporan Knowledge Discovery — versi layar dari
-   LAPORAN_KNOWLEDGE_DISCOVERY.md (dokumen naratif di root repo).
+   Fase 5 · Laporan Knowledge Discovery — dokumen naratif lengkap proyek ini.
 
-   Angkanya STATIS dan disalin apa adanya dari laporan tersebut, yang seluruhnya
-   berasal dari eksekusi notebook Fase 1-4. Halaman ini sengaja tidak menghitung
-   ulang dari data dashboard: laporan adalah dokumen yang ditandatangani pada satu
-   titik waktu, jadi angkanya harus tetap sama walau filter tahun digeser di tab lain.
+   Halaman ini adalah SATU-SATUNYA rumah laporan; versi .md di root repo sudah
+   dihapus, jadi tidak ada salinan kedua yang bisa menyimpang diam-diam.
+
+   Angkanya STATIS dan seluruhnya berasal dari eksekusi notebook Fase 1-4.
+   Halaman ini sengaja tidak menghitung ulang dari data dashboard: laporan adalah
+   dokumen yang ditandatangani pada satu titik waktu, jadi angkanya harus tetap
+   sama walau filter tahun digeser di tab lain.
    Tab "Insight Bisnis" adalah kebalikannya: di sana angka ikut data.
    ========================================================================== */
 

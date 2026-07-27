@@ -12,7 +12,7 @@
 | | |
 |---|---|
 | 🌐 **Dashboard live** | **[picat.my.id](https://picat.my.id)** |
-| 📄 **Laporan lengkap** | [`LAPORAN_KNOWLEDGE_DISCOVERY.md`](LAPORAN_KNOWLEDGE_DISCOVERY.md) |
+| 📄 **Laporan KDD lengkap** | [picat.my.id → tab Laporan KDD](https://picat.my.id/?tab=laporan) |
 | 📊 **Dataset** | [Lending Club (Kaggle)](https://www.kaggle.com/datasets/wordsforthewise/lending-club) |
 | 💻 **Repositori** | [github.com/StievenLee/Data-Mining-All-Lending-Club-loan](https://github.com/StievenLee/Data-Mining-All-Lending-Club-loan) |
 
@@ -61,7 +61,7 @@ sebagai temuan tersendiri, bukan disembunyikan.
 
 | Anda ingin… | Mulai dari |
 |---|---|
-| Membaca hasilnya saja | [Dashboard live](https://picat.my.id) atau [`LAPORAN_KNOWLEDGE_DISCOVERY.md`](LAPORAN_KNOWLEDGE_DISCOVERY.md) |
+| Membaca hasilnya saja | [Dashboard live](https://picat.my.id) — laporan naratif lengkapnya ada di tab **[Laporan KDD](https://picat.my.id/?tab=laporan)** |
 | Memahami metodenya | [§8 Rincian Tiap Fase](#8-rincian-tiap-fase) |
 | Menjalankan ulang seluruh pipeline | [§6 Instalasi](#6-instalasi) → [§7 Cara Menjalankan](#7-cara-menjalankan) |
 | Mengembangkan dashboard-nya | [`Phase 5 Dashboard Web/README.md`](Phase%205%20Dashboard%20Web/README.md) |
@@ -71,7 +71,7 @@ sebagai temuan tersendiri, bukan disembunyikan.
 ## 2. Temuan Utama
 
 Lima temuan, diurutkan dari yang paling bisa ditindaklanjuti. Uraian lengkap beserta bukti angkanya
-ada di [`LAPORAN_KNOWLEDGE_DISCOVERY.md`](LAPORAN_KNOWLEDGE_DISCOVERY.md).
+ada di tab **[Laporan KDD](https://picat.my.id/?tab=laporan)** pada dashboard.
 
 | # | Temuan | Bukti kunci | Sumber |
 |---|---|---|---|
@@ -156,10 +156,11 @@ Data-Mining-All-Lending-Club-loan/
 │   ├── data_src/                          # ⛔ gitignored — salinan input Fase 2–4
 │   ├── scripts/build_data.py              # agregasi → public/data/*.json
 │   ├── public/data/*.json                 # ✅ di-commit (±4 MB gzip) — ini yang di-deploy
-│   ├── src/                               # pages/ components/ lib/ store/ theme/
+│   ├── src/
+│   │   ├── pages/Laporan.tsx              # 📄 laporan KDD naratif lengkap ada di sini
+│   │   └── components/ lib/ store/ theme/
 │   └── README.md · PLAN.md
 │
-├── LAPORAN_KNOWLEDGE_DISCOVERY.md         # laporan naratif untuk pembaca non-teknis
 ├── requirements.txt                       # dependency Python
 └── README.md                              # berkas ini
 ```
@@ -470,13 +471,14 @@ filter dikerjakan di browser sebagai operasi array in-memory.
 | **Rules** | 29 aturan asosiasi Fase 3 + rule network | ✅ |
 | **Anomali** | Peta sebar anomali Fase 4 + kontrol lapisan | ✅ |
 | **Insight Bisnis** | Narasi bisnis yang dihitung dari data dashboard | ✅ |
-| **Laporan KDD** | Versi layar dari `LAPORAN_KNOWLEDGE_DISCOVERY.md` | ❌ **sengaja statis** |
+| **[Laporan KDD](https://picat.my.id/?tab=laporan)** | **Laporan naratif lengkap** — temuan, bukti, rekomendasi, keterbatasan | ❌ **sengaja statis** |
 | **About** | Tim & tautan proyek | — |
 
-> Halaman **Laporan KDD** sengaja tidak ikut filter: laporan adalah dokumen yang ditandatangani pada
-> satu titik waktu, jadi isinya harus tetap sama walau rentang tahun digeser di tab lain. Bila
-> berkas `.md`-nya diperbarui, halaman ini harus diperbarui manual — keduanya tidak terhubung
-> otomatis.
+> Halaman **Laporan KDD** (`src/pages/Laporan.tsx`) adalah **rumah tunggal** laporan naratif proyek
+> ini — tidak ada salinan `.md` terpisah yang perlu dijaga tetap sinkron. Halaman ini sengaja
+> **tidak ikut filter**: laporan adalah dokumen yang ditandatangani pada satu titik waktu, jadi
+> isinya harus tetap sama walau rentang tahun digeser di tab lain. Tab **Insight Bisnis** adalah
+> kebalikannya — angkanya dihitung dari data dashboard.
 
 ### Performa (angka hasil ukur, bukan target)
 
@@ -584,6 +586,6 @@ layak dipakai untuk menolak pengajuan pinjaman perorangan.
 
 *Seluruh angka dalam README ini dapat ditelusuri ke notebook Fase 1–4 di repositori.*
 
-**[🌐 Lihat Dashboard](https://picat.my.id)** · **[📄 Baca Laporan Lengkap](LAPORAN_KNOWLEDGE_DISCOVERY.md)**
+**[🌐 Lihat Dashboard](https://picat.my.id)** · **[📄 Baca Laporan KDD](https://picat.my.id/?tab=laporan)**
 
 </div>
