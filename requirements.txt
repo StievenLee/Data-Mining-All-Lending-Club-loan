@@ -1,4 +1,40 @@
-dash==2.17.1
-plotly==5.24.1
+# Dependency Python — proyek KDD Lending Club (Fase 1-5)
+#
+#   pip install -r requirements.txt
+#
+# Diuji pada Python 3.10. Versi ber-"==" adalah versi yang benar-benar terpasang
+# dan dipakai saat notebook dijalankan; versi ber-">=" belum terverifikasi di
+# lingkungan ini, jadi hanya diberi batas bawah yang aman.
+
+# --- Inti: manipulasi data (semua fase) ---
 pandas==2.2.3
 numpy==2.1.3
+pyarrow==25.0.0          # baca/tulis Parquet (Fase 1, 2, dan build_data.py Fase 5)
+
+# --- Algoritma data mining ---
+scikit-learn==1.7.2      # Fase 1: StandardScaler, LabelEncoder, mutual_info_classif
+                         # Fase 2: KMeans, MiniBatchKMeans, DBSCAN, PCA, NearestNeighbors,
+                         #         silhouette_score, adjusted_rand_score
+                         # Fase 4: IsolationForest, StandardScaler
+scipy==1.15.3            # Fase 1 & 3: matriks sparse (csr_matrix, save_npz, load_npz)
+                         # Fase 2: hierarchical clustering (linkage, fcluster)
+                         # Fase 4: stats (Z-score)
+mlxtend==0.23.4          # Fase 3: apriori, association_rules
+kneed>=0.8.5             # Fase 1: deteksi titik siku otomatis pada seleksi fitur
+
+# --- Visualisasi di notebook ---
+matplotlib==3.10.9
+seaborn>=0.13.0
+plotly==5.24.1           # Fase 2: plotly.express untuk scatter klaster
+
+# --- Lingkungan notebook ---
+# Lewati bila Anda menjalankan notebook lewat VS Code / Colab / Jupyter yang
+# sudah terpasang di luar virtual environment ini.
+jupyterlab>=4.0
+
+# --- Catatan ---
+# `dash` DIHAPUS dari daftar ini: dashboard Dash lama sudah dihapus dari repo
+# (commit ed0bfa6) dan digantikan dashboard web statis di "Phase 5 Dashboard Web"
+# yang berbasis Node/React — dependency-nya ada di package.json, bukan di sini.
+# Satu-satunya skrip Python yang tersisa di Fase 5 adalah scripts/build_data.py,
+# yang hanya butuh pandas + numpy + pyarrow.
