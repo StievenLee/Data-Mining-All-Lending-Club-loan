@@ -3,7 +3,10 @@
 > Proyek KDD lima fase yang menambang **2,26 juta pinjaman disetujui** dan **27,6 juta pengajuan
 > ditolak** milik Lending Club, lalu menyajikan temuannya lewat dashboard web interaktif.
 
-**Mata kuliah:** Data Mining · **Domain:** Perbankan / Peer-to-Peer Lending
+**Mata kuliah:** Data Mining
+
+**Domain:** Perbankan / Peer-to-Peer Lending
+
 **Metodologi:** KDD lima fase — Preprocessing → Clustering → Association Rule → Anomaly Detection → Visualisasi
 
 | | |
