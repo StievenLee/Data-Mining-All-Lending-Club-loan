@@ -89,8 +89,11 @@ export default function AnomalyControls({
   available,
   drawn,
 }: Props) {
+  // min-w-0 + flex-1: lebar bawaan <select> mengikuti opsi terpanjang (nama fitur
+  // bisa sangat panjang). Tanpa ini, di layar sempit ia menolak menyusut dan
+  // mendorong seluruh panel melewati tepi kanan viewport.
   const selCls =
-    "cursor-pointer rounded-lg border border-line bg-bg-deep px-2.5 py-1.5 font-mono text-xs text-text";
+    "min-w-0 max-w-full flex-1 basis-[calc(50%-0.25rem)] cursor-pointer truncate rounded-lg border border-line bg-bg-deep px-2.5 py-1.5 font-mono text-xs text-text min-[640px]:flex-none min-[640px]:basis-auto";
   // Lapisan yang memang tidak ada di dataset ini (rejected: kolektif/kontekstual)
   // disembunyikan, bukan ditampilkan sebagai chip mati yang membingungkan.
   const layers = LAYERS.filter((l) => l.key === "main" || counts[l.key] > 0);
@@ -98,8 +101,8 @@ export default function AnomalyControls({
   return (
     <div className="mb-[18px] rounded-2xl border border-line bg-glass px-4 py-3.5 min-[640px]:rounded-[20px] min-[640px]:px-5">
       <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
-        <div className="flex items-center gap-2">
-          <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted">
+        <div className="flex w-full flex-wrap items-center gap-2 min-[640px]:w-auto">
+          <span className="w-full font-mono text-[10px] uppercase tracking-[0.12em] text-muted min-[640px]:w-auto">
             Sumbu
           </span>
           <select className={selCls} value={xKey} onChange={(e) => onX(e.target.value)}>
