@@ -566,8 +566,8 @@ Untuk pembaca yang belum akrab dengan istilah data mining.
 | **Stieven Lee** | 2802538725 | Data Engineer I |
 | **Calvin Martin** | 2802540686 | Data Engineer II |
 | **Rangga Mulia Tohpati** | 2802539854 | Pattern Analyst |
-| **Randysta Rasta Putra** | 2802539835 | Segmentation Specialist |
-| **Keisha Grace Kristian** | 2802549344 | Insight Communicator |
+| **Keisha Grace Kristian** | 2802549344 | Segmentation Specialist |
+| **Randysta Rasta Putra** | 2802539835 | Insight Communicator |
 
 ---
 
