@@ -68,6 +68,15 @@ const MEMBERS: TeamMember[] = [
   },
   {
     id: 3,
+    nama: "Keisha Grace Kristian",
+    nim: "2802549344",
+    role: "Segmentation Specialist",
+    avatarBg: "rgba(255, 180, 171, 0.12)",
+    avatarColor: "#ffb4ab",
+    image: "/images/keisha.jpg",
+  },
+  {
+    id: 4,
     nama: "Rangga Mulia Tohpati",
     nim: "2802539854",
     role: "Pattern Analyst",
@@ -76,22 +85,13 @@ const MEMBERS: TeamMember[] = [
     image: "/images/rangga.jpeg",
   },
   {
-    id: 4,
+    id: 5,
     nama: "Randysta Rasta Putra",
     nim: "2802539835",
     role: "Insight Communicator",
     avatarBg: "rgba(255, 212, 121, 0.12)",
     avatarColor: "#ffd479",
     image: "/images/randys.jpg",
-  },
-  {
-    id: 5,
-    nama: "Keisha Grace Kristian",
-    nim: "2802549344",
-    role: "Segmentation Specialist",
-    avatarBg: "rgba(255, 180, 171, 0.12)",
-    avatarColor: "#ffb4ab",
-    image: "/images/keisha.jpg",
   },
 ];
 
