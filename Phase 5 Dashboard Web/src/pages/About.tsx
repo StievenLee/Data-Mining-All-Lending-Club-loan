@@ -77,22 +77,23 @@ const MEMBERS: TeamMember[] = [
   },
   {
     id: 4,
-    nama: "Randysta Rasta Putra",
-    nim: "2802539835",
-    role: "Segmentation Specialist",
-    avatarBg: "rgba(255, 212, 121, 0.12)",
-    avatarColor: "#ffd479",
-    image: "/images/randys.jpg",
-  },
-  {
-    id: 5,
     nama: "Keisha Grace Kristian",
     nim: "2802549344",
-    role: "Insight Communicator",
+    role: "Segmentation Specialist",
     avatarBg: "rgba(255, 180, 171, 0.12)",
     avatarColor: "#ffb4ab",
     image: "/images/keisha.jpg",
   },
+  {
+    id: 5,
+    nama: "Randysta Rasta Putra",
+    nim: "2802539835",
+    role: "Insight Communicator",
+    avatarBg: "rgba(255, 212, 121, 0.12)",
+    avatarColor: "#ffd479",
+    image: "/images/randys.jpg",
+  },
+  
 ];
 
 interface ResourceItem {
